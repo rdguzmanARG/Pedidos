@@ -1,2 +1,3 @@
-# ReactBoilerplate
-My Minimal React Webpack Babel Setup
+# Pedidos La Chapanay
+
+Sistema para administrar pedidos.
