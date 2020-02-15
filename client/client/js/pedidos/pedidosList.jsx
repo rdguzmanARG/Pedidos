@@ -10,6 +10,7 @@ class PedidosList extends Component {
 
   componentDidMount() {
     Axios.get("http://localhost:5000/api/pedidos").then(res => {
+      console.log("Recuperar Pedidos!!");
       if (res.status === 200) {
         this.setState({ pedidos: res.data, pedidosFiltrados: res.data });
       }

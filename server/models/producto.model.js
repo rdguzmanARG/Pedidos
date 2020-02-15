@@ -6,6 +6,9 @@ const productoSchema = new Schema(
     nombre: {
       type: String,
       required: true
+    },
+    precio: {
+      type: Number
     }
   },
   {

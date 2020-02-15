@@ -58,7 +58,7 @@ router.route("/import").get((request, response) => {
       const borrarPedidos = Pedido.collection.drop();
       const crearProductos = Producto.insertMany(
         cols.map(c => {
-          return { nombre: c };
+          return { nombre: c, precio: 0 };
         })
       );
       const crearPedidos = Pedido.insertMany(pedidos);
