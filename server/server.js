@@ -1,10 +1,11 @@
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
+
 const pedidosRouter = require("./routes/pedidos");
+const productosRouter = require("./routes/productos");
 
 require("dotenv").config();
-
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -19,10 +20,12 @@ mongoose.connect(uri, {
   useUnifiedTopology: true
 });
 const connection = mongoose.connection;
+
 connection.once("open", () => {
   console.log("MongoDB database connection established successfully.");
 
   app.use("/api/pedidos", pedidosRouter);
+  app.use("/api/productos", productosRouter);
 
   app.listen(port, () => {
     console.log("Server is running on port " + port);

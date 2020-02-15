@@ -6,6 +6,19 @@ const pedidoSchema = new Schema(
     nombre: {
       type: String,
       required: true
+    },
+    apellido: {
+      type: String,
+      required: true
+    },
+    email: {
+      type: String
+    },
+    celular: {
+      type: String
+    },
+    items: {
+      type: Array
     }
   },
   {
