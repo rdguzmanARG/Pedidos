@@ -6,11 +6,14 @@ class Inicio extends Component {
   render() {
     return (
       <div class="jumbotron">
-        <h1>Sistema de pedidos</h1>
-        <h2>La Chapanay</h2>
-        <p class="lead">
-          Seleccione <Link to="/pedidos">Pedidos</Link> para iniciar la entrega.
-        </p>
+        <h1>La Chapanay</h1>
+        <h2>Sistema de pedidos</h2>
+        <div>
+          <b> Nodo vecinxs de Temperley.</b>{" "}
+        </div>
+        <div>
+          Seleccione <Link to="/pedidos">pedidos</Link> para iniciar la entrega.
+        </div>
       </div>
     );
   }

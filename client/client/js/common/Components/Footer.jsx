@@ -5,7 +5,12 @@ export default function Footer(props) {
     <footer class="bg-faded">
       <hr class="mb-1" />
       <div class="container text-center">
-        <span>&copy; 2019 MRCGo</span>
+        <span>
+          &copy; 2020 MRCGo -{" "}
+          <a href="mailto:ricardo.deguzman@gmail.com">
+            ricardo.deguzman@gmail.com
+          </a>
+        </span>
       </div>
     </footer>
   );

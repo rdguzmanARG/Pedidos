@@ -33,7 +33,15 @@ class App extends Component {
           <NavBar></NavBar>
           <div className="mt-2 mb-2">
             <Switch>
-              <Route path="/pedidos/:verb/:id" component={PedidoDetail} />
+              <Route
+                path="/pedidos/:verb/:id"
+                render={props => (
+                  <PedidoDetail
+                    productos={this.state.productos}
+                    {...props}
+                  ></PedidoDetail>
+                )}
+              />
               <Route path="/pedidos" component={PedidosList} />
               <Route path="/productos/:verb/:id" component={ProductoDetail} />
               <Route

@@ -58,7 +58,12 @@ router.route("/import").get((request, response) => {
       const borrarPedidos = Pedido.collection.drop();
       const crearProductos = Producto.insertMany(
         cols.map(c => {
-          return { nombre: c, precio: 0 };
+          return {
+            nombre: c,
+            precio: isNaN(Number(c.substring(c.lastIndexOf("$") + 1).trim()))
+              ? 0
+              : Number(c.substring(c.lastIndexOf("$") + 1).trim())
+          };
         })
       );
       const crearPedidos = Pedido.insertMany(pedidos);

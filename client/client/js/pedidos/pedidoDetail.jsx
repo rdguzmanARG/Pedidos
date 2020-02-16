@@ -3,7 +3,11 @@ import Axios from "axios";
 import { Link } from "react-router-dom";
 
 class PedidoDetail extends Component {
-  state = { pedido: {} };
+  state = {
+    pedido: {
+      items: []
+    }
+  };
 
   componentDidMount() {
     const id = this.props.match.params.id;
@@ -13,9 +17,17 @@ class PedidoDetail extends Component {
       }
     });
   }
+  arrSum = arr => arr.reduce((a, b) => a + b, 0);
 
   render() {
     const pedido = this.state.pedido;
+    const items = pedido.items.map(i => [
+      ...i,
+      this.props.productos.filter(p => p.nombre === i[0])[0] === undefined
+        ? 0
+        : this.props.productos.filter(p => p.nombre === i[0])[0].precio
+    ]);
+    const total = this.arrSum(items.map(p => p[1] * p[2]));
     return (
       <React.Fragment>
         <nav aria-label="breadcrumb">
@@ -65,7 +77,7 @@ class PedidoDetail extends Component {
             )}
           </div>
         </div>
-        {pedido.items && (
+        {items && (
           <table className="table">
             <thead>
               <tr>
@@ -76,19 +88,22 @@ class PedidoDetail extends Component {
               </tr>
             </thead>
             <tbody>
-              {pedido.items.map((item, index) => (
+              {items.map((item, index) => (
                 <tr key={index}>
                   <td>{item[0]}</td>
                   <td>{item[1]}</td>
-                  <td>$0.00</td>
-                  <td>$0.00</td>
+                  <td className="cell-right">${item[2].toFixed(2)}</td>
+                  <td className="cell-right">
+                    ${(item[1] * item[2]).toFixed(2)}
+                  </td>
                 </tr>
               ))}
-              {/* <tr>
-                <td colSpan="2">Total</td>
-                <td>$3213</td>
-                <td>$443242</td>
-              </tr> */}
+              <tr>
+                <td colSpan="3" className="cell-right">
+                  Total
+                </td>
+                <td className="cell-right">${total.toFixed(2)}</td>
+              </tr>
             </tbody>
           </table>
         )}
