@@ -21,13 +21,7 @@ class PedidoDetail extends Component {
 
   render() {
     const pedido = this.state.pedido;
-    const items = pedido.items.map(i => [
-      ...i,
-      this.props.productos.filter(p => p.nombre === i[0])[0] === undefined
-        ? 0
-        : this.props.productos.filter(p => p.nombre === i[0])[0].precio
-    ]);
-    const total = this.arrSum(items.map(p => p[1] * p[2]));
+    const total = this.arrSum(pedido.items.map(p => p.cantidad * p.precio));
     return (
       <React.Fragment>
         <nav aria-label="breadcrumb">
@@ -77,7 +71,7 @@ class PedidoDetail extends Component {
             )}
           </div>
         </div>
-        {items && (
+        {pedido.items && (
           <table className="table">
             <thead>
               <tr>
@@ -88,13 +82,13 @@ class PedidoDetail extends Component {
               </tr>
             </thead>
             <tbody>
-              {items.map((item, index) => (
+              {pedido.items.map((item, index) => (
                 <tr key={index}>
-                  <td>{item[0]}</td>
-                  <td>{item[1]}</td>
-                  <td className="cell-right">${item[2].toFixed(2)}</td>
+                  <td>{item.nombre}</td>
+                  <td>{item.cantidad}</td>
+                  <td className="cell-right">${item.precio.toFixed(2)}</td>
                   <td className="cell-right">
-                    ${(item[1] * item[2]).toFixed(2)}
+                    ${(item.precio * item.cantidad).toFixed(2)}
                   </td>
                 </tr>
               ))}
