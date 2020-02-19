@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const pedidoSchema = new Schema(
   {
+    _id: mongoose.Schema.Types.ObjectId,
     nombre: {
       type: String,
       required: true
@@ -17,15 +18,18 @@ const pedidoSchema = new Schema(
     celular: {
       type: String
     },
-    items: {
-      type: Array
-    }
+    items: [
+      {
+        _id: mongoose.Schema.Types.ObjectId,
+        cantidad: Number
+      }
+    ]
   },
   {
     timestamps: true
   }
 );
 
-const Pedido = mongoose.model("pedido", pedidoSchema);
+const Pedido = mongoose.model("Pedido", pedidoSchema);
 
 module.exports = Pedido;

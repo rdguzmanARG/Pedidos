@@ -2,23 +2,13 @@ const router = require("express").Router();
 const fetch = require("node-fetch");
 let Pedido = require("../models/pedido.model");
 let Producto = require("../models/producto.model");
+const mongoose = require("mongoose");
 
 router.get("/", (req, res, next) => {
   Pedido.find()
-    .then(pedidos =>
-      res.status(200).json(
-        pedidos.map(p => {
-          const { _id, nombre, apellido, celular } = p;
-          return {
-            _id,
-            nombre,
-            apellido,
-            celular
-          };
-        })
-      )
-    )
-    .catch(err => next(err));
+    .select("_id nombre apellido celular")
+    .then(pedidos => res.status(200).json(pedidos))
+    .catch(err => res.status(500).json({ error: err }));
 });
 
 router.get("/import", (request, response, next) => {
@@ -48,14 +38,15 @@ router.get("/import", (request, response, next) => {
         .then(
           Producto.insertMany(
             cols.map(c => {
-              return {
+              return new Producto({
+                _id: new mongoose.Types.ObjectId(),
                 nombre: c,
                 precio: isNaN(
                   Number(c.substring(c.lastIndexOf("$") + 1).trim())
                 )
                   ? 0
                   : Number(c.substring(c.lastIndexOf("$") + 1).trim())
-              };
+              });
             })
           )
             .then(res => {
@@ -69,7 +60,8 @@ router.get("/import", (request, response, next) => {
                     d.Apellido !== ""
                 )
                 .map(d => {
-                  return {
+                  return new Pedido({
+                    _id: new mongoose.Types.ObjectId(),
                     date: d[colMarcaTemporal],
                     nombre: d[colNombre],
                     apellido: d[colApellido],
@@ -85,11 +77,11 @@ router.get("/import", (request, response, next) => {
                       )
                       .map(pr => {
                         return {
-                          _id: pr._id.toString(),
+                          _id: pr._id,
                           cantidad: d[pr.nombre]
                         };
                       })
-                  };
+                  });
                 });
 
               const borrarPedidos = Pedido.collection.drop();
@@ -108,42 +100,43 @@ router.get("/import", (request, response, next) => {
                 })
                 .catch(err => next(err));
             })
-            .catch(err => next(err))
+            .catch(err => res.status(500).json({ error: err }))
         )
-        .then(productos => {})
-        .catch(err => next(err));
-    });
+        .catch(err => res.status(500).json({ error: err }));
+    })
+    .catch(err => res.status(500).json({ error: err }));
 });
 
 router.get("/:idPedido", (req, res, next) => {
   Pedido.findById(req.params.idPedido)
     .then(pedido => {
-      Producto.find({ _id: { $in: pedido.items.map(p => p._id) } }).then(
-        prod => {
-          res.status(200).json({
-            _id: pedido._id,
-            nombre: pedido.nombre,
-            apellido: pedido.apellido,
-            celular: pedido.celular,
-            email: pedido.email,
-            items: prod.map(p => {
-              return {
-                _id: p._id,
-                nombre: p.nombre,
-                precio: p.precio,
-                cantidad: pedido.items.filter(
-                  i => i._id === p._id.toString()
-                )[0].cantidad
-              };
-            })
-          });
-        }
-      );
+      if (pedido) {
+        Producto.find({ _id: { $in: pedido.items.map(p => p._id) } })
+          .then(prod => {
+            res.status(200).json({
+              _id: pedido._id,
+              nombre: pedido.nombre,
+              apellido: pedido.apellido,
+              celular: pedido.celular,
+              email: pedido.email,
+              items: prod.map(p => {
+                return {
+                  _id: p._id,
+                  nombre: p.nombre,
+                  precio: p.precio,
+                  cantidad: pedido.items.filter(
+                    i => i._id.toString() === p._id.toString()
+                  )[0].cantidad
+                };
+              })
+            });
+          })
+          .catch(err => res.status(500).json({ error: err }));
+      } else {
+        res.status(404).json({ message: "Pedido inexistente." });
+      }
     })
-    .catch(err => {
-      err.status = 404;
-      next(err);
-    });
+    .catch(err => res.status(500).json({ error: err }));
 });
 
 module.exports = router;

@@ -28,7 +28,7 @@ class ProductosList extends Component {
           <input
             type="text"
             class="form-control"
-            placeholder="Ingresar Nombre y/o Apellido para filtrar la búqeuda..."
+            placeholder="Ingresar Nombre del producto para filtrar la búqeuda..."
             onChange={this.search}
           />
         </div>
@@ -42,7 +42,7 @@ class ProductosList extends Component {
           </thead>
           <tbody>
             {this.props.productos
-              .filter(f => f.nombre.includes(this.state.filter))
+              .filter(f => f.nombre.toLowerCase().includes(this.state.filter))
               .map(p => (
                 <tr key={p._id}>
                   <td>

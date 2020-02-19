@@ -5,26 +5,20 @@ import { Link } from "react-router-dom";
 class PedidosList extends Component {
   state = {
     pedidos: [],
-    pedidosFiltrados: []
+    filter: ""
   };
 
   componentDidMount() {
     Axios.get("http://localhost:5000/api/pedidos").then(res => {
       console.log("Recuperar Pedidos!!");
       if (res.status === 200) {
-        this.setState({ pedidos: res.data, pedidosFiltrados: res.data });
+        this.setState({ pedidos: res.data });
       }
     });
   }
 
   search = e => {
-    const text = e.target.value.toLowerCase();
-    const pedidosFiltrados = this.state.pedidos.filter(
-      p =>
-        p.nombre.toLowerCase().includes(text) ||
-        p.apellido.toLowerCase().includes(text)
-    );
-    this.setState({ pedidosFiltrados });
+    this.setState({ filter: e.target.value.toLowerCase() });
   };
 
   render() {
@@ -57,19 +51,25 @@ class PedidosList extends Component {
             </tr>
           </thead>
           <tbody>
-            {this.state.pedidosFiltrados.map(p => (
-              <tr key={p._id}>
-                <td>
-                  <Link to={`/pedidos/ver/${p._id}`}>
-                    {p.nombre}, {p.apellido}
-                  </Link>
-                </td>
-                <td className="d-none d-sm-block">{p.celular}</td>
-                <td>
-                  <Link to={`/pedidos/ver/${p._id}`}>Ver</Link>
-                </td>
-              </tr>
-            ))}
+            {this.state.pedidos
+              .filter(
+                f =>
+                  f.nombre.toLowerCase().includes(this.state.filter) ||
+                  f.apellido.toLowerCase().includes(this.state.filter)
+              )
+              .map(p => (
+                <tr key={p._id}>
+                  <td>
+                    <Link to={`/pedidos/ver/${p._id}`}>
+                      {p.nombre}, {p.apellido}
+                    </Link>
+                  </td>
+                  <td className="d-none d-sm-block">{p.celular}</td>
+                  <td>
+                    <Link to={`/pedidos/ver/${p._id}`}>Ver</Link>
+                  </td>
+                </tr>
+              ))}
           </tbody>
         </table>
       </React.Fragment>

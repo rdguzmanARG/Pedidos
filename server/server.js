@@ -31,7 +31,7 @@ connection.once("open", () => {
   app.use("/api/productos", productosRouter);
 
   app.use((req, res, next) => {
-    const error = new Error("Resource not exists.");
+    const error = new Error("Resource does not exists.");
     error.status = 404;
     next(error);
   });
