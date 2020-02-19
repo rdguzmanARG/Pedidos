@@ -3,8 +3,9 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const morgan = require("morgan");
 
-const pedidosRouter = require("./routes/pedidos");
-const productosRouter = require("./routes/productos");
+const pedidosRoutes = require("./routes/pedidos");
+const productosRoutes = require("./routes/productos");
+const userRoutes = require("./routes/user");
 
 require("dotenv").config();
 const app = express();
@@ -27,8 +28,9 @@ const connection = mongoose.connection;
 connection.once("open", () => {
   console.log("MongoDB database connection established successfully.");
 
-  app.use("/api/pedidos", pedidosRouter);
-  app.use("/api/productos", productosRouter);
+  app.use("/api/pedidos", pedidosRoutes);
+  app.use("/api/productos", productosRoutes);
+  app.use("/api/user", userRoutes);
 
   app.use((req, res, next) => {
     const error = new Error("Resource does not exists.");
