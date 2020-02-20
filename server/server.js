@@ -5,7 +5,7 @@ const morgan = require("morgan");
 
 const pedidosRoutes = require("./routes/pedidos");
 const productosRoutes = require("./routes/productos");
-const userRoutes = require("./routes/user");
+const usersRoutes = require("./routes/users");
 
 require("dotenv").config();
 const app = express();
@@ -30,7 +30,7 @@ connection.once("open", () => {
 
   app.use("/api/pedidos", pedidosRoutes);
   app.use("/api/productos", productosRoutes);
-  app.use("/api/user", userRoutes);
+  app.use("/api/users", usersRoutes);
 
   app.use((req, res, next) => {
     const error = new Error("Resource does not exists.");

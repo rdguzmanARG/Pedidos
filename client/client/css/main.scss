@@ -3,3 +3,9 @@ table {
     text-align: right;
   }
 }
+.navbar-dark {
+  .navbar-text.current-user {
+    color: white;
+    font-weight: bold;
+  }
+}

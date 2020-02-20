@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import Axios from "axios";
 import { Link } from "react-router-dom";
+import { pedido_getAll } from "../services/pedidoService";
 
 class PedidosList extends Component {
   state = {
@@ -9,7 +9,7 @@ class PedidosList extends Component {
   };
 
   componentDidMount() {
-    Axios.get("http://localhost:5000/api/pedidos").then(res => {
+    pedido_getAll().then(res => {
       console.log("Recuperar Pedidos!!");
       if (res.status === 200) {
         this.setState({ pedidos: res.data });

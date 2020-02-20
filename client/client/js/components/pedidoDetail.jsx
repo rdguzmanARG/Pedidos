@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import Axios from "axios";
 import { Link } from "react-router-dom";
+import { pedido_get } from "../services/pedidoService";
 
 class PedidoDetail extends Component {
   state = {
@@ -11,7 +11,7 @@ class PedidoDetail extends Component {
 
   componentDidMount() {
     const id = this.props.match.params.id;
-    Axios.get("http://localhost:5000/api/pedidos/" + id).then(res => {
+    pedido_get(id).then(res => {
       if (res.status === 200) {
         this.setState({ pedido: res.data });
       }

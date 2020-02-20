@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import Axios from "axios";
 import { Link } from "react-router-dom";
+import { producto_get, producto_update } from "../services/productoService";
 
 class ProductoDetail extends Component {
   state = {
@@ -10,7 +10,7 @@ class ProductoDetail extends Component {
 
   componentDidMount() {
     const id = this.props.match.params.id;
-    Axios.get("http://localhost:5000/api/productos/" + id).then(res => {
+    producto_get(id).then(res => {
       if (res.status === 200) {
         this.setState({ ...this.state, ...res.data });
       }
@@ -24,10 +24,7 @@ class ProductoDetail extends Component {
 
   submitForm = e => {
     e.preventDefault();
-    Axios.put(
-      "http://localhost:5000/api/productos/" + this.state._id,
-      this.state
-    ).then(res => {
+    producto_update(this.state._id, this.state).then(res => {
       if (res.status === 200) {
         window.location = "/productos";
       }

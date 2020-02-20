@@ -1,5 +1,4 @@
 ﻿import React, { Component } from "react";
-import Axios from "axios";
 import {
   BrowserRouter as Router,
   Switch,
@@ -7,30 +6,38 @@ import {
   Redirect
 } from "react-router-dom";
 import Footer from "./Footer";
-import PedidosList from "../../pedidos/pedidosList";
-import PedidoDetail from "../../pedidos/pedidoDetail";
-import ProductosList from "../../productos/productosList";
-import ProductoDetail from "../../productos/productoDetail";
-import Inicio from "../../inicio/index";
 import NavBar from "./Navbar";
+import PedidosList from "./components/pedidosList";
+import PedidoDetail from "./components/pedidoDetail";
+import ProductosList from "./components/productosList";
+import ProductoDetail from "./components/productoDetail";
+import Inicio from "./components/Home";
+import LoginForm from "./components/loginForm";
+import Logout from "./components/logout";
+import auth from "./services/authService";
+import { producto_getAll } from "./services/productoService";
 
 class App extends Component {
   state = { productos: [] };
 
   componentDidMount() {
-    Axios.get("http://localhost:5000/api/productos").then(res => {
-      console.log("Recuperar Productos!!");
-      if (res.status === 200) {
-        this.setState({ productos: res.data });
-      }
-    });
+    const user = auth.getCurrentUser();
+    this.setState({ user });
+    if (user) {
+      producto_getAll().then(res => {
+        console.log("Recuperar Productos!!");
+        if (res.status === 200) {
+          this.setState({ productos: res.data });
+        }
+      });
+    }
   }
 
   render() {
     return (
       <Router>
         <div className="container mt-2">
-          <NavBar></NavBar>
+          <NavBar user={this.state.user}></NavBar>
           <div className="mt-2 mb-2">
             <Switch>
               <Route
@@ -60,6 +67,8 @@ class App extends Component {
                   </h4>
                 </div>
               </Route>
+              <Route path="/login" component={LoginForm} />
+              <Route path="/logout" component={Logout} />
               <Route path="/" exact component={Inicio} />
               <Redirect to="/404" />
             </Switch>
