@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { producto_get, producto_update } from "../services/productoService";
+import auth from "../services/authService";
 
 class ProductoDetail extends Component {
   state = {
@@ -10,11 +11,18 @@ class ProductoDetail extends Component {
 
   componentDidMount() {
     const id = this.props.match.params.id;
-    producto_get(id).then(res => {
-      if (res.status === 200) {
-        this.setState({ ...this.state, ...res.data });
-      }
-    });
+    producto_get(id)
+      .then(res => {
+        if (res.status === 200) {
+          this.setState({ ...this.state, ...res.data });
+        }
+      })
+      .catch(ex => {
+        if (ex.response && ex.response.status === 401) {
+          auth.logout();
+          window.location = "/login";
+        }
+      });
   }
 
   onFieldChange = e => {

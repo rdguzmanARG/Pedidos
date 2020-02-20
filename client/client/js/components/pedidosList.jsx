@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { pedido_getAll } from "../services/pedidoService";
+import auth from "../services/authService";
 
 class PedidosList extends Component {
   state = {
@@ -9,12 +10,19 @@ class PedidosList extends Component {
   };
 
   componentDidMount() {
-    pedido_getAll().then(res => {
-      console.log("Recuperar Pedidos!!");
-      if (res.status === 200) {
-        this.setState({ pedidos: res.data });
-      }
-    });
+    pedido_getAll()
+      .then(res => {
+        console.log("Recuperar Pedidos!!");
+        if (res.status === 200) {
+          this.setState({ pedidos: res.data });
+        }
+      })
+      .catch(ex => {
+        if (ex.response && ex.response.status === 401) {
+          auth.logout();
+          window.location = "/login";
+        }
+      });
   }
 
   search = e => {
@@ -43,10 +51,10 @@ class PedidosList extends Component {
           />
         </div>
         <table className="table table-striped table-sm">
-          <thead>
+          <thead className="thead-dark">
             <tr>
               <th>Nombre y Apellido</th>
-              <th className="d-none d-sm-block">Telefono</th>
+              <th className="hide-on-mobile">Telefono</th>
               <th></th>
             </tr>
           </thead>
@@ -60,13 +68,17 @@ class PedidosList extends Component {
               .map(p => (
                 <tr key={p._id}>
                   <td>
-                    <Link to={`/pedidos/ver/${p._id}`}>
-                      {p.nombre}, {p.apellido}
-                    </Link>
+                    {p.nombre}, {p.apellido}
                   </td>
-                  <td className="d-none d-sm-block">{p.celular}</td>
+                  <td className="hide-on-mobile">
+                    <a href={"tel:+" + p.celular}>{p.celular}</a>{" "}
+                  </td>
                   <td>
-                    <Link to={`/pedidos/ver/${p._id}`}>Ver</Link>
+                    <Link to={`/pedidos/ver/${p._id}`}>
+                      <button type="button" class="btn btn-primary btn-sm">
+                        Ver
+                      </button>
+                    </Link>
                   </td>
                 </tr>
               ))}

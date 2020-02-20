@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { pedido_get } from "../services/pedidoService";
+import auth from "../services/authService";
 
 class PedidoDetail extends Component {
   state = {
@@ -11,11 +12,18 @@ class PedidoDetail extends Component {
 
   componentDidMount() {
     const id = this.props.match.params.id;
-    pedido_get(id).then(res => {
-      if (res.status === 200) {
-        this.setState({ pedido: res.data });
-      }
-    });
+    pedido_get(id)
+      .then(res => {
+        if (res.status === 200) {
+          this.setState({ pedido: res.data });
+        }
+      })
+      .catch(ex => {
+        if (ex.response && ex.response.status === 401) {
+          auth.logout();
+          window.location = "/login";
+        }
+      });
   }
   arrSum = arr => arr.reduce((a, b) => a + b, 0);
 
@@ -43,10 +51,10 @@ class PedidoDetail extends Component {
             <div class="d-flex justify-content-between">
               Detalle de Pedido
               <button
-                className="btn btn-success btn-sm"
                 onClick={() => this.props.history.push("/pedidos")}
+                class="btn btn-light ml-2"
               >
-                Volder
+                Volver
               </button>
             </div>
           </div>

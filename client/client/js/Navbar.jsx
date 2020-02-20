@@ -35,6 +35,13 @@ const NavBar = props => {
                   Productos
                 </NavLink>
               </li>
+              {props.user.isAdmin && (
+                <li>
+                  <NavLink className="nav-link" to="/admin">
+                    Admin
+                  </NavLink>
+                </li>
+              )}
               <li>
                 <NavLink className="nav-link" to="/logout">
                   Cerrar Sesión

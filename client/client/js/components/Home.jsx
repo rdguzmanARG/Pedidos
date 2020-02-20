@@ -5,7 +5,7 @@ class Inicio extends Component {
   state = {};
   render() {
     return (
-      <div class="jumbotron">
+      <div class="p-5 mt-5 mb-5 jumbotron">
         <h1>La Chapanay</h1>
         <h2>Sistema de pedidos</h2>
         <div>

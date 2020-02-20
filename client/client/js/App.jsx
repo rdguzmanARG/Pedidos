@@ -5,6 +5,7 @@ import {
   Route,
   Redirect
 } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
 import Footer from "./Footer";
 import NavBar from "./Navbar";
 import PedidosList from "./components/pedidosList";
@@ -16,52 +17,94 @@ import LoginForm from "./components/loginForm";
 import Logout from "./components/logout";
 import auth from "./services/authService";
 import { producto_getAll } from "./services/productoService";
+import "react-toastify/dist/ReactToastify.css";
 
 class App extends Component {
   state = { productos: [] };
 
   componentDidMount() {
+    // toast.configure({
+    //   autoClose: 8000,
+    //   draggable: false
+    //   //etc you get the idea
+    // });
+
     const user = auth.getCurrentUser();
     this.setState({ user });
     if (user) {
-      producto_getAll().then(res => {
-        console.log("Recuperar Productos!!");
-        if (res.status === 200) {
-          this.setState({ productos: res.data });
-        }
-      });
+      producto_getAll()
+        .then(res => {
+          console.log("Recuperar Productos!!");
+          if (res.status === 200) {
+            this.setState({ productos: res.data });
+          }
+        })
+        .catch(ex => {
+          if (ex.response && ex.response.status === 401) {
+            auth.logout();
+            window.location = "/login";
+          }
+        });
     }
   }
 
   render() {
+    const { user } = this.state;
+    if (user === undefined) return null;
     return (
       <Router>
         <div className="container mt-2">
-          <NavBar user={this.state.user}></NavBar>
+          <ToastContainer
+            position="top-center"
+            autoClose={5000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnVisibilityChange
+            draggable
+            pauseOnHover
+          />
+          <NavBar user={user}></NavBar>
           <div className="mt-2 mb-2">
             <Switch>
               <Route
                 path="/pedidos/:verb/:id"
-                render={props => (
-                  <PedidoDetail
-                    productos={this.state.productos}
-                    {...props}
-                  ></PedidoDetail>
-                )}
+                render={props => {
+                  if (!user) return <Redirect to="/login"></Redirect>;
+                  return (
+                    <PedidoDetail
+                      productos={this.state.productos}
+                      {...props}
+                    ></PedidoDetail>
+                  );
+                }}
               />
-              <Route path="/pedidos" component={PedidosList} />
+              <Route
+                path="/pedidos"
+                render={() => {
+                  if (!user) return <Redirect to="/login"></Redirect>;
+                  return <PedidosList></PedidosList>;
+                }}
+              />
               <Route path="/productos/:verb/:id" component={ProductoDetail} />
               <Route
                 path="/productos"
-                render={props => (
-                  <ProductosList
-                    productos={this.state.productos}
-                    {...props}
-                  ></ProductosList>
-                )}
+                render={props => {
+                  if (!user) return <Redirect to="/login"></Redirect>;
+                  return (
+                    <ProductosList
+                      productos={this.state.productos}
+                      {...props}
+                    ></ProductosList>
+                  );
+                }}
               />
               <Route path="/404">
-                <div class="alert alert-danger" role="alert">
+                <div
+                  class="mt-5 mb-5 pt-5 pb-5 alert alert-danger"
+                  role="alert"
+                >
                   <h4 class="alert-heading">
                     La página que esta buscando no existe!
                   </h4>
