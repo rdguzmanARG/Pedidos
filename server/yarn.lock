@@ -55,13 +55,13 @@ basic-auth@~2.0.0:
   dependencies:
     safe-buffer "5.1.2"
 
-bcrypt@^3.0.8:
-  version "3.0.8"
-  resolved "https://registry.yarnpkg.com/bcrypt/-/bcrypt-3.0.8.tgz#fe437b7569faffc1105c3c3f6e7d2913e3d3bea5"
-  integrity sha512-jKV6RvLhI36TQnPDvUFqBEnGX9c8dRRygKxCZu7E+MgLfKZbmmXL8a7/SFFOyHoPNX9nV81cKRC5tbQfvEQtpw==
+bcrypt@3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/bcrypt/-/bcrypt-3.0.0.tgz#0cd38983f45143aa5a6122c9660d0b7ec3a33fb0"
+  integrity sha512-gjicxsD4e5U3nH0EqiEb5y+fKpsZ7F52wcnmNfu45nxnolWVAYh7NgbdfilY+5x1v6cLspxmzz4hf+ju2pFxhA==
   dependencies:
-    nan "2.14.0"
-    node-pre-gyp "0.14.0"
+    nan "2.10.0"
+    node-pre-gyp "0.10.2"
 
 bluebird@3.5.1:
   version "3.5.1"
@@ -647,12 +647,12 @@ ms@2.1.2, ms@^2.1.1:
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.1.2.tgz#d09d1f357b443f493382a8eb3ccd183872ae6009"
   integrity sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==
 
-nan@2.14.0:
-  version "2.14.0"
-  resolved "https://registry.yarnpkg.com/nan/-/nan-2.14.0.tgz#7818f722027b2459a86f0295d434d1fc2336c52c"
-  integrity sha512-INOFj37C7k3AfaNTtX8RhsTw7qRy7eLET14cROi9+5HAVbbHuIWUHEauBv5qT4Av2tWasiTY1Jw6puUNqRJXQg==
+nan@2.10.0:
+  version "2.10.0"
+  resolved "https://registry.yarnpkg.com/nan/-/nan-2.10.0.tgz#96d0cd610ebd58d4b4de9cc0c6828cda99c7548f"
+  integrity sha512-bAdJv7fBLhWC+/Bls0Oza+mvTaNQtP+1RyhhhvD95pgUJz6XM5IzgmxOkItJ9tkoCiplvAnXI1tNmmUD/eScyA==
 
-needle@^2.2.1:
+needle@^2.2.0:
   version "2.3.2"
   resolved "https://registry.yarnpkg.com/needle/-/needle-2.3.2.tgz#3342dea100b7160960a450dc8c22160ac712a528"
   integrity sha512-DUzITvPVDUy6vczKKYTnWc/pBZ0EnjMJnQ3y+Jo5zfKFimJs7S3HFCxCRZYB9FUZcrzUQr3WsmvZgddMEIZv6w==
@@ -671,21 +671,21 @@ node-fetch@^2.6.0:
   resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.0.tgz#e633456386d4aa55863f676a7ab0daa8fdecb0fd"
   integrity sha512-8dG4H5ujfvFiqDmVu9fQ5bOHUC15JMjMY/Zumv26oOvvVJjM67KF8koCWIabKQ1GJIa9r2mMZscBq/TbdOcmNA==
 
-node-pre-gyp@0.14.0:
-  version "0.14.0"
-  resolved "https://registry.yarnpkg.com/node-pre-gyp/-/node-pre-gyp-0.14.0.tgz#9a0596533b877289bcad4e143982ca3d904ddc83"
-  integrity sha512-+CvDC7ZttU/sSt9rFjix/P05iS43qHCOOGzcr3Ry99bXG7VX953+vFyEuph/tfqoYu8dttBkE86JSKBO2OzcxA==
+node-pre-gyp@0.10.2:
+  version "0.10.2"
+  resolved "https://registry.yarnpkg.com/node-pre-gyp/-/node-pre-gyp-0.10.2.tgz#e8945c20ef6795a20aac2b44f036eb13cf5146e3"
+  integrity sha512-16lql9QTqs6KsB9fl3neWyZm02KxIKdI9FlJjrB0y7eMTP5Nyz+xalwPbOlw3iw7EejllJPmlJSnY711PLD1ug==
   dependencies:
     detect-libc "^1.0.2"
     mkdirp "^0.5.1"
-    needle "^2.2.1"
+    needle "^2.2.0"
     nopt "^4.0.1"
     npm-packlist "^1.1.6"
     npmlog "^4.0.2"
     rc "^1.2.7"
     rimraf "^2.6.1"
     semver "^5.3.0"
-    tar "^4.4.2"
+    tar "^4"
 
 nopt@^4.0.1:
   version "4.0.1"
@@ -1010,7 +1010,7 @@ strip-json-comments@~2.0.1:
   resolved "https://registry.yarnpkg.com/strip-json-comments/-/strip-json-comments-2.0.1.tgz#3c531942e908c2697c0ec344858c286c7ca0a60a"
   integrity sha1-PFMZQukIwml8DsNEhYwobHygpgo=
 
-tar@^4.4.2:
+tar@^4:
   version "4.4.13"
   resolved "https://registry.yarnpkg.com/tar/-/tar-4.4.13.tgz#43b364bc52888d555298637b10d60790254ab525"
   integrity sha512-w2VwSrBoHa5BsSyH+KxEqeQBAllHhccyMFVHtGtdMpF4W7IRWfZjFiQceJPChOeTsSDVUpER2T8FA93pr0L+QA==
