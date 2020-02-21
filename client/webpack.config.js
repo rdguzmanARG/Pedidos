@@ -8,10 +8,10 @@ var isDevServer = process.argv.find(v => v.includes("webpack-dev-server"));
 
 module.exports = env => {
   const pluginArray = [
-    new ExtractTextPlugin({ filename: "css/[name].css" }),
+    new ExtractTextPlugin({ filename: "css/style.css" }),
     new webpack.DefinePlugin({
       "process.env.API_URL": JSON.stringify(
-        env.API_URL ? env.API_URL : "https://localhost:5000"
+        env.API_URL ? env.API_URL : "http://localhost:5000/api"
       )
     })
   ];
@@ -24,13 +24,11 @@ module.exports = env => {
 
   return {
     entry: {
-      main: APP_DIR + "/css/main.scss",
       index: APP_DIR + "/js/IndexMain.jsx"
     },
     output: {
       path: BUILD_DIR,
-      publicPath: "/",
-      filename: "js/[name]-main.js"
+      filename: "js/bundle.js"
     },
     devtool: "source-map",
     module: {
@@ -46,8 +44,7 @@ module.exports = env => {
             fallback: "style-loader",
             use: [
               {
-                loader: "css-loader",
-                options: "sourceMap"
+                loader: "css-loader"
               },
               {
                 loader: "sass-loader",

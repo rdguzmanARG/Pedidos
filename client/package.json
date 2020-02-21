@@ -4,10 +4,10 @@
   "description": "Cliente HTML de React Ticket",
   "private": true,
   "scripts": {
-    "build": "webpack --env.development --mode=development",
-    "build-prod": "webpack --env.production",
-    "dev": "webpack-dev-server --env.development --mode=development  --progress --port 8080",
-    "dev-local": "webpack-dev-server --env.development --mode=development --env.API_URL=https://localhost:5001 --progress --port 8080",
+    "build": "webpack --env.development --mode=development --env.API_URL=http://lachapanay-api.azurewebsites.net/api",
+    "build-prod": "webpack --env.production --mode=production --env.API_URL=http://lachapanay-api.azurewebsites.net/api",
+    "dev": "webpack-dev-server --env.development --mode=development  --env.API_URL=http://lachapanay-api.azurewebsites.net/api --progress --port 8080",
+    "dev-local": "webpack-dev-server --env.development --mode=development --env.API_URL=http://localhost:5000/api --progress --port 8080",
     "watch": "webpack --env.development --mode=development --watch"
   },
   "engines": {
@@ -33,8 +33,10 @@
     "fibers": "^4.0.2",
     "graceful-fs": "^4.2.3",
     "joi-browser": "^13.4.0",
+    "jquery": "^3.4.1",
     "jwt-decode": "^2.2.0",
     "node-sass": "^4.13.0",
+    "popper.js": "^1.16.1",
     "react": "^16.11.0",
     "react-dom": "^16.11.0",
     "react-redux": "^7.1.1",

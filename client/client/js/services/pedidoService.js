@@ -1,5 +1,6 @@
 import http from "./httpService";
-import { apiUrl } from "../../../config.json";
+//import { apiUrl } from "../../../config.json";
+const apiUrl = process.env.API_URL;
 
 export function pedido_getAll() {
   return http.get(apiUrl + "/pedidos");
