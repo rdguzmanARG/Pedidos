@@ -16,38 +16,35 @@ app.use(cors());
 app.use(express.json());
 //app.use(express.static("dist"));
 
-const uri = process.env.DB_URL;
-mongoose.connect(uri, {
-  useNewUrlParser: true,
-  useCreateIndex: true,
-  useUnifiedTopology: true,
-  useFindAndModify: false
-});
-const connection = mongoose.connection;
+mongoose
+  .connect(process.env.DB_URL, {
+    useNewUrlParser: true,
+    useCreateIndex: true,
+    useUnifiedTopology: true,
+    useFindAndModify: false
+  })
+  .then(() => {
+    console.log("MongoDB database connection established successfully.");
+    app.use("/api/pedidos", pedidosRoutes);
+    app.use("/api/productos", productosRoutes);
+    app.use("/api/users", usersRoutes);
 
-connection.once("open", () => {
-  console.log("MongoDB database connection established successfully.");
-
-  app.use("/api/pedidos", pedidosRoutes);
-  app.use("/api/productos", productosRoutes);
-  app.use("/api/users", usersRoutes);
-
-  app.use((req, res, next) => {
-    const error = new Error("Resource does not exists.");
-    error.status = 404;
-    next(error);
-  });
-
-  app.use((error, req, res, next) => {
-    res.status(error.status || 500);
-    res.json({
-      error: {
-        message: error.message
-      }
+    app.use((req, res, next) => {
+      const error = new Error("Resource does not exists.");
+      error.status = 404;
+      next(error);
     });
-  });
 
-  app.listen(port, () => {
-    console.log("Server is running on port " + port);
-  });
-});
+    app.use((error, req, res, next) => {
+      res.status(error.status || 500);
+      res.json({
+        error: {
+          message: error.message
+        }
+      });
+    });
+    app.listen(port, () => {
+      console.log("Server is running on port " + port);
+    });
+  })
+  .catch(error => console.log(error));

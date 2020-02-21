@@ -56,7 +56,6 @@ exports.users_login = (req, res) => {
   User.find({ username: req.body.username })
     .exec()
     .then(user => {
-      console.log(user);
       if (user.length < 1) {
         return res.status(401).json({
           message: "Autenticacion invalida"
