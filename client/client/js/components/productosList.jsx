@@ -27,7 +27,7 @@ class ProductosList extends Component {
           <input
             type="text"
             class="form-control"
-            placeholder="Ingresar Nombre del producto para filtrar la búqeuda..."
+            placeholder="Ingresar texto para buscar..."
             onChange={this.search}
           />
         </div>

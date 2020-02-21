@@ -46,7 +46,7 @@ class PedidosList extends Component {
           <input
             type="text"
             class="form-control"
-            placeholder="Ingresar Nombre y/o Apellido para filtrar la búqeuda..."
+            placeholder="Ingresar texto para buscar..."
             onChange={this.search}
           />
         </div>
@@ -54,7 +54,7 @@ class PedidosList extends Component {
           <thead className="thead-dark">
             <tr>
               <th>Nombre y Apellido</th>
-              <th className="hide-on-mobile">Telefono</th>
+              <th className="d-none d-sm-table-cell">Teléfono</th>
               <th></th>
             </tr>
           </thead>
@@ -70,10 +70,10 @@ class PedidosList extends Component {
                   <td>
                     {p.nombre}, {p.apellido}
                   </td>
-                  <td className="hide-on-mobile">
+                  <td className="d-none d-sm-table-cell">
                     <a href={"tel:+" + p.celular}>{p.celular}</a>{" "}
                   </td>
-                  <td>
+                  <td className="cell-right">
                     <Link to={`/pedidos/ver/${p._id}`}>
                       <button type="button" class="btn btn-primary btn-sm">
                         Ver

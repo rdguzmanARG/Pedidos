@@ -48,67 +48,104 @@ class PedidoDetail extends Component {
 
         <div className="card">
           <div className="card-header">
-            <div class="d-flex justify-content-between">
-              Detalle de Pedido
-              <button
-                onClick={() => this.props.history.push("/pedidos")}
-                class="btn btn-light ml-2"
-              >
-                Volver
-              </button>
+            <div class="d-flex">
+              <div>
+                <b>
+                  {pedido.nombre}, {pedido.apellido}
+                </b>
+              </div>
             </div>
           </div>
-          <div className="card-body m-2">
-            <div>
-              Nombre y Apellido:
-              <b className="m-2">
-                {pedido.nombre}, {pedido.apellido}
-              </b>
-            </div>
+          <div className="card-body m-1">
             {pedido.celular && (
               <div>
                 Telefono:
-                <b className="m-2">{pedido.celular}</b>
+                <b>{pedido.celular}</b>
               </div>
             )}
             {pedido.email && (
               <div>
-                Correo electrónico:
-                <b className="m-2">{pedido.email}</b>
+                Email:
+                <b>{pedido.email}</b>
               </div>
             )}
           </div>
         </div>
         {pedido.items && (
-          <table className="table">
+          <table className="table mt-2">
             <thead>
-              <tr>
-                <th>Producto</th>
-                <th>Cant.</th>
-                <th>Uni</th>
-                <th>Total</th>
+              <tr className="main-header">
+                <th>Detalle del pedido</th>
+                <th className="d-none d-md-table-cell">Cant.</th>
+                <th className="d-none d-md-table-cell cell-right">Unidad</th>
+                <th className="d-none d-md-table-cell cell-right">Total</th>
               </tr>
             </thead>
             <tbody>
               {pedido.items.map((item, index) => (
                 <tr key={index}>
-                  <td>{item.nombre}</td>
-                  <td>{item.cantidad}</td>
-                  <td className="cell-right">${item.precio.toFixed(2)}</td>
-                  <td className="cell-right">
+                  <td className="d-table-cell d-md-none">
+                    <div class="row">
+                      <div class="col pb-3">
+                        <b>{item.nombre}</b>
+                      </div>
+                    </div>
+                    <table className="table">
+                      <thead>
+                        <tr className="secondary-header">
+                          <th>Cantidad</th>
+                          <th className="cell-right">P. Unitario</th>
+                          <th className="cell-right">Total</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>{item.cantidad}</td>
+                          <td className="cell-right">
+                            ${item.precio.toFixed(2)}
+                          </td>
+                          <td className="cell-right">
+                            ${(item.precio * item.cantidad).toFixed(2)}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </td>
+
+                  <td className="d-none d-md-table-cell">{item.nombre}</td>
+                  <td className="d-none d-md-table-cell">{item.cantidad}</td>
+                  <td className="d-none d-md-table-cell cell-right">
+                    ${item.precio.toFixed(2)}
+                  </td>
+                  <td className="d-none d-md-table-cell cell-right">
                     ${(item.precio * item.cantidad).toFixed(2)}
                   </td>
                 </tr>
               ))}
-              <tr>
-                <td colSpan="3" className="cell-right">
-                  Total
+              <tr className="totales">
+                <td colSpan="4" className="cell-right d-none d-md-table-cell  ">
+                  Total ${total.toFixed(2)}
                 </td>
-                <td className="cell-right">${total.toFixed(2)}</td>
+                <td colSpan="3" className="cell-right d-table-cell d-md-none ">
+                  Total ${total.toFixed(2)}
+                </td>
               </tr>
             </tbody>
           </table>
         )}
+        <button
+          onClick={() => this.props.history.push("/pedidos")}
+          class="btn btn-success ml-2"
+          disabled="true"
+        >
+          Confirmar retiro
+        </button>
+        <button
+          onClick={() => this.props.history.push("/pedidos")}
+          class="btn btn-primary ml-2"
+        >
+          Volver
+        </button>
       </React.Fragment>
     );
   }

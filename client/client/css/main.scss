@@ -1,6 +1,33 @@
+// Global styles
+body {
+  font-size: 18px;
+}
+
+// Home page
+.jumbotron {
+  text-align: center;
+}
+
+// Other pages
 table {
+  font-size: 16px;
   .cell-right {
     text-align: right;
+  }
+  .main-header {
+    background-color: black;
+    color: white;
+    font-weight: bold;
+  }
+  .secondary-header {
+    background-color: gray;
+    color: white;
+    font-weight: bold;
+  }
+  .totales {
+    background-color: black;
+    color: white;
+    font-weight: bold;
   }
 }
 .navbar-dark {
