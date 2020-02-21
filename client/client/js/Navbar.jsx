@@ -36,10 +36,27 @@ const NavBar = props => {
                 </NavLink>
               </li>
               {props.user.isAdmin && (
-                <li>
-                  <NavLink className="nav-link" to="/admin">
-                    Admin
-                  </NavLink>
+                <li class="nav-item dropdown">
+                  <a
+                    class="nav-link dropdown-toggle"
+                    href="#"
+                    id="navbarDropdown"
+                    role="button"
+                    data-toggle="dropdown"
+                    aria-haspopup="true"
+                    aria-expanded="false"
+                  >
+                    Administración
+                  </a>
+                  <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <Link className="dropdown-item" to="/admin">
+                      Importar datos
+                    </Link>
+                    <div class="dropdown-divider"></div>
+                    <Link className="dropdown-item" to="/usuarios">
+                      Usuarios
+                    </Link>
+                  </div>
                 </li>
               )}
               <li>

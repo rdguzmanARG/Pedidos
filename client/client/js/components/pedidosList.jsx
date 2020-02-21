@@ -5,8 +5,7 @@ import auth from "../services/authService";
 
 class PedidosList extends Component {
   state = {
-    pedidos: [],
-    filter: ""
+    pedidos: []
   };
 
   componentDidMount() {
@@ -24,10 +23,6 @@ class PedidosList extends Component {
         }
       });
   }
-
-  search = e => {
-    this.setState({ filter: e.target.value.toLowerCase() });
-  };
 
   render() {
     return (
@@ -47,8 +42,23 @@ class PedidosList extends Component {
             type="text"
             class="form-control"
             placeholder="Ingresar texto para buscar..."
-            onChange={this.search}
+            value={this.props.filter}
+            onChange={e =>
+              this.props.onChangeFilter(e.target.value.toLowerCase())
+            }
           />
+          <div class="input-group-append">
+            <button
+              class="btn btn-outline-secondary"
+              type="button"
+              onClick={e => {
+                e.preventDefault();
+                this.props.onChangeFilter("");
+              }}
+            >
+              Borrar
+            </button>
+          </div>
         </div>
         <table className="table table-striped table-sm">
           <thead className="thead-dark">
@@ -62,8 +72,8 @@ class PedidosList extends Component {
             {this.state.pedidos
               .filter(
                 f =>
-                  f.nombre.toLowerCase().includes(this.state.filter) ||
-                  f.apellido.toLowerCase().includes(this.state.filter)
+                  f.nombre.toLowerCase().includes(this.props.filter) ||
+                  f.apellido.toLowerCase().includes(this.props.filter)
               )
               .map(p => (
                 <tr key={p._id}>

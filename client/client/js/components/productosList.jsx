@@ -2,10 +2,6 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 
 class ProductosList extends Component {
-  state = {
-    filter: ""
-  };
-
   search = e => {
     this.setState({ filter: e.target.value.toLowerCase() });
   };
@@ -28,27 +24,40 @@ class ProductosList extends Component {
             type="text"
             class="form-control"
             placeholder="Ingresar texto para buscar..."
-            onChange={this.search}
+            value={this.props.filter}
+            onChange={e =>
+              this.props.onChangeFilter(e.target.value.toLowerCase())
+            }
           />
+          <div class="input-group-append">
+            <button
+              class="btn btn-outline-secondary"
+              type="button"
+              onClick={e => {
+                e.preventDefault();
+                this.props.onChangeFilter("");
+              }}
+            >
+              Borrar
+            </button>
+          </div>
         </div>
         <table className="table table-striped table-sm">
-          <thead>
+          <thead className="thead-dark">
             <tr>
-              <th>Nombre</th>
-              <th>P.Venta</th>
+              <th>Nombre del producto</th>
+              <th className="cell-right">P.Venta</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
             {this.props.productos
-              .filter(f => f.nombre.toLowerCase().includes(this.state.filter))
+              .filter(f => f.nombre.toLowerCase().includes(this.props.filter))
               .map(p => (
                 <tr key={p._id}>
-                  <td>
-                    <Link to={`/productos/ver/${p._id}`}>{p.nombre}</Link>
-                  </td>
+                  <td>{p.nombre}</td>
                   <td className="cell-right">${p.precio.toFixed(2)}</td>
-                  <td>
+                  <td className="cell-right">
                     <Link to={`/productos/ver/${p._id}`}>
                       <button type="button" class="btn btn-primary btn-sm">
                         Modificar

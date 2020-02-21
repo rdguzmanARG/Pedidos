@@ -20,17 +20,11 @@ import { producto_getAll } from "./services/productoService";
 import "react-toastify/dist/ReactToastify.css";
 
 class App extends Component {
-  state = { productos: [] };
+  state = { productos: [], filterPedidos: "", filterProductos: "" };
 
   componentDidMount() {
-    // toast.configure({
-    //   autoClose: 8000,
-    //   draggable: false
-    //   //etc you get the idea
-    // });
-
     const user = auth.getCurrentUser();
-    this.setState({ user });
+    this.setState({ ...this.state, user });
     if (user) {
       producto_getAll()
         .then(res => {
@@ -47,6 +41,14 @@ class App extends Component {
         });
     }
   }
+
+  ChangeFilterPedidos = filterPedidos => {
+    this.setState({ ...this.state, filterPedidos });
+  };
+
+  ChangeFilterProductos = filterProductos => {
+    this.setState({ ...this.state, filterProductos });
+  };
 
   render() {
     const { user } = this.state;
@@ -82,9 +84,15 @@ class App extends Component {
               />
               <Route
                 path="/pedidos"
-                render={() => {
+                render={props => {
                   if (!user) return <Redirect to="/login"></Redirect>;
-                  return <PedidosList></PedidosList>;
+                  return (
+                    <PedidosList
+                      filter={this.state.filterPedidos}
+                      onChangeFilter={this.ChangeFilterPedidos}
+                      {...props}
+                    ></PedidosList>
+                  );
                 }}
               />
               <Route path="/productos/:verb/:id" component={ProductoDetail} />
@@ -94,6 +102,8 @@ class App extends Component {
                   if (!user) return <Redirect to="/login"></Redirect>;
                   return (
                     <ProductosList
+                      filter={this.state.filterProductos}
+                      onChangeFilter={this.ChangeFilterProductos}
                       productos={this.state.productos}
                       {...props}
                     ></ProductosList>
