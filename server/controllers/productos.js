@@ -2,7 +2,7 @@ let Producto = require("../models/producto.model");
 
 exports.productos_get_all = (req, res) => {
   Producto.find()
-    .select("_id nombre precio")
+    .select("_id nombre precio cantidad anulado")
     .then(productos => res.status(200).json(productos))
     .catch(err => res.status(500).json({ Error: err }));
 };

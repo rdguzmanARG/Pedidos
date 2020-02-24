@@ -62,15 +62,34 @@ exports.pedidos_import = (request, response, next) => {
   fetch("https://sheet.best/api/sheets/2c84077a-9587-4180-898d-56b0ad076f16")
     .then(res => res.json())
     .then(data => {
+      if (data.length === 0) {
+        return response.json({
+          success: true,
+          pedidos: 0,
+          productos: 0
+        });
+      }
       const cols = Object.keys(data[0]).filter(c => excludeCols.indexOf(c) < 0);
       Producto.insertMany(
         cols.map(c => {
           return new Producto({
             _id: new mongoose.Types.ObjectId(),
             nombre: c,
-            precio: isNaN(Number(c.substring(c.lastIndexOf("$") + 1).trim()))
+            precio: isNaN(
+              Number(
+                c
+                  .substring(c.lastIndexOf("$") + 1)
+                  .replace("]", "")
+                  .trim()
+              )
+            )
               ? 0
-              : Number(c.substring(c.lastIndexOf("$") + 1).trim())
+              : Number(
+                  c
+                    .substring(c.lastIndexOf("$") + 1)
+                    .replace("]", "")
+                    .trim()
+                )
           });
         })
       )
@@ -109,8 +128,31 @@ exports.pedidos_import = (request, response, next) => {
               });
             });
 
+          if (pedidos.length === 0) {
+            return response.json({
+              success: true,
+              pedidos: pedidos.length,
+              productos: productos.length
+            });
+          }
+
           Pedido.insertMany(pedidos)
             .then(() => {
+              // Calcular cantidades por pedido.
+
+              productos.map(prod => {
+                pedidos.map(ped => {
+                  ped.items.map(item => {
+                    if (item && item._id.toString() === prod._id.toString()) {
+                      prod.cantidad += item.cantidad;
+                      Producto.findByIdAndUpdate(prod._id.toString(), prod)
+                        .then()
+                        .catch(err => console.log(err));
+                    }
+                  });
+                });
+              });
+
               return response.json({
                 success: true,
                 pedidos: pedidos.length,
