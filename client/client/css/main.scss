@@ -2,14 +2,18 @@
 body {
   font-size: 18px;
 }
+.navbar-brand {
+  font-size: 18px;
+}
 
 // Home page
 .jumbotron {
   text-align: center;
 }
-.navbar-brand {
-  font-size: 18px;
+.main-image {
+  width: 50%;
 }
+
 // Other pages
 table {
   font-size: 16px;

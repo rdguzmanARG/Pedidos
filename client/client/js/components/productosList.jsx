@@ -29,18 +29,6 @@ class ProductosList extends Component {
               this.props.onChangeFilter(e.target.value.toLowerCase())
             }
           />
-          <div class="input-group-append">
-            <button
-              class="btn btn-outline-secondary"
-              type="button"
-              onClick={e => {
-                e.preventDefault();
-                this.props.onChangeFilter("");
-              }}
-            >
-              Borrar
-            </button>
-          </div>
         </div>
         <table className="table table-striped table-sm">
           <thead className="thead-dark">
@@ -62,7 +50,7 @@ class ProductosList extends Component {
                   <td className="cell-right">
                     <Link to={`/productos/ver/${p._id}`}>
                       <button type="button" class="btn btn-primary btn-sm">
-                        Modificar
+                        Editar
                       </button>
                     </Link>
                   </td>

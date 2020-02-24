@@ -58,106 +58,119 @@ exports.pedidos_import = (request, response, next) => {
     colEmail,
     colcomentarios
   ];
-
-  fetch("https://sheet.best/api/sheets/2c84077a-9587-4180-898d-56b0ad076f16")
-    .then(res => res.json())
-    .then(data => {
-      if (data.length === 0) {
-        return response.json({
-          success: true,
-          pedidos: 0,
-          productos: 0
-        });
-      }
-      const cols = Object.keys(data[0]).filter(c => excludeCols.indexOf(c) < 0);
-      Producto.insertMany(
-        cols.map(c => {
-          return new Producto({
-            _id: new mongoose.Types.ObjectId(),
-            nombre: c,
-            precio: isNaN(
-              Number(
-                c
-                  .substring(c.lastIndexOf("$") + 1)
-                  .replace("]", "")
-                  .trim()
-              )
-            )
-              ? 0
-              : Number(
-                  c
-                    .substring(c.lastIndexOf("$") + 1)
-                    .replace("]", "")
-                    .trim()
-                )
-          });
-        })
+  Pedido.collection.remove().then(
+    Producto.collection.remove().then(
+      fetch(
+        "https://sheet.best/api/sheets/2c84077a-9587-4180-898d-56b0ad076f16"
       )
-        .then(res => {
-          const productos = res.map(r => r._doc);
-          const pedidos = data
-            .filter(
-              d =>
-                d.Nombre !== null &&
-                d.Nombre !== "" &&
-                d.Apellido !== null &&
-                d.Apellido !== ""
-            )
-            .map(d => {
-              return new Pedido({
-                _id: new mongoose.Types.ObjectId(),
-                date: d[colMarcaTemporal],
-                nombre: d[colNombre],
-                apellido: d[colApellido],
-                celular: d[colCelular],
-                email: d[colEmail],
-                comentarios: d[colcomentarios],
-                items: productos
-                  .filter(
-                    p =>
-                      d[p.nombre] !== null &&
-                      d[p.nombre] !== "" &&
-                      d[p.nombre] > 0
-                  )
-                  .map(pr => {
-                    return {
-                      _id: pr._id,
-                      cantidad: d[pr.nombre]
-                    };
-                  })
-              });
-            });
-
-          if (pedidos.length === 0) {
+        .then(res => res.json())
+        .then(data => {
+          if (data.length === 0) {
             return response.json({
               success: true,
-              pedidos: pedidos.length,
-              productos: productos.length
+              pedidos: 0,
+              productos: 0
             });
           }
-
-          Pedido.insertMany(pedidos)
-            .then(() => {
-              // Calcular cantidades por pedido.
-
-              productos.map(prod => {
-                pedidos.map(ped => {
-                  ped.items.map(item => {
-                    if (item && item._id.toString() === prod._id.toString()) {
-                      prod.cantidad += item.cantidad;
-                      Producto.findByIdAndUpdate(prod._id.toString(), prod)
-                        .then()
-                        .catch(err => console.log(err));
-                    }
+          const cols = Object.keys(data[0]).filter(
+            c => excludeCols.indexOf(c) < 0
+          );
+          Producto.insertMany(
+            cols.map(c => {
+              return new Producto({
+                _id: new mongoose.Types.ObjectId(),
+                nombre: c,
+                precio: isNaN(
+                  Number(
+                    c
+                      .substring(c.lastIndexOf("$") + 1)
+                      .replace("]", "")
+                      .trim()
+                  )
+                )
+                  ? 0
+                  : Number(
+                      c
+                        .substring(c.lastIndexOf("$") + 1)
+                        .replace("]", "")
+                        .trim()
+                    )
+              });
+            })
+          )
+            .then(res => {
+              const productos = res.map(r => r._doc);
+              const pedidos = data
+                .filter(
+                  d =>
+                    d.Nombre !== null &&
+                    d.Nombre !== "" &&
+                    d.Apellido !== null &&
+                    d.Apellido !== ""
+                )
+                .map(d => {
+                  return new Pedido({
+                    _id: new mongoose.Types.ObjectId(),
+                    date: d[colMarcaTemporal],
+                    nombre: d[colNombre],
+                    apellido: d[colApellido],
+                    celular: d[colCelular],
+                    email: d[colEmail],
+                    comentarios: d[colcomentarios],
+                    items: productos
+                      .filter(
+                        p =>
+                          d[p.nombre] !== null &&
+                          d[p.nombre] !== "" &&
+                          d[p.nombre] > 0
+                      )
+                      .map(pr => {
+                        return {
+                          _id: pr._id,
+                          cantidad: d[pr.nombre]
+                        };
+                      })
                   });
                 });
-              });
 
-              return response.json({
-                success: true,
-                pedidos: pedidos.length,
-                productos: productos.length
-              });
+              if (pedidos.length === 0) {
+                return response.json({
+                  success: true,
+                  pedidos: pedidos.length,
+                  productos: productos.length
+                });
+              }
+
+              Pedido.insertMany(pedidos)
+                .then(() => {
+                  // Calcular cantidades por pedido.
+
+                  productos.map(prod => {
+                    pedidos.map(ped => {
+                      ped.items.map(item => {
+                        if (
+                          item &&
+                          item._id.toString() === prod._id.toString()
+                        ) {
+                          prod.cantidad += item.cantidad;
+                          Producto.findByIdAndUpdate(prod._id.toString(), prod)
+                            .then()
+                            .catch(err => console.log(err));
+                        }
+                      });
+                    });
+                  });
+
+                  return response.json({
+                    success: true,
+                    pedidos: pedidos.length,
+                    productos: productos.length
+                  });
+                })
+                .catch(err => {
+                  console.log(err);
+                  response.status(500).json({ error: err });
+                });
             })
             .catch(err => {
               console.log(err);
@@ -167,10 +180,7 @@ exports.pedidos_import = (request, response, next) => {
         .catch(err => {
           console.log(err);
           response.status(500).json({ error: err });
-        });
-    })
-    .catch(err => {
-      console.log(err);
-      response.status(500).json({ error: err });
-    });
+        })
+    )
+  );
 };

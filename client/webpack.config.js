@@ -39,6 +39,10 @@ module.exports = env => {
           loader: "babel-loader"
         },
         {
+          test: /\.(png|jpg)$/,
+          loader: "url-loader"
+        },
+        {
           test: /\.s?css$/,
           use: ExtractTextPlugin.extract({
             fallback: "style-loader",

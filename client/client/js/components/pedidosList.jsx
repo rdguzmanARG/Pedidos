@@ -47,18 +47,6 @@ class PedidosList extends Component {
               this.props.onChangeFilter(e.target.value.toLowerCase())
             }
           />
-          <div class="input-group-append">
-            <button
-              class="btn btn-outline-secondary"
-              type="button"
-              onClick={e => {
-                e.preventDefault();
-                this.props.onChangeFilter("");
-              }}
-            >
-              Borrar
-            </button>
-          </div>
         </div>
         <table className="table table-striped table-sm">
           <thead className="thead-dark">

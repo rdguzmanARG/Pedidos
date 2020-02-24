@@ -49,6 +49,7 @@
     "webpack-cli": "^3.3.9"
   },
   "devDependencies": {
+    "url-loader": "^3.0.0",
     "webpack-dev-server": "^3.9.0"
   }
 }
