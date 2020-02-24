@@ -76,8 +76,10 @@ class PedidoDetail extends Component {
             <thead>
               <tr className="main-header">
                 <th>Detalle del pedido</th>
-                <th className="d-none d-md-table-cell">Cant.</th>
-                <th className="d-none d-md-table-cell cell-right">Unidad</th>
+                <th className="d-none d-md-table-cell">Cantidad</th>
+                <th className="d-none d-md-table-cell cell-right">
+                  P. Unitario
+                </th>
                 <th className="d-none d-md-table-cell cell-right">Total</th>
               </tr>
             </thead>
@@ -93,8 +95,8 @@ class PedidoDetail extends Component {
                     <table className="table">
                       <thead>
                         <tr className="secondary-header">
-                          <th>Cantidad</th>
-                          <th className="cell-right">P. Unitario</th>
+                          <th>Cant.</th>
+                          <th className="cell-right">P. Unit.</th>
                           <th className="cell-right">Total</th>
                         </tr>
                       </thead>
@@ -136,7 +138,7 @@ class PedidoDetail extends Component {
         <button
           onClick={() => this.props.history.push("/pedidos")}
           class="btn btn-success ml-2"
-          disabled="true"
+          disabled={true}
         >
           Confirmar retiro
         </button>

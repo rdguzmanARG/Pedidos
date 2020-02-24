@@ -46,7 +46,7 @@ class ProductosList extends Component {
           <thead className="thead-dark">
             <tr>
               <th>Nombre del producto</th>
-              <th>Cantidad</th>
+              <th className="d-none d-sm-table-cell">Cantidad</th>
               <th className="cell-right">P.Venta</th>
               <th></th>
             </tr>
@@ -57,7 +57,7 @@ class ProductosList extends Component {
               .map(p => (
                 <tr key={p._id}>
                   <td>{p.nombre}</td>
-                  <td>{p.cantidad}</td>
+                  <td className="d-none d-sm-table-cell">{p.cantidad}</td>
                   <td className="cell-right">${p.precio.toFixed(2)}</td>
                   <td className="cell-right">
                     <Link to={`/productos/ver/${p._id}`}>
