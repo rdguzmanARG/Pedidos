@@ -21,7 +21,7 @@ class LoginForm extends Form {
   doSubmit = () => {
     const { data } = this.state;
     auth
-      .login(data.username, data.password)
+      .login(data.username.toLowerCase(), data.password)
       .then(() => {
         window.location = "/";
       })

@@ -1,5 +1,7 @@
 import React, { Component } from "react";
+import Scroll from "react-scroll";
 import { Link } from "react-router-dom";
+const Element = Scroll.Element;
 
 class ProductosList extends Component {
   search = e => {
@@ -7,6 +9,13 @@ class ProductosList extends Component {
   };
 
   render() {
+    const scroller = Scroll.scroller;
+    scroller.scrollTo("myScrollToElement", {
+      duration: 1000,
+      delay: 100,
+      smooth: true,
+      offset: -5 // Scrolls to element + 50 pixels down the page
+    });
     return (
       <React.Fragment>
         <nav aria-label="breadcrumb">
@@ -20,6 +29,7 @@ class ProductosList extends Component {
           </ol>
         </nav>
         <div class="input-group mb-3">
+          <Element name="myScrollToElement"></Element>
           <input
             type="text"
             class="form-control"

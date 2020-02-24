@@ -1,7 +1,9 @@
 import React, { Component } from "react";
+import Scroll from "react-scroll";
 import { Link } from "react-router-dom";
 import { pedido_getAll } from "../services/pedidoService";
 import auth from "../services/authService";
+const Element = Scroll.Element;
 
 class PedidosList extends Component {
   state = {
@@ -25,6 +27,13 @@ class PedidosList extends Component {
   }
 
   render() {
+    const scroller = Scroll.scroller;
+    scroller.scrollTo("myScrollToElement", {
+      duration: 1000,
+      delay: 100,
+      smooth: true,
+      offset: -5 // Scrolls to element + 50 pixels down the page
+    });
     return (
       <React.Fragment>
         <nav aria-label="breadcrumb">
@@ -38,6 +47,7 @@ class PedidosList extends Component {
           </ol>
         </nav>
         <div class="input-group mb-3">
+          <Element name="myScrollToElement"></Element>
           <input
             type="text"
             class="form-control"
