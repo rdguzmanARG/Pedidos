@@ -21,7 +21,7 @@ class Inicio extends Component {
     return (
       <div>
         <div class="alert alert-warning" role="alert">
-          <h4 class="alert-heading">Proceso de importacion de datos</h4>
+          <h4 class="alert-heading">Proceso de importación de datos</h4>
           <p>ATENCION: Este proceso reemplazara los datos existentes. </p>
           {this.state.result != null && this.state.result.success && (
             <div>
