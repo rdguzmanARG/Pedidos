@@ -108,9 +108,9 @@ class App extends Component {
                 path="/productos"
                 render={props => {
                   if (!user) return <Redirect to="/login"></Redirect>;
-                  if (!user.isAdmin) return <Redirect to="/404"></Redirect>;
                   return (
                     <ProductosList
+                      user={user}
                       filter={this.state.filterProductos}
                       onChangeFilter={this.ChangeFilterProductos}
                       productos={this.state.productos}
