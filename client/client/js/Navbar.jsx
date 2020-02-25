@@ -30,34 +30,36 @@ const NavBar = props => {
                   Pedidos
                 </NavLink>
               </li>
-              <li className="nav-item">
-                <NavLink className="nav-link" to="/productos">
-                  Productos
-                </NavLink>
-              </li>
               {props.user.isAdmin && (
-                <li class="nav-item dropdown">
-                  <a
-                    class="nav-link dropdown-toggle"
-                    href="#"
-                    id="navbarDropdown"
-                    role="button"
-                    data-toggle="dropdown"
-                    aria-haspopup="true"
-                    aria-expanded="false"
-                  >
-                    Administración
-                  </a>
-                  <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <Link className="dropdown-item" to="/admin">
-                      Importar datos
-                    </Link>
-                    <div class="dropdown-divider"></div>
-                    <Link className="dropdown-item" to="/usuarios">
-                      Usuarios
-                    </Link>
-                  </div>
-                </li>
+                <React.Fragment>
+                  <li className="nav-item">
+                    <NavLink className="nav-link" to="/productos">
+                      Productos
+                    </NavLink>
+                  </li>
+                  <li class="nav-item dropdown">
+                    <a
+                      class="nav-link dropdown-toggle"
+                      href="#"
+                      id="navbarDropdown"
+                      role="button"
+                      data-toggle="dropdown"
+                      aria-haspopup="true"
+                      aria-expanded="false"
+                    >
+                      Administración
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                      <Link className="dropdown-item" to="/importar-datos">
+                        Importar datos
+                      </Link>
+                      <div class="dropdown-divider"></div>
+                      <Link className="dropdown-item" to="/usuarios">
+                        Usuarios
+                      </Link>
+                    </div>
+                  </li>
+                </React.Fragment>
               )}
               <li>
                 <NavLink className="nav-link" to="/logout">

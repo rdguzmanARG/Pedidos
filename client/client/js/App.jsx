@@ -12,6 +12,7 @@ import PedidosList from "./components/pedidosList";
 import PedidoDetail from "./components/pedidoDetail";
 import ProductosList from "./components/productosList";
 import ProductoDetail from "./components/productoDetail";
+import ImportarDatos from "./components/importarDatos";
 import Inicio from "./components/Home";
 import LoginForm from "./components/loginForm";
 import Logout from "./components/logout";
@@ -95,11 +96,19 @@ class App extends Component {
                   );
                 }}
               />
-              <Route path="/productos/:verb/:id" component={ProductoDetail} />
+              <Route
+                path="/productos/:verb/:id"
+                render={props => {
+                  if (!user) return <Redirect to="/login"></Redirect>;
+                  if (!user.isAdmin) return <Redirect to="/404"></Redirect>;
+                  return <ProductoDetail {...props}></ProductoDetail>;
+                }}
+              />
               <Route
                 path="/productos"
                 render={props => {
                   if (!user) return <Redirect to="/login"></Redirect>;
+                  if (!user.isAdmin) return <Redirect to="/404"></Redirect>;
                   return (
                     <ProductosList
                       filter={this.state.filterProductos}
@@ -108,6 +117,14 @@ class App extends Component {
                       {...props}
                     ></ProductosList>
                   );
+                }}
+              />
+              <Route
+                path="/importar-datos"
+                render={props => {
+                  if (!user) return <Redirect to="/login"></Redirect>;
+                  if (!user.isAdmin) return <Redirect to="/404"></Redirect>;
+                  return <ImportarDatos {...props}></ImportarDatos>;
                 }}
               />
               <Route path="/404">

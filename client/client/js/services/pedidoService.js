@@ -13,3 +13,7 @@ export function pedido_get(idPedido) {
 export function pedido_update(idPedido, pedido) {
   return http.put(apiUrl + "/pedidos/" + idPedido, pedido);
 }
+
+export function pedido_import() {
+  return http.get(apiUrl + "/pedidos/import");
+}

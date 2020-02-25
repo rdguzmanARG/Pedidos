@@ -153,19 +153,50 @@ exports.pedidos_import = (request, response, next) => {
                           item._id.toString() === prod._id.toString()
                         ) {
                           prod.cantidad += item.cantidad;
-                          Producto.findByIdAndUpdate(prod._id.toString(), prod)
-                            .then()
-                            .catch(err => console.log(err));
                         }
                       });
                     });
                   });
 
-                  return response.json({
-                    success: true,
-                    pedidos: pedidos.length,
-                    productos: productos.length
-                  });
+                  // productos.map(prod => {
+                  //   Producto.findByIdAndUpdate(prod._id.toString(), prod)
+                  //     .then()
+                  //     .catch(err => console.log(err));
+                  // });
+
+                  let checkADCompletions = function(prods) {
+                    var promises = prods.map(function(pr) {
+                      return Producto.findByIdAndUpdate(pr._id.toString(), pr);
+                    });
+                    return Promise.all(promises);
+                  };
+
+                  checkADCompletions(productos)
+                    .then(function(responses) {
+                      return response.json({
+                        success: true,
+                        pedidos: pedidos.length,
+                        productos: responses.length
+                      });
+                    })
+                    .catch(function(err) {
+                      console.log(err);
+                    });
+
+                  // Producto.updateMany(
+                  //   {},
+                  //   productos.map(p => {
+                  //     return { $set: { ...p, _id: p._id.toString() } };
+                  //   })
+                  // )
+                  //   .then(() => {
+                  //     return response.json({
+                  //       success: true,
+                  //       pedidos: pedidos.length,
+                  //       productos: productos.length
+                  //     });
+                  //   })
+                  //   .catch(err => console.log(err));
                 })
                 .catch(err => {
                   console.log(err);

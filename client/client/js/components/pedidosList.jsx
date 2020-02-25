@@ -73,6 +73,19 @@ class PedidosList extends Component {
                   f.nombre.toLowerCase().includes(this.props.filter) ||
                   f.apellido.toLowerCase().includes(this.props.filter)
               )
+              .sort((a, b) => {
+                var nameA = a.nombre.toLowerCase() + a.apellido.toLowerCase(); // ignore upper and lowercase
+                var nameB = b.nombre.toLowerCase() + b.apellido.toLowerCase(); // ignore upper and lowercase
+                if (nameA < nameB) {
+                  return -1;
+                }
+                if (nameA > nameB) {
+                  return 1;
+                }
+
+                // names must be equal
+                return 0;
+              })
               .map(p => (
                 <tr key={p._id}>
                   <td>
