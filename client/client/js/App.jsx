@@ -6,6 +6,7 @@ import {
   Redirect
 } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
+import Loader from "react-loader-spinner";
 import Footer from "./Footer";
 import NavBar from "./Navbar";
 import PedidosList from "./components/pedidosList";
@@ -17,31 +18,19 @@ import Inicio from "./components/Home";
 import LoginForm from "./components/loginForm";
 import Logout from "./components/logout";
 import auth from "./services/authService";
-import { producto_getAll } from "./services/productoService";
 import "react-toastify/dist/ReactToastify.css";
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 
 class App extends Component {
-  state = { productos: [], filterPedidos: "", filterProductos: "" };
-
+  state = {
+    filterPedidos: "",
+    filterProductos: "",
+    hasError: false,
+    isLoading: true
+  };
   componentDidMount() {
     const user = auth.getCurrentUser();
-    this.setState({ ...this.state, user });
-    if (user) {
-      producto_getAll()
-        .then(res => {
-          console.log("Recuperar Productos!!");
-          if (res.status === 200) {
-            this.setState({ productos: res.data });
-          }
-        })
-        .catch(ex => {
-          if (ex.response && ex.response.status === 401) {
-            auth.logout();
-            window.location = "/login";
-          }
-        });
-    }
+    this.setState({ ...this.state, user, isLoading: false });
   }
 
   ChangeFilterPedidos = filterPedidos => {
@@ -52,9 +41,35 @@ class App extends Component {
     this.setState({ ...this.state, filterProductos });
   };
 
+  SetGlobalError = () => {
+    this.setState({ ...this.state, hasError: true });
+  };
+
   render() {
-    const { user } = this.state;
-    if (user === undefined) return null;
+    const { user, isLoading } = this.state;
+    if (isLoading) {
+      return (
+        <div id="overlay">
+          <Loader type="Circles" color="#025f17" height={100} width={100} />
+        </div>
+      );
+    }
+    if (this.state.hasError) {
+      return (
+        <div id="overlay">
+          <div class="alert alert-danger alert-dismissible fade show">
+            <h2>Sistema de Pedidos</h2>
+            <div>
+              No se pudo conectar con el servidor, si el problema persiste
+              comuniquese con el administrador del sistema.
+            </div>
+            <a href="/" class="alert-link">
+              Haga click aqui para reintentar
+            </a>
+          </div>
+        </div>
+      );
+    }
     return (
       <div className="container mt-2">
         <ToastContainer
@@ -87,7 +102,7 @@ class App extends Component {
                 if (!user) return <Redirect to="/login"></Redirect>;
                 return (
                   <PedidoDetail
-                    productos={this.state.productos}
+                    onGlobalError={this.SetGlobalError}
                     {...props}
                   ></PedidoDetail>
                 );
@@ -101,6 +116,7 @@ class App extends Component {
                   <PedidosList
                     filter={this.state.filterPedidos}
                     onChangeFilter={this.ChangeFilterPedidos}
+                    onGlobalError={this.SetGlobalError}
                     {...props}
                   ></PedidosList>
                 );
@@ -111,7 +127,13 @@ class App extends Component {
               render={props => {
                 if (!user) return <Redirect to="/login"></Redirect>;
                 if (!user.isAdmin) return <Redirect to="/404"></Redirect>;
-                return <ProductoDetail user={user} {...props}></ProductoDetail>;
+                return (
+                  <ProductoDetail
+                    onGlobalError={this.SetGlobalError}
+                    user={user}
+                    {...props}
+                  ></ProductoDetail>
+                );
               }}
             />
             <Route
@@ -120,10 +142,10 @@ class App extends Component {
                 if (!user) return <Redirect to="/login"></Redirect>;
                 return (
                   <ProductosList
+                    onGlobalError={this.SetGlobalError}
                     user={user}
                     filter={this.state.filterProductos}
                     onChangeFilter={this.ChangeFilterProductos}
-                    productos={this.state.productos}
                     {...props}
                   ></ProductosList>
                 );
@@ -134,7 +156,12 @@ class App extends Component {
               render={props => {
                 if (!user) return <Redirect to="/login"></Redirect>;
                 if (!user.isAdmin) return <Redirect to="/404"></Redirect>;
-                return <ImportarDatos {...props}></ImportarDatos>;
+                return (
+                  <ImportarDatos
+                    onGlobalError={this.SetGlobalError}
+                    {...props}
+                  ></ImportarDatos>
+                );
               }}
             />
             <Route path="/404">
@@ -144,7 +171,12 @@ class App extends Component {
                 </h4>
               </div>
             </Route>
-            <Route path="/login" component={LoginForm} />
+            <Route
+              path="/login"
+              render={() => (
+                <LoginForm onGlobalError={this.SetGlobalError}></LoginForm>
+              )}
+            />
             <Route path="/logout" component={Logout} />
             <Route path="/" exact component={Inicio} />
             <Redirect to="/404" />

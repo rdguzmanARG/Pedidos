@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import Scroll from "react-scroll";
+import Loader from "react-loader-spinner";
 import { Link } from "react-router-dom";
 import { pedido_getAll } from "../services/pedidoService";
 import auth from "../services/authService";
@@ -7,6 +8,7 @@ const Element = Scroll.Element;
 
 class PedidosList extends Component {
   state = {
+    isLoading: true,
     pedidos: []
   };
 
@@ -14,7 +16,7 @@ class PedidosList extends Component {
     pedido_getAll()
       .then(res => {
         if (res.status === 200) {
-          this.setState({ pedidos: res.data });
+          this.setState({ pedidos: res.data, isLoading: false });
           const scroller = Scroll.scroller;
           scroller.scrollTo("myScrollToElement", {
             duration: 1000,
@@ -28,11 +30,21 @@ class PedidosList extends Component {
         if (ex.response && ex.response.status === 401) {
           auth.logout();
           window.location = "/login";
+        } else {
+          this.props.onGlobalError();
         }
       });
   }
 
   render() {
+    const { pedidos, isLoading } = this.state;
+    if (isLoading) {
+      return (
+        <div id="overlay">
+          <Loader type="Circles" color="#025f17" height={100} width={100} />
+        </div>
+      );
+    }
     return (
       <React.Fragment>
         <nav aria-label="breadcrumb">
@@ -50,6 +62,7 @@ class PedidosList extends Component {
           <input
             type="text"
             class="form-control"
+            autoFocus
             placeholder="Ingresar texto para buscar..."
             value={this.props.filter}
             onChange={e =>
@@ -66,7 +79,7 @@ class PedidosList extends Component {
             </tr>
           </thead>
           <tbody>
-            {this.state.pedidos
+            {pedidos
               .filter(
                 f =>
                   f.nombre.toLowerCase().includes(this.props.filter) ||

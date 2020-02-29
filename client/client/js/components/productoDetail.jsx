@@ -1,12 +1,13 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import Loader from "react-loader-spinner";
 import { producto_get, producto_update } from "../services/productoService";
 import auth from "../services/authService";
 
 class ProductoDetail extends Component {
   state = {
-    nombre: "",
-    precio: 0
+    isLoading: true,
+    producto: {}
   };
 
   componentDidMount() {
@@ -14,34 +15,44 @@ class ProductoDetail extends Component {
     producto_get(id)
       .then(res => {
         if (res.status === 200) {
-          this.setState({ ...this.state, ...res.data });
+          this.setState({ producto: res.data, isLoading: false });
         }
       })
       .catch(ex => {
         if (ex.response && ex.response.status === 401) {
           auth.logout();
           window.location = "/login";
+        } else {
+          this.props.onGlobalError();
         }
       });
   }
 
   onFieldChange = e => {
-    console.log(e.target);
-    this.setState({ ...this.state, [e.target.name]: e.target.value });
+    const prod = { ...this.state.producto };
+    prod[e.target.name] = e.target.value;
+    this.setState({ ...this.state, producto: prod });
   };
 
   submitForm = e => {
+    const { producto } = this.state;
     e.preventDefault();
-    producto_update(this.state._id, this.state).then(res => {
+    producto_update(producto._id, producto).then(res => {
       if (res.status === 200) {
-        window.location = "/productos";
+        this.props.history.push("/productos");
       }
     });
   };
 
   render() {
-    const producto = this.state;
-    console.log(this.state);
+    const { producto, isLoading } = this.state;
+    if (isLoading) {
+      return (
+        <div id="overlay">
+          <Loader type="Circles" color="#025f17" height={100} width={100} />
+        </div>
+      );
+    }
     return (
       <React.Fragment>
         <nav aria-label="breadcrumb">
@@ -67,6 +78,7 @@ class ProductoDetail extends Component {
               name="nombre"
               value={producto.nombre}
               onChange={this.onFieldChange}
+              readOnly={true}
             />
           </div>
           <div class="form-group">

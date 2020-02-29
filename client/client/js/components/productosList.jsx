@@ -1,12 +1,53 @@
 import React, { Component } from "react";
+import Scroll from "react-scroll";
+import Loader from "react-loader-spinner";
 import { Link } from "react-router-dom";
+import { producto_getAll } from "../services/productoService";
+const Element = Scroll.Element;
 
 class ProductosList extends Component {
+  state = {
+    isLoading: true,
+    productos: []
+  };
+
   search = e => {
     this.setState({ filter: e.target.value.toLowerCase() });
   };
 
+  componentDidMount() {
+    producto_getAll()
+      .then(res => {
+        if (res.status === 200) {
+          this.setState({ productos: res.data, isLoading: false });
+          const scroller = Scroll.scroller;
+          scroller.scrollTo("myScrollToElement", {
+            duration: 1000,
+            delay: 100,
+            smooth: true,
+            offset: -5 // Scrolls to element + 50 pixels down the page
+          });
+        }
+      })
+      .catch(ex => {
+        if (ex.response && ex.response.status === 401) {
+          auth.logout();
+          window.location = "/login";
+        } else {
+          this.props.onGlobalError();
+        }
+      });
+  }
+
   render() {
+    const { productos, isLoading } = this.state;
+    if (isLoading) {
+      return (
+        <div id="overlay">
+          <Loader type="Circles" color="#025f17" height={100} width={100} />
+        </div>
+      );
+    }
     return (
       <React.Fragment>
         <nav aria-label="breadcrumb">
@@ -20,8 +61,10 @@ class ProductosList extends Component {
           </ol>
         </nav>
         <div class="input-group mb-3">
+          <Element name="myScrollToElement"></Element>
           <input
             type="text"
+            autoFocus
             class="form-control"
             placeholder="Ingresar texto para buscar..."
             value={this.props.filter}
@@ -40,7 +83,7 @@ class ProductosList extends Component {
             </tr>
           </thead>
           <tbody>
-            {this.props.productos
+            {productos
               .filter(f => f.nombre.toLowerCase().includes(this.props.filter))
               .map(p => (
                 <tr key={p._id}>

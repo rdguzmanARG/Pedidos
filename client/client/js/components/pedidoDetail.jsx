@@ -9,6 +9,7 @@ import auth from "../services/authService";
 
 class PedidoDetail extends Component {
   state = {
+    isLoading: true,
     pedido: {
       items: []
     }
@@ -19,13 +20,15 @@ class PedidoDetail extends Component {
     pedido_get(id)
       .then(res => {
         if (res.status === 200) {
-          this.setState({ pedido: res.data });
+          this.setState({ pedido: res.data, isLoading: false });
         }
       })
       .catch(ex => {
         if (ex.response && ex.response.status === 401) {
           auth.logout();
           window.location = "/login";
+        } else {
+          this.props.onGlobalError();
         }
       });
   }
@@ -81,9 +84,9 @@ class PedidoDetail extends Component {
   };
 
   render() {
-    const pedido = this.state.pedido;
+    const { pedido, isLoading } = this.state;
     const total = this.arrSum(pedido.items.map(p => p.cantidad * p.precio));
-    if (pedido._id === undefined) {
+    if (isLoading) {
       return (
         <div id="overlay">
           <Loader type="Circles" color="#025f17" height={100} width={100} />
@@ -119,7 +122,7 @@ class PedidoDetail extends Component {
           <div className="card-body m-1">
             {pedido.celular && (
               <div>
-                Telefono:
+                Teléfono:
                 <b>{pedido.celular}</b>
               </div>
             )}

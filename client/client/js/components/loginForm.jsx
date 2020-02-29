@@ -28,7 +28,7 @@ class LoginForm extends Form {
       .catch(ex => {
         if (ex.response && ex.response.status == 401) {
           const errors = { ...this.state.errors };
-          errors.username = "Usuario y contraseña inválida.";
+          errors.username = "Usuario y/o contraseña inválida.";
           this.setState({ errors });
         } else {
           const errors = { ...this.state.errors };

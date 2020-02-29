@@ -7,9 +7,9 @@ axios.interceptors.response.use(null, error => {
     error.response.status >= 400 &&
     error.response.status < 500;
 
-  if (!expectedError) {
-    toast.error("Ocurrio un error inesperado.");
-  }
+  // if (!expectedError) {
+  //   toast.error("Ocurrio un error inesperado.");
+  // }
 
   return Promise.reject(error);
 });
