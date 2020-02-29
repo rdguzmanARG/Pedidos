@@ -22,7 +22,14 @@ const schema = mongoose.Schema(
         _id: mongoose.Schema.Types.ObjectId,
         cantidad: Number
       }
-    ]
+    ],
+    entregado: {
+      type: Boolean,
+      default: false
+    },
+    usuarioMod: {
+      type: String
+    }
   },
   {
     timestamps: true

@@ -19,6 +19,7 @@ import Logout from "./components/logout";
 import auth from "./services/authService";
 import { producto_getAll } from "./services/productoService";
 import "react-toastify/dist/ReactToastify.css";
+import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 
 class App extends Component {
   state = { productos: [], filterPedidos: "", filterProductos: "" };
@@ -110,7 +111,7 @@ class App extends Component {
               render={props => {
                 if (!user) return <Redirect to="/login"></Redirect>;
                 if (!user.isAdmin) return <Redirect to="/404"></Redirect>;
-                return <ProductoDetail {...props}></ProductoDetail>;
+                return <ProductoDetail user={user} {...props}></ProductoDetail>;
               }}
             />
             <Route

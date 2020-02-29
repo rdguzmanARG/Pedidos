@@ -6,5 +6,6 @@ const controller = require("../controllers/pedidos");
 router.get("/", checkAuth, controller.pedidos_get_all);
 router.get("/import", [checkAuth, admin], controller.pedidos_import);
 router.get("/:idPedido", checkAuth, controller.pedidos_get_pedido);
+router.put("/:idPedido", [checkAuth], controller.pedidos_update_pedido);
 
 module.exports = router;

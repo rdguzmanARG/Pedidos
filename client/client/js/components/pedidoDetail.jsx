@@ -1,6 +1,10 @@
 import React, { Component } from "react";
+import { confirmAlert } from "react-confirm-alert";
+import Loader from "react-loader-spinner";
+import "react-confirm-alert/src/react-confirm-alert.css";
+
 import { Link } from "react-router-dom";
-import { pedido_get } from "../services/pedidoService";
+import { pedido_get, pedido_update } from "../services/pedidoService";
 import auth from "../services/authService";
 
 class PedidoDetail extends Component {
@@ -27,9 +31,65 @@ class PedidoDetail extends Component {
   }
   arrSum = arr => arr.reduce((a, b) => a + b, 0);
 
+  submit = () => {
+    confirmAlert({
+      title: "Atención",
+      message: (
+        <div>
+          <div>Pedido a nombre de: </div>
+          <div>
+            <b>
+              {this.state.pedido.nombre + ", " + this.state.pedido.apellido}
+            </b>
+          </div>
+          <div>
+            {this.state.pedido.entregado
+              ? "¿Confirma anulación de la entrega?"
+              : "¿Confirma entrega?"}
+          </div>
+        </div>
+      ),
+      buttons: [
+        {
+          label: "Confirmar",
+          className: this.state.pedido.entregado
+            ? "btn btn-danger"
+            : "btn btn-success",
+          onClick: () => {
+            const { pedido } = this.state;
+            pedido_update(pedido._id, {
+              ...pedido,
+              entregado: !pedido.entregado,
+              usuarioMod: ""
+            })
+              .then(res => {
+                if (res.status === 200) {
+                  this.props.history.push("/pedidos");
+                }
+              })
+              .catch(ex => {
+                toast.error("No se pudo confirmar el pedido.");
+              });
+          }
+        },
+        {
+          label: "Cancelar",
+          onClick: () => {}
+        }
+      ]
+    });
+  };
+
   render() {
     const pedido = this.state.pedido;
     const total = this.arrSum(pedido.items.map(p => p.cantidad * p.precio));
+    if (pedido._id === undefined) {
+      return (
+        <div id="overlay">
+          <Loader type="Circles" color="#025f17" height={100} width={100} />
+        </div>
+      );
+    }
     return (
       <React.Fragment>
         <nav aria-label="breadcrumb">
@@ -135,13 +195,18 @@ class PedidoDetail extends Component {
             </tbody>
           </table>
         )}
-        <button
-          onClick={() => this.props.history.push("/pedidos")}
-          class="btn btn-success ml-2"
-          disabled={true}
-        >
-          Confirmar retiro
-        </button>
+
+        {pedido.entregado === undefined ||
+          (pedido.entregado === false && (
+            <button onClick={this.submit} class="btn btn-success ml-2">
+              Confirmar retiro
+            </button>
+          ))}
+        {pedido.entregado === true && (
+          <button onClick={this.submit} class="btn btn-danger ml-2">
+            Anular retiro
+          </button>
+        )}
         <button
           onClick={() => this.props.history.push("/pedidos")}
           class="btn btn-primary ml-2"

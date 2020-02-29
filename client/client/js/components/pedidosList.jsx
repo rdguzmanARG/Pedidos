@@ -13,9 +13,15 @@ class PedidosList extends Component {
   componentDidMount() {
     pedido_getAll()
       .then(res => {
-        console.log("Recuperar Pedidos!!");
         if (res.status === 200) {
           this.setState({ pedidos: res.data });
+          const scroller = Scroll.scroller;
+          scroller.scrollTo("myScrollToElement", {
+            duration: 1000,
+            delay: 100,
+            smooth: true,
+            offset: -5 // Scrolls to element + 50 pixels down the page
+          });
         }
       })
       .catch(ex => {
@@ -27,13 +33,6 @@ class PedidosList extends Component {
   }
 
   render() {
-    const scroller = Scroll.scroller;
-    scroller.scrollTo("myScrollToElement", {
-      duration: 1000,
-      delay: 100,
-      smooth: true,
-      offset: -5 // Scrolls to element + 50 pixels down the page
-    });
     return (
       <React.Fragment>
         <nav aria-label="breadcrumb">
@@ -58,7 +57,7 @@ class PedidosList extends Component {
             }
           />
         </div>
-        <table className="table table-striped table-sm">
+        <table className="table table-striped table-sm table-pedidos">
           <thead className="thead-dark">
             <tr>
               <th>Nombre y Apellido</th>
@@ -87,7 +86,7 @@ class PedidosList extends Component {
                 return 0;
               })
               .map(p => (
-                <tr key={p._id}>
+                <tr key={p._id} className={p.entregado ? "bg-success" : ""}>
                   <td>
                     {p.nombre}, {p.apellido}
                   </td>

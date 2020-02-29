@@ -5,7 +5,7 @@ let Pedido = require("../models/pedido.model");
 
 exports.pedidos_get_all = (req, res, next) => {
   Pedido.find()
-    .select("_id nombre apellido celular")
+    .select("_id nombre apellido celular entregado")
     .then(pedidos => res.status(200).json(pedidos))
     .catch(err => res.status(500).json({ error: err }));
 };
@@ -22,6 +22,7 @@ exports.pedidos_get_pedido = (req, res, next) => {
               apellido: pedido.apellido,
               celular: pedido.celular,
               email: pedido.email,
+              entregado: pedido.entregado,
               items: prod.map(p => {
                 return {
                   _id: p._id,
@@ -40,6 +41,12 @@ exports.pedidos_get_pedido = (req, res, next) => {
       }
     })
     .catch(err => res.status(500).json({ error: err }));
+};
+
+exports.pedidos_update_pedido = (req, res) => {
+  Pedido.findByIdAndUpdate(req.params.idPedido, req.body)
+    .then(pedido => res.json(pedido))
+    .catch(err => res.status(500).json("Error: " + err));
 };
 
 exports.pedidos_import = (request, response, next) => {
