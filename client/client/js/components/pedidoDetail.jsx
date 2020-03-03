@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { confirmAlert } from "react-confirm-alert";
 import Loader from "react-loader-spinner";
 import "react-confirm-alert/src/react-confirm-alert.css";
-
+import moment from "moment";
 import { Link } from "react-router-dom";
 import { pedido_get, pedido_update } from "../services/pedidoService";
 import auth from "../services/authService";
@@ -60,10 +60,11 @@ class PedidoDetail extends Component {
             : "btn btn-success",
           onClick: () => {
             const { pedido } = this.state;
+            const { user } = this.props;
             pedido_update(pedido._id, {
               ...pedido,
               entregado: !pedido.entregado,
-              usuarioMod: ""
+              usuarioMod: user.username
             })
               .then(res => {
                 if (res.status === 200) {
@@ -85,7 +86,9 @@ class PedidoDetail extends Component {
 
   render() {
     const { pedido, isLoading } = this.state;
-    const total = this.arrSum(pedido.items.map(p => p.cantidad * p.precio));
+    const total = this.arrSum(
+      pedido.items.filter(f => !f.anulado).map(p => p.cantidad * p.precio)
+    );
     if (isLoading) {
       return (
         <div id="overlay">
@@ -132,6 +135,12 @@ class PedidoDetail extends Component {
                 <b>{pedido.email}</b>
               </div>
             )}
+            {pedido.date && (
+              <div>
+                Fecha - Hora:{" "}
+                <b>{moment(pedido.date).format("DD/MM/YYYY HH:mm")}</b>
+              </div>
+            )}
           </div>
         </div>
         {pedido.items && (
@@ -148,14 +157,14 @@ class PedidoDetail extends Component {
             </thead>
             <tbody>
               {pedido.items.map((item, index) => (
-                <tr key={index}>
-                  <td className="d-table-cell d-md-none">
-                    <div class="row">
-                      <div class="col pb-3">
+                <tr key={index} className={item.anulado ? "bg-danger" : ""}>
+                  <td className="pedido-detail-mobile d-table-cell d-md-none">
+                    <div class="row2">
+                      <div class="pedido-detail-item-title col pb-3">
                         <b>{item.nombre}</b>
                       </div>
                     </div>
-                    <table className="table">
+                    <table className="table m-0">
                       <thead>
                         <tr className="secondary-header">
                           <th>Cant.</th>
@@ -164,17 +173,22 @@ class PedidoDetail extends Component {
                         </tr>
                       </thead>
                       <tbody>
-                        <tr>
+                        <tr className={item.anulado ? "bg-danger" : ""}>
                           <td>{item.cantidad}</td>
                           <td className="cell-right">
                             ${item.precio.toFixed(2)}
                           </td>
                           <td className="cell-right">
-                            ${(item.precio * item.cantidad).toFixed(2)}
+                            $
+                            {(item.anulado
+                              ? 0
+                              : item.precio * item.cantidad
+                            ).toFixed(2)}
                           </td>
                         </tr>
                       </tbody>
                     </table>
+                    <div className="space"></div>
                   </td>
 
                   <td className="d-none d-md-table-cell">{item.nombre}</td>
@@ -183,7 +197,10 @@ class PedidoDetail extends Component {
                     ${item.precio.toFixed(2)}
                   </td>
                   <td className="d-none d-md-table-cell cell-right">
-                    ${(item.precio * item.cantidad).toFixed(2)}
+                    $
+                    {(item.anulado ? 0 : item.precio * item.cantidad).toFixed(
+                      2
+                    )}
                   </td>
                 </tr>
               ))}

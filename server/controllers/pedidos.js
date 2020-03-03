@@ -1,11 +1,13 @@
 const fetch = require("node-fetch");
 const mongoose = require("mongoose");
+const moment = require("moment");
 let Producto = require("../models/producto.model");
 let Pedido = require("../models/pedido.model");
+let Entrega = require("../models/entrega.model");
 
 exports.pedidos_get_all = (req, res, next) => {
   Pedido.find()
-    .select("_id nombre apellido celular entregado")
+    .select("_id nombre apellido celular entregado usuarioMod")
     .then(pedidos => res.status(200).json(pedidos))
     .catch(err => res.status(500).json({ error: err }));
 };
@@ -23,11 +25,14 @@ exports.pedidos_get_pedido = (req, res, next) => {
               celular: pedido.celular,
               email: pedido.email,
               entregado: pedido.entregado,
+              usuarioMod: pedido.usuarioMod,
+              date: pedido.date,
               items: prod.map(p => {
                 return {
                   _id: p._id,
                   nombre: p.nombre,
                   precio: p.precio,
+                  anulado: p.anulado,
                   cantidad: pedido.items.filter(
                     i => i._id.toString() === p._id.toString()
                   )[0].cantidad
@@ -45,11 +50,49 @@ exports.pedidos_get_pedido = (req, res, next) => {
 
 exports.pedidos_update_pedido = (req, res) => {
   Pedido.findByIdAndUpdate(req.params.idPedido, req.body)
+    .exec()
     .then(pedido => res.json(pedido))
     .catch(err => res.status(500).json("Error: " + err));
 };
 
 exports.pedidos_import = (request, response, next) => {
+  // Valida si la Entrega en curso puede ser importada nuevamente.
+  Entrega.findOne()
+    .sort({ fechaImportacion: -1 })
+    .then(entrega => {
+      // Si no hay entrega disponble, debe crear una nueva.
+      if (entrega == null || entrega.estado === "CER") {
+        Entrega.create(
+          new Entrega({
+            _id: new mongoose.Types.ObjectId(),
+            fechaImportacion: Date(),
+            estado: "IMP"
+          })
+        )
+          .then(entrega => {
+            return ImportarDatos(response, entrega._doc);
+          })
+          .catch(err => {
+            console.log(err);
+            response.status(500).json({ error: err });
+          });
+      } else {
+        if (entrega.estado === "IMP") {
+          return ImportarDatos(response, entrega._doc);
+        } else {
+          const message = "La Entrega en curso no puede ser importada.";
+          console.log(message);
+          response.status(500).json({ message });
+        }
+      }
+    })
+    .catch(err => {
+      console.log(err);
+      response.status(500).json({ error: err });
+    });
+};
+
+function ImportarDatos(response, entrega) {
   const colNombre = "Nombre";
   const colApellido = "Apellido";
   const colCelular = "Celular";
@@ -65,6 +108,7 @@ exports.pedidos_import = (request, response, next) => {
     colEmail,
     colcomentarios
   ];
+
   Pedido.collection.remove().then(
     Producto.collection.remove().then(
       fetch(
@@ -73,11 +117,21 @@ exports.pedidos_import = (request, response, next) => {
         .then(res => res.json())
         .then(data => {
           if (data.length === 0) {
-            return response.json({
-              success: true,
-              pedidos: 0,
-              productos: 0
-            });
+            // La importacion no tiene datos.
+            Entrega.findByIdAndUpdate(entrega._id, {
+              ...entrega,
+              fechaImportacion: Date()
+            })
+              .exec()
+              .then(finalEnt => {
+                return response.json({
+                  ...finalEnt._doc
+                });
+              })
+              .catch(err => {
+                console.log(err);
+                response.status(500).json({ error: err });
+              });
           }
           const cols = Object.keys(data[0]).filter(
             c => excludeCols.indexOf(c) < 0
@@ -118,7 +172,7 @@ exports.pedidos_import = (request, response, next) => {
                 .map(d => {
                   return new Pedido({
                     _id: new mongoose.Types.ObjectId(),
-                    date: d[colMarcaTemporal],
+                    date: moment(d[colMarcaTemporal], "DD/MM/YYYY HH:mm:ss"),
                     nombre: d[colNombre],
                     apellido: d[colApellido],
                     celular: d[colCelular],
@@ -141,11 +195,22 @@ exports.pedidos_import = (request, response, next) => {
                 });
 
               if (pedidos.length === 0) {
-                return response.json({
-                  success: true,
-                  pedidos: pedidos.length,
-                  productos: productos.length
-                });
+                Entrega.findByIdAndUpdate(entrega._id, {
+                  ...entrega,
+                  fechaImportacion: Date(),
+                  cantPedidos: pedidos.length,
+                  cantProductos: productos.length
+                })
+                  .exec()
+                  .then(finalEnt => {
+                    return response.json({
+                      ...finalEnt._doc
+                    });
+                  })
+                  .catch(err => {
+                    console.log(err);
+                    response.status(500).json({ error: err });
+                  });
               }
 
               Pedido.insertMany(pedidos)
@@ -165,12 +230,6 @@ exports.pedidos_import = (request, response, next) => {
                     });
                   });
 
-                  // productos.map(prod => {
-                  //   Producto.findByIdAndUpdate(prod._id.toString(), prod)
-                  //     .then()
-                  //     .catch(err => console.log(err));
-                  // });
-
                   let checkADCompletions = function(prods) {
                     var promises = prods.map(function(pr) {
                       return Producto.findByIdAndUpdate(pr._id.toString(), pr);
@@ -180,30 +239,28 @@ exports.pedidos_import = (request, response, next) => {
 
                   checkADCompletions(productos)
                     .then(function(responses) {
-                      return response.json({
-                        success: true,
-                        pedidos: pedidos.length,
-                        productos: responses.length
-                      });
+                      Entrega.findByIdAndUpdate(
+                        entrega._id.toString(),
+                        {
+                          ...entrega,
+                          fechaImportacion: Date(),
+                          cantPedidos: pedidos.length,
+                          cantProductos: productos.length
+                        },
+                        { new: true }
+                      )
+                        .exec()
+                        .then(finalEnt => {
+                          return response.json({ ...finalEnt._doc });
+                        })
+                        .catch(err => {
+                          console.log(err);
+                          response.status(500).json({ error: err });
+                        });
                     })
                     .catch(function(err) {
                       console.log(err);
                     });
-
-                  // Producto.updateMany(
-                  //   {},
-                  //   productos.map(p => {
-                  //     return { $set: { ...p, _id: p._id.toString() } };
-                  //   })
-                  // )
-                  //   .then(() => {
-                  //     return response.json({
-                  //       success: true,
-                  //       pedidos: pedidos.length,
-                  //       productos: productos.length
-                  //     });
-                  //   })
-                  //   .catch(err => console.log(err));
                 })
                 .catch(err => {
                   console.log(err);
@@ -221,4 +278,4 @@ exports.pedidos_import = (request, response, next) => {
         })
     )
   );
-};
+}

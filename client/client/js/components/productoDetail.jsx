@@ -30,7 +30,12 @@ class ProductoDetail extends Component {
 
   onFieldChange = e => {
     const prod = { ...this.state.producto };
-    prod[e.target.name] = e.target.value;
+    if (e.target.type === "checkbox") {
+      prod[e.target.name] = e.target.checked;
+    } else {
+      prod[e.target.name] = e.target.value;
+    }
+
     this.setState({ ...this.state, producto: prod });
   };
 
@@ -53,17 +58,18 @@ class ProductoDetail extends Component {
         </div>
       );
     }
+    console.log(producto);
     return (
       <React.Fragment>
         <nav aria-label="breadcrumb">
-          <ol class="breadcrumb">
-            <li class="breadcrumb-item">
+          <ol className="breadcrumb">
+            <li className="breadcrumb-item">
               <Link to="/">Inicio</Link>
             </li>
-            <li class="breadcrumb-item">
+            <li className="breadcrumb-item">
               <Link to="/productos">Productos</Link>
             </li>
-            <li class="breadcrumb-item active" aria-current="page">
+            <li className="breadcrumb-item active" aria-current="page">
               Detalle
             </li>
           </ol>
@@ -81,7 +87,7 @@ class ProductoDetail extends Component {
               readOnly={true}
             />
           </div>
-          <div class="form-group">
+          <div className="form-group">
             <label for="exampleInputPassword1">Precio de Venta</label>
             <input
               type="text"
@@ -92,12 +98,23 @@ class ProductoDetail extends Component {
               placeholder="$0.00"
             />
           </div>
-          <button type="submit" class="btn btn-success">
+          <div className="form-group">
+            <input
+              className="form-check"
+              type="checkbox"
+              defaultChecked={producto.anulado}
+              name="anulado"
+              onChange={this.onFieldChange}
+              id="anulado"
+            />
+            <label for="anulado">Producto anulado</label>
+          </div>
+          <button type="submit" className="btn btn-success">
             Aceptar
           </button>
           <button
             onClick={() => this.props.history.push("/productos")}
-            class="btn btn-light ml-2"
+            className="btn btn-light ml-2"
           >
             Cancelar
           </button>

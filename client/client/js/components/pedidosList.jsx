@@ -45,6 +45,8 @@ class PedidosList extends Component {
         </div>
       );
     }
+    const cantidad = pedidos.length;
+    const restantes = cantidad - pedidos.filter(f => f.entregado).length;
     return (
       <React.Fragment>
         <nav aria-label="breadcrumb">
@@ -75,7 +77,12 @@ class PedidosList extends Component {
             <tr>
               <th>Nombre y Apellido</th>
               <th className="d-none d-sm-table-cell">Teléfono</th>
-              <th></th>
+              <th className="d-none d-md-table-cell">Entregado por</th>
+              <th className="cell-right">
+                <div>
+                  Pend. ({restantes}/{cantidad})
+                </div>
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -106,9 +113,12 @@ class PedidosList extends Component {
                   <td className="d-none d-sm-table-cell">
                     <a href={"tel:+" + p.celular}>{p.celular}</a>{" "}
                   </td>
+                  <td className="d-none d-md-table-cell">
+                    {p.entregado ? p.usuarioMod : ""}
+                  </td>
                   <td className="cell-right">
                     <Link to={`/pedidos/ver/${p._id}`}>
-                      <button type="button" class="btn btn-primary btn-sm">
+                      <button type="button" class="btn btn-sm btn-success">
                         Ver
                       </button>
                     </Link>

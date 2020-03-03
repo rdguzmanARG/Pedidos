@@ -9,7 +9,7 @@ exports.productos_get_all = (req, res) => {
 
 exports.productos_get_producto = (req, res) => {
   Producto.findById(req.params.idProducto)
-    .select("_id nombre precio")
+    .select("_id nombre precio anulado")
     .then(producto => {
       if (producto) {
         res.status(200).json(producto);

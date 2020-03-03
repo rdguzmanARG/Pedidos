@@ -36,10 +36,40 @@ body {
   width: 50%;
 }
 
-// Listado de pedidos
-.table-pedidos {
+// Detalle del pedido
+table {
+  td {
+    &.pedido-detail-mobile {
+      padding: 0;
+      .space {
+        background-color: white;
+        height: 15px;
+      }
+    }
+    .pedido-detail-item-title {
+      text-align: center;
+      background-color: teal;
+      padding: 10px 0;
+      color: white;
+    }
+  }
+}
+// Other pages
+table {
   tr {
     font-weight: bold;
+    th {
+      vertical-align: middle;
+    }
+    td {
+      vertical-align: middle;
+    }
+    &.bg-danger {
+      color: white;
+      a {
+        color: white;
+      }
+    }
     &.bg-success {
       color: white;
       a {
@@ -47,13 +77,12 @@ body {
       }
     }
   }
-}
-
-// Other pages
-table {
   font-size: 16px;
   .cell-right {
     text-align: right;
+  }
+  .cell-center {
+    text-align: center;
   }
   .main-header {
     background-color: black;
@@ -61,8 +90,8 @@ table {
     font-weight: bold;
   }
   .secondary-header {
-    background-color: gray;
-    color: white;
+    background-color: #d4edda;
+    color: black;
     font-weight: bold;
   }
   .totales {
@@ -100,5 +129,25 @@ table {
   }
   button.btn-danger:hover {
     background: #c82333;
+  }
+}
+
+// Forms styles
+.form-group {
+  .form-check {
+    display: inline-block;
+    margin-right: 10px;
+  }
+}
+
+//Nav
+
+.breadcrumb {
+  background-color: teal;
+  a {
+    color: white;
+  }
+  .breadcrumb-item.active {
+    color: white;
   }
 }

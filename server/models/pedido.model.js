@@ -11,6 +11,9 @@ const schema = mongoose.Schema(
       type: String,
       required: true
     },
+    date: {
+      type: Date
+    },
     email: {
       type: String
     },

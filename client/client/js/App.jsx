@@ -13,7 +13,7 @@ import PedidosList from "./components/pedidosList";
 import PedidoDetail from "./components/pedidoDetail";
 import ProductosList from "./components/productosList";
 import ProductoDetail from "./components/productoDetail";
-import ImportarDatos from "./components/importarDatos";
+import Entregas from "./components/entregas";
 import Inicio from "./components/Home";
 import LoginForm from "./components/loginForm";
 import Logout from "./components/logout";
@@ -102,6 +102,7 @@ class App extends Component {
                 if (!user) return <Redirect to="/login"></Redirect>;
                 return (
                   <PedidoDetail
+                    user={user}
                     onGlobalError={this.SetGlobalError}
                     {...props}
                   ></PedidoDetail>
@@ -152,15 +153,15 @@ class App extends Component {
               }}
             />
             <Route
-              path="/importar-datos"
+              path="/entregas"
               render={props => {
                 if (!user) return <Redirect to="/login"></Redirect>;
                 if (!user.isAdmin) return <Redirect to="/404"></Redirect>;
                 return (
-                  <ImportarDatos
+                  <Entregas
                     onGlobalError={this.SetGlobalError}
                     {...props}
-                  ></ImportarDatos>
+                  ></Entregas>
                 );
               }}
             />

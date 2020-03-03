@@ -73,7 +73,7 @@ class ProductosList extends Component {
             }
           />
         </div>
-        <table className="table table-striped table-sm">
+        <table className="table table-striped table-sm table-productos">
           <thead className="thead-dark">
             <tr>
               <th>Nombre del producto</th>
@@ -86,7 +86,7 @@ class ProductosList extends Component {
             {productos
               .filter(f => f.nombre.toLowerCase().includes(this.props.filter))
               .map(p => (
-                <tr key={p._id}>
+                <tr key={p._id} className={p.anulado ? "bg-danger" : ""}>
                   <td>{p.nombre}</td>
                   <td className="d-none d-sm-table-cell">{p.cantidad}</td>
                   <td className="cell-right">${p.precio.toFixed(2)}</td>

@@ -71,10 +71,10 @@ class Navbar extends React.Component {
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                       <Link
                         className="dropdown-item"
-                        to="/importar-datos"
+                        to="/entregas"
                         onClick={this.changeSelection}
                       >
-                        Importar datos
+                        Entregas
                       </Link>
                       <div class="dropdown-divider"></div>
                       <Link
@@ -104,7 +104,7 @@ class Navbar extends React.Component {
           </ul>
           {user && (
             <span class="navbar-text current-user">
-              Usuario: {user.username}
+              Usuario: {user.username.toUpperCase()}
             </span>
           )}
         </div>

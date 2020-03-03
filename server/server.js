@@ -6,6 +6,7 @@ const morgan = require("morgan");
 const pedidosRoutes = require("./routes/pedidos");
 const productosRoutes = require("./routes/productos");
 const usersRoutes = require("./routes/users");
+const entregasRoutes = require("./routes/entregas");
 
 require("dotenv").config();
 const app = express();
@@ -28,7 +29,7 @@ mongoose
     app.use("/api/pedidos", pedidosRoutes);
     app.use("/api/productos", productosRoutes);
     app.use("/api/users", usersRoutes);
-
+    app.use("/api/entregas", entregasRoutes);
     app.use((req, res, next) => {
       const error = new Error("Resource does not exists.");
       error.status = 404;
