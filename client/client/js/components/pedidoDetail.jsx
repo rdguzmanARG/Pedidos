@@ -254,7 +254,7 @@ class PedidoDetail extends Component {
               <tr>
                 <td colSpan="4" className="cell-right d-none d-md-table-cell  ">
                   <div className="form-group">
-                    <label for="ajusteporPesoD">Ajuste por peso:</label>
+                    <label for="ajusteporPesoD">Ajuste:</label>
                     <input
                       id="ajusteporPesoD"
                       type="text"
@@ -269,7 +269,7 @@ class PedidoDetail extends Component {
                 </td>
                 <td colSpan="3" className="cell-right d-table-cell d-md-none ">
                   <div className="form-group">
-                    <label for="ajusteporPesoM">Ajuste por peso:</label>
+                    <label for="ajusteporPesoM">Ajuste:</label>
                     <input
                       id="ajusteporPesoM"
                       type="text"

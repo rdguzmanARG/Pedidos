@@ -100,7 +100,7 @@ class ProductoDetail extends Component {
               name="nombre"
               value={producto.nombre}
               onChange={this.onFieldChange}
-              readOnly={true}
+              disabled={true}
             />
           </div>
           <div className="form-group">

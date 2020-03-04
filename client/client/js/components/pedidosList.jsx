@@ -114,7 +114,7 @@ class PedidosList extends Component {
                     <a href={"tel:+" + p.celular}>{p.celular}</a>{" "}
                   </td>
                   <td className="d-none d-md-table-cell">
-                    {p.entregado ? p.usuarioMod : ""}
+                    {p.entregado ? p.usuarioMod.toUpperCase() : ""}
                   </td>
                   <td className="cell-right">
                     <Link to={`/pedidos/ver/${p._id}`}>

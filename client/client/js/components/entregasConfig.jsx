@@ -121,6 +121,71 @@ class Inicio extends Component {
 
         <div id="accordion">
           <div class="card">
+            <div class="card-header bg-light" id="headingCero">
+              <button
+                class="btn btn-lg"
+                data-toggle="collapse"
+                data-target="#collapseCero"
+                aria-expanded="true"
+                aria-controls="collapseCero"
+              >
+                Paso 0 - Iniciar nueva entrega
+              </button>
+            </div>
+
+            <div
+              id="collapseCero"
+              class={
+                entrega == null || entrega.estado == "CER"
+                  ? "collapse show"
+                  : "collapse"
+              }
+              aria-labelledby="headingCero"
+              data-parent="#accordion"
+            >
+              <div class="card border-light">
+                <div class="card-body">
+                  <p class="card-text">
+                    ATENCIÓN: antes de iniciar una nueva entrega recuerde:
+                    <ul>
+                      <li>1 - Desvincular el formulario de Google.</li>
+                      <li>
+                        2 - Desde el formulario de Google, borrar todas las
+                        respuestas.
+                      </li>
+                      <li>
+                        3 - Configurar el Formulario nuevamente con los nuevos
+                        productos.
+                      </li>
+                      <li>
+                        4 - Volver a vincular el formulario a la planilla{" "}
+                        <b>existente</b>.
+                      </li>
+                      <li>
+                        5 - Habilitar el formulario para recibir respuestas.
+                      </li>
+                    </ul>
+                    Una vez completados estos puntos mencionados, estara en
+                    condiciones de iniciar una nueva entrega.
+                  </p>
+                  <p>
+                    <i>
+                      Nota: Hasta que no haya un pedido cargado, los productos
+                      no serán importados.
+                    </i>
+                  </p>
+                  <button
+                    disabled={entrega != null && entrega.estado != "CER"}
+                    onClick={() => this.ImportData()}
+                    class="btn btn-success mr-1"
+                  >
+                    Iniciar nueva entrega
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
             <div class="card-header text-white bg-danger" id="headingOne">
               <button
                 class="btn btn-lg text-white"
@@ -136,7 +201,7 @@ class Inicio extends Component {
             <div
               id="collapseOne"
               class={
-                entrega == null || entrega.estado === "IMP"
+                entrega != null && entrega.estado === "IMP"
                   ? "collapse show"
                   : "collapse"
               }
@@ -151,12 +216,17 @@ class Inicio extends Component {
                     en curso. Una vez iniciado el <b>paso 2</b>, ya no se podrán
                     importar más datos.
                   </p>
+                  <p>
+                    ATENCIÓN: antes de iniciar el paso 2:
+                    <ul>
+                      <li>
+                        1 - Debe cerrar el Formulario de Google, para impedir
+                        que se carguen nuevos pedidos.
+                      </li>
+                    </ul>
+                  </p>
                   <button
-                    disabled={
-                      entrega != null &&
-                      entrega.estado != "IMP" &&
-                      entrega.estado != "CER"
-                    }
+                    disabled={entrega == null || entrega.estado != "IMP"}
                     onClick={() => this.ImportData()}
                     class="btn btn-danger mr-1"
                   >
@@ -198,9 +268,12 @@ class Inicio extends Component {
               <div class="card border-info">
                 <div class="card-body">
                   <p class="card-text">
-                    Permite ajustar los precios si fuera necesario, y anular los
-                    productos que no fueron recibidos. Una vez iniciado el{" "}
-                    <b>paso 3</b>, ya no se podrán modificar estos datos.
+                    Permite ajustar los precios y anular los productos que no
+                    fueron recibidos.
+                  </p>
+                  <p>
+                    ATENCIÓN: Una vez iniciado el <b>paso 3</b>, ya no se podrán
+                    modificar estos datos.
                   </p>
                   <button
                     disabled={entrega === null || entrega.estado != "PRE"}
@@ -238,9 +311,8 @@ class Inicio extends Component {
               <div class="card border-sucess">
                 <div class="card-body">
                   <p class="card-text">
-                    Permite ajustar los precios si fuera necesario, y anular los
-                    productos que no fueron recibidos. Estos datos no podrán ser
-                    modificados una vez aprobado este paso.
+                    Permite realizar la entrega de los pedidos, debe cerrar la
+                    enterga una ves completado todo el proceso.
                   </p>
                   <button
                     disabled={entrega === null || entrega.estado != "INI"}

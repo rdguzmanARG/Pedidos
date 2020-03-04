@@ -52,40 +52,54 @@ class Entregas extends Component {
             </li>
           </ol>
         </nav>
-        <table className="table table-striped table-sm table-productos">
-          <thead className="thead-dark">
-            <tr>
-              <th>Fecha de importación</th>
-              <th className="d-none d-sm-table-cell">Productos</th>
-              <th className="d-none d-sm-table-cell">Pedidos</th>
-              <th className="d-none d-sm-table-cell cell-right">
-                Total Entregas
-              </th>
-              <th className="d-none d-sm-table-cell cell-right">
-                Total Almacen
-              </th>
-              <th className="d-none d-sm-table-cell cell-right">Total</th>
-            </tr>
-          </thead>
-          <tbody>
-            {entregas.map(p => (
-              <tr key={p._id}>
-                <td>{moment(p.fechaImportacion).format("DD/MM/YYYY HH:mm")}</td>
-                <td className="d-none d-sm-table-cell">{p.cantProductos}</td>
-                <td className="d-none d-sm-table-cell">{p.cantPedidos}</td>
-                <td className="d-none d-sm-table-cell cell-right">
-                  ${p.totalEntrega.toFixed(2)}
-                </td>
-                <td className="d-none d-sm-table-cell cell-right">
-                  ${p.totalAlmacen.toFixed(2)}
-                </td>
-                <td className="d-none d-sm-table-cell cell-right">
-                  ${(p.totalEntrega + p.totalAlmacen).toFixed(2)}
-                </td>
+        {entregas.length == 0 && (
+          <div>
+            <div class="alert alert-success" role="alert">
+              <h4 class="alert-heading">
+                No hay entregas registradas por el momento.
+              </h4>
+              <p>Solo se muestran las entregas que esten cerradas.</p>
+            </div>
+          </div>
+        )}
+        {entregas.length > 0 && (
+          <table className="table table-striped table-sm table-productos">
+            <thead className="thead-dark">
+              <tr>
+                <th>Fecha de importación</th>
+                <th className="d-none d-sm-table-cell">Productos</th>
+                <th className="d-none d-sm-table-cell">Pedidos</th>
+                <th className="d-none d-sm-table-cell cell-right">
+                  Total Entregas
+                </th>
+                <th className="d-none d-sm-table-cell cell-right">
+                  Total Almacen
+                </th>
+                <th className="d-none d-sm-table-cell cell-right">Total</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {entregas.map(p => (
+                <tr key={p._id}>
+                  <td>
+                    {moment(p.fechaImportacion).format("DD/MM/YYYY HH:mm")}
+                  </td>
+                  <td className="d-none d-sm-table-cell">{p.cantProductos}</td>
+                  <td className="d-none d-sm-table-cell">{p.cantPedidos}</td>
+                  <td className="d-none d-sm-table-cell cell-right">
+                    ${p.totalEntrega.toFixed(2)}
+                  </td>
+                  <td className="d-none d-sm-table-cell cell-right">
+                    ${p.totalAlmacen.toFixed(2)}
+                  </td>
+                  <td className="d-none d-sm-table-cell cell-right">
+                    ${(p.totalEntrega + p.totalAlmacen).toFixed(2)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </React.Fragment>
     );
   }
