@@ -25,6 +25,9 @@ exports.pedidos_get_pedido = (req, res, next) => {
               celular: pedido.celular,
               email: pedido.email,
               entregado: pedido.entregado,
+              ajuste: pedido.ajuste,
+              totalPedido: pedido.totalPedido,
+              totalAlmacen: pedido.totalAlmacen,
               usuarioMod: pedido.usuarioMod,
               date: pedido.date,
               items: prod.map(p => {
@@ -178,6 +181,9 @@ function ImportarDatos(response, entrega) {
                     celular: d[colCelular],
                     email: d[colEmail],
                     comentarios: d[colcomentarios],
+                    totalAlmacen: 0,
+                    totalPedido: 0,
+                    ajuste: 0,
                     items: productos
                       .filter(
                         p =>

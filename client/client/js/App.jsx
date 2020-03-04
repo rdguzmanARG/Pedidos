@@ -13,6 +13,7 @@ import PedidosList from "./components/pedidosList";
 import PedidoDetail from "./components/pedidoDetail";
 import ProductosList from "./components/productosList";
 import ProductoDetail from "./components/productoDetail";
+import EntregasConfig from "./components/entregasConfig";
 import Entregas from "./components/entregas";
 import Inicio from "./components/Home";
 import LoginForm from "./components/loginForm";
@@ -156,12 +157,24 @@ class App extends Component {
               path="/entregas"
               render={props => {
                 if (!user) return <Redirect to="/login"></Redirect>;
-                if (!user.isAdmin) return <Redirect to="/404"></Redirect>;
                 return (
                   <Entregas
                     onGlobalError={this.SetGlobalError}
                     {...props}
                   ></Entregas>
+                );
+              }}
+            />
+            <Route
+              path="/entregas-configuracion"
+              render={props => {
+                if (!user) return <Redirect to="/login"></Redirect>;
+                if (!user.isAdmin) return <Redirect to="/404"></Redirect>;
+                return (
+                  <EntregasConfig
+                    onGlobalError={this.SetGlobalError}
+                    {...props}
+                  ></EntregasConfig>
                 );
               }}
             />

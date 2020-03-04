@@ -55,38 +55,40 @@ class Navbar extends React.Component {
                     Productos
                   </NavLink>
                 </li>
-                {user.isAdmin && (
-                  <li class="nav-item dropdown">
-                    <a
-                      class="nav-link dropdown-toggle"
-                      href="#"
-                      id="navbarDropdown"
-                      role="button"
-                      data-toggle="dropdown"
-                      aria-haspopup="true"
-                      aria-expanded="false"
+
+                <li class="nav-item dropdown">
+                  <a
+                    class="nav-link dropdown-toggle"
+                    href="#"
+                    id="navbarDropdown"
+                    role="button"
+                    data-toggle="dropdown"
+                    aria-haspopup="true"
+                    aria-expanded="false"
+                  >
+                    Entregas
+                  </a>
+                  <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    {user.isAdmin && (
+                      <Link
+                        className="dropdown-item"
+                        to="/entregas-configuracion"
+                        onClick={this.changeSelection}
+                      >
+                        Configuracion
+                      </Link>
+                    )}
+                    <div class="dropdown-divider"></div>
+                    <Link
+                      className="dropdown-item"
+                      to="/entregas"
+                      onClick={this.changeSelection}
                     >
-                      Administración
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                      <Link
-                        className="dropdown-item"
-                        to="/entregas"
-                        onClick={this.changeSelection}
-                      >
-                        Entregas
-                      </Link>
-                      <div class="dropdown-divider"></div>
-                      <Link
-                        className="dropdown-item"
-                        to="/usuarios"
-                        onClick={this.changeSelection}
-                      >
-                        Usuarios
-                      </Link>
-                    </div>
-                  </li>
-                )}
+                      Historial
+                    </Link>
+                  </div>
+                </li>
+
                 <li>
                   <NavLink className="nav-link" to="/logout">
                     Cerrar Sesión

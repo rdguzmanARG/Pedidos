@@ -13,6 +13,14 @@ const schema = mongoose.Schema(
     cantPedidos: {
       type: Number
     },
+    totalEntrega: {
+      type: Number,
+      defaul: 0
+    },
+    totalAlmacen: {
+      type: Number,
+      defaul: 0
+    },
     estado: {
       type: String
     },

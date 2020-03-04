@@ -2,20 +2,37 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import Loader from "react-loader-spinner";
 import { producto_get, producto_update } from "../services/productoService";
+import { entrega_getCurrent } from "../services/entregaService";
 import auth from "../services/authService";
 
 class ProductoDetail extends Component {
   state = {
     isLoading: true,
-    producto: {}
+    producto: {},
+    entregaEstado: ""
   };
 
   componentDidMount() {
     const id = this.props.match.params.id;
     producto_get(id)
-      .then(res => {
-        if (res.status === 200) {
-          this.setState({ producto: res.data, isLoading: false });
+      .then(resProducto => {
+        if (resProducto.status === 200) {
+          entrega_getCurrent()
+            .then(resEntrega => {
+              this.setState({
+                producto: resProducto.data,
+                isLoading: false,
+                entregaEstado: resEntrega.data ? resEntrega.data.estado : ""
+              });
+            })
+            .catch(ex => {
+              if (ex.response && ex.response.status === 401) {
+                auth.logout();
+                window.location = "/login";
+              } else {
+                this.props.onGlobalError();
+              }
+            });
         }
       })
       .catch(ex => {
@@ -50,7 +67,7 @@ class ProductoDetail extends Component {
   };
 
   render() {
-    const { producto, isLoading } = this.state;
+    const { producto, isLoading, entregaEstado } = this.state;
     if (isLoading) {
       return (
         <div id="overlay">
@@ -58,7 +75,6 @@ class ProductoDetail extends Component {
         </div>
       );
     }
-    console.log(producto);
     return (
       <React.Fragment>
         <nav aria-label="breadcrumb">
@@ -92,6 +108,7 @@ class ProductoDetail extends Component {
             <input
               type="text"
               name="precio"
+              disabled={entregaEstado != "PRE"}
               value={producto.precio}
               onChange={this.onFieldChange}
               class="form-control"
@@ -102,6 +119,7 @@ class ProductoDetail extends Component {
             <input
               className="form-check"
               type="checkbox"
+              disabled={entregaEstado != "PRE"}
               defaultChecked={producto.anulado}
               name="anulado"
               onChange={this.onFieldChange}
@@ -109,7 +127,11 @@ class ProductoDetail extends Component {
             />
             <label for="anulado">Producto anulado</label>
           </div>
-          <button type="submit" className="btn btn-success">
+          <button
+            type="submit"
+            className="btn btn-success"
+            disabled={entregaEstado != "PRE"}
+          >
             Aceptar
           </button>
           <button

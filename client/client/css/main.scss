@@ -37,6 +37,16 @@ body {
 }
 
 // Detalle del pedido
+
+.pedido-detail {
+  .form-group {
+    input.form-control {
+      width: unset;
+      display: inline-block;
+      margin-left: 10px;
+    }
+  }
+}
 table {
   td {
     &.pedido-detail-mobile {

@@ -30,6 +30,15 @@ const schema = mongoose.Schema(
       type: Boolean,
       default: false
     },
+    ajuste: {
+      type: Number
+    },
+    totalPedido: {
+      type: Number
+    },
+    totalAlmacen: {
+      type: Number
+    },
     usuarioMod: {
       type: String
     }

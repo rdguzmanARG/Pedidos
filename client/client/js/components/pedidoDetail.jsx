@@ -5,6 +5,7 @@ import "react-confirm-alert/src/react-confirm-alert.css";
 import moment from "moment";
 import { Link } from "react-router-dom";
 import { pedido_get, pedido_update } from "../services/pedidoService";
+import { entrega_getCurrent } from "../services/entregaService";
 import auth from "../services/authService";
 
 class PedidoDetail extends Component {
@@ -12,15 +13,42 @@ class PedidoDetail extends Component {
     isLoading: true,
     pedido: {
       items: []
-    }
+    },
+    entregaEstado: "",
+    totalPedidos: 0,
+    totalAlmacen: 0
   };
 
   componentDidMount() {
     const id = this.props.match.params.id;
     pedido_get(id)
-      .then(res => {
-        if (res.status === 200) {
-          this.setState({ pedido: res.data, isLoading: false });
+      .then(resPedido => {
+        if (resPedido.status === 200) {
+          entrega_getCurrent()
+            .then(resEntrega => {
+              const pedido = resPedido.data;
+              const totalPedidos = pedido.entregado
+                ? pedido.totalPedido
+                : this.arrSum(
+                    pedido.items
+                      .filter(f => !f.anulado)
+                      .map(m => m.cantidad * m.precio)
+                  );
+              this.setState({
+                pedido,
+                totalPedidos,
+                isLoading: false,
+                entregaEstado: resEntrega.data ? resEntrega.data.estado : ""
+              });
+            })
+            .catch(ex => {
+              if (ex.response && ex.response.status === 401) {
+                auth.logout();
+                window.location = "/login";
+              } else {
+                this.props.onGlobalError();
+              }
+            });
         }
       })
       .catch(ex => {
@@ -59,11 +87,14 @@ class PedidoDetail extends Component {
             ? "btn btn-danger"
             : "btn btn-success",
           onClick: () => {
-            const { pedido } = this.state;
+            const { pedido, totalPedidos, totalAlmacen } = this.state;
             const { user } = this.props;
             pedido_update(pedido._id, {
               ...pedido,
               entregado: !pedido.entregado,
+              ajuste: !pedido.entregado ? pedido.ajuste : null,
+              totalPedido: !pedido.entregado ? totalPedidos : 0,
+              totalAlmacen: !pedido.entregado ? totalAlmacen : 0,
               usuarioMod: user.username
             })
               .then(res => {
@@ -84,11 +115,14 @@ class PedidoDetail extends Component {
     });
   };
 
+  onFieldChange = e => {
+    const ped = { ...this.state.pedido };
+    ped[e.target.name] = Number(e.target.value);
+    this.setState({ ...this.state, pedido: ped });
+  };
+
   render() {
-    const { pedido, isLoading } = this.state;
-    const total = this.arrSum(
-      pedido.items.filter(f => !f.anulado).map(p => p.cantidad * p.precio)
-    );
+    const { pedido, isLoading, entregaEstado, totalPedidos } = this.state;
     if (isLoading) {
       return (
         <div id="overlay">
@@ -96,8 +130,11 @@ class PedidoDetail extends Component {
         </div>
       );
     }
+
+    const total = totalPedidos + pedido.ajuste;
+    console.log(total);
     return (
-      <React.Fragment>
+      <div className="pedido-detail">
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb">
             <li class="breadcrumb-item">
@@ -204,6 +241,38 @@ class PedidoDetail extends Component {
                   </td>
                 </tr>
               ))}
+              <tr>
+                <td colSpan="4" className="cell-right d-none d-md-table-cell  ">
+                  <div className="form-group">
+                    <label for="ajusteporPesoD">Ajuste por peso:</label>
+                    <input
+                      id="ajusteporPesoD"
+                      type="text"
+                      name="ajuste"
+                      disabled={entregaEstado !== "INI" || pedido.entregado}
+                      defaultValue={pedido.ajuste}
+                      onChange={this.onFieldChange}
+                      class="form-control"
+                      placeholder="$0.00"
+                    />
+                  </div>
+                </td>
+                <td colSpan="3" className="cell-right d-table-cell d-md-none ">
+                  <div className="form-group">
+                    <label for="ajusteporPesoM">Ajuste por peso:</label>
+                    <input
+                      id="ajusteporPesoM"
+                      type="text"
+                      name="ajuste"
+                      disabled={entregaEstado !== "INI" || pedido.entregado}
+                      defaultValue={pedido.ajuste}
+                      onChange={this.onFieldChange}
+                      class="form-control"
+                      placeholder="$0.00"
+                    />
+                  </div>
+                </td>
+              </tr>
               <tr className="totales">
                 <td colSpan="4" className="cell-right d-none d-md-table-cell  ">
                   Total ${total.toFixed(2)}
@@ -218,12 +287,20 @@ class PedidoDetail extends Component {
 
         {pedido.entregado === undefined ||
           (pedido.entregado === false && (
-            <button onClick={this.submit} class="btn btn-success ml-2">
+            <button
+              onClick={this.submit}
+              disabled={entregaEstado !== "INI"}
+              class="btn btn-success ml-2"
+            >
               Confirmar retiro
             </button>
           ))}
         {pedido.entregado === true && (
-          <button onClick={this.submit} class="btn btn-danger ml-2">
+          <button
+            onClick={this.submit}
+            disabled={entregaEstado !== "INI"}
+            class="btn btn-danger ml-2"
+          >
             Anular retiro
           </button>
         )}
@@ -233,7 +310,7 @@ class PedidoDetail extends Component {
         >
           Volver
         </button>
-      </React.Fragment>
+      </div>
     );
   }
 }
