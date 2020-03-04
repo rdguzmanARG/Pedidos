@@ -52,7 +52,7 @@ exports.pedidos_get_pedido = (req, res, next) => {
 };
 
 exports.pedidos_update_pedido = (req, res) => {
-  Pedido.findByIdAndUpdate(req.params.idPedido, req.body)
+  Pedido.findByIdAndUpdate(req.params.idPedido, req.body, { new: true })
     .exec()
     .then(pedido => res.json(pedido))
     .catch(err => res.status(500).json("Error: " + err));
@@ -176,8 +176,8 @@ function ImportarDatos(response, entrega) {
                   return new Pedido({
                     _id: new mongoose.Types.ObjectId(),
                     date: moment(d[colMarcaTemporal], "DD/MM/YYYY HH:mm:ss"),
-                    nombre: d[colNombre],
-                    apellido: d[colApellido],
+                    nombre: d[colNombre].trim(),
+                    apellido: d[colApellido].trim(),
                     celular: d[colCelular],
                     email: d[colEmail],
                     comentarios: d[colcomentarios],

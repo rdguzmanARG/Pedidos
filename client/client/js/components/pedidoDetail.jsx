@@ -1,8 +1,7 @@
 import React, { Component } from "react";
-import { confirmAlert } from "react-confirm-alert";
 import Loader from "react-loader-spinner";
-import "react-confirm-alert/src/react-confirm-alert.css";
 import moment from "moment";
+import SweetAlert from "react-bootstrap-sweetalert";
 import { Link } from "react-router-dom";
 import { pedido_get, pedido_update } from "../services/pedidoService";
 import { entrega_getCurrent } from "../services/entregaService";
@@ -16,7 +15,8 @@ class PedidoDetail extends Component {
     },
     entregaEstado: "",
     totalPedidos: 0,
-    totalAlmacen: 0
+    totalAlmacen: 0,
+    showConfirm: false
   };
 
   componentDidMount() {
@@ -62,59 +62,6 @@ class PedidoDetail extends Component {
   }
   arrSum = arr => arr.reduce((a, b) => a + b, 0);
 
-  submit = () => {
-    confirmAlert({
-      title: "Atención",
-      message: (
-        <div>
-          <div>Pedido a nombre de: </div>
-          <div>
-            <b>
-              {this.state.pedido.nombre + ", " + this.state.pedido.apellido}
-            </b>
-          </div>
-          <div>
-            {this.state.pedido.entregado
-              ? "¿Confirma anulación de la entrega?"
-              : "¿Confirma entrega?"}
-          </div>
-        </div>
-      ),
-      buttons: [
-        {
-          label: "Confirmar",
-          className: this.state.pedido.entregado
-            ? "btn btn-danger"
-            : "btn btn-success",
-          onClick: () => {
-            const { pedido, totalPedidos, totalAlmacen } = this.state;
-            const { user } = this.props;
-            pedido_update(pedido._id, {
-              ...pedido,
-              entregado: !pedido.entregado,
-              ajuste: !pedido.entregado ? pedido.ajuste : null,
-              totalPedido: !pedido.entregado ? totalPedidos : 0,
-              totalAlmacen: !pedido.entregado ? totalAlmacen : 0,
-              usuarioMod: user.username
-            })
-              .then(res => {
-                if (res.status === 200) {
-                  this.props.history.push("/pedidos");
-                }
-              })
-              .catch(ex => {
-                toast.error("No se pudo confirmar el pedido.");
-              });
-          }
-        },
-        {
-          label: "Cancelar",
-          onClick: () => {}
-        }
-      ]
-    });
-  };
-
   onFieldChange = e => {
     const ped = { ...this.state.pedido };
     ped[e.target.name] = Number(e.target.value);
@@ -122,7 +69,13 @@ class PedidoDetail extends Component {
   };
 
   render() {
-    const { pedido, isLoading, entregaEstado, totalPedidos } = this.state;
+    const {
+      pedido,
+      isLoading,
+      entregaEstado,
+      totalPedidos,
+      showConfirm
+    } = this.state;
     if (isLoading) {
       return (
         <div id="overlay">
@@ -132,9 +85,66 @@ class PedidoDetail extends Component {
     }
 
     const total = totalPedidos + pedido.ajuste;
-    console.log(total);
+
     return (
       <div className="pedido-detail">
+        {showConfirm && (
+          <SweetAlert
+            showCancel
+            reverseButtons
+            btnSize="sm"
+            confirmBtnText="Confirmar!"
+            confirmBtnBsStyle="danger"
+            cancelBtnBsStyle="primary"
+            showCloseButton={true}
+            title="¿Desea continuar?"
+            onConfirm={() => {
+              const { pedido, totalPedidos, totalAlmacen } = this.state;
+              const { user } = this.props;
+              const newPedido = {
+                ...pedido,
+                entregado: !pedido.entregado,
+                ajuste: !pedido.entregado ? pedido.ajuste : 0,
+                totalPedido: !pedido.entregado ? totalPedidos : 0,
+                totalAlmacen: !pedido.entregado ? totalAlmacen : 0,
+                usuarioMod: user.username
+              };
+              pedido_update(pedido._id, newPedido)
+                .then(res => {
+                  if (res.status === 200) {
+                    if (res.data.entregado) {
+                      this.props.history.push("/pedidos");
+                    } else {
+                      this.setState({
+                        ...this.state,
+                        pedido: newPedido,
+                        showConfirm: false
+                      });
+                    }
+                  }
+                })
+                .catch(ex => {
+                  this.props.onGlobalError();
+                });
+            }}
+            onCancel={() => {
+              this.setState({
+                ...this.state,
+                showConfirm: false
+              });
+            }}
+            focusCancelBtn
+          >
+            <div>
+              El pedido de{" "}
+              <b>
+                {pedido.nombre}, {pedido.apellido}
+              </b>{" "}
+              será {!pedido.entregado && <span>confirmado</span>}
+              {pedido.entregado && <span>anulado</span>}.
+            </div>
+          </SweetAlert>
+        )}
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb">
             <li class="breadcrumb-item">
@@ -250,7 +260,7 @@ class PedidoDetail extends Component {
                       type="text"
                       name="ajuste"
                       disabled={entregaEstado !== "INI" || pedido.entregado}
-                      defaultValue={pedido.ajuste}
+                      value={pedido.ajuste}
                       onChange={this.onFieldChange}
                       class="form-control"
                       placeholder="$0.00"
@@ -265,7 +275,7 @@ class PedidoDetail extends Component {
                       type="text"
                       name="ajuste"
                       disabled={entregaEstado !== "INI" || pedido.entregado}
-                      defaultValue={pedido.ajuste}
+                      value={pedido.ajuste}
                       onChange={this.onFieldChange}
                       class="form-control"
                       placeholder="$0.00"
@@ -288,7 +298,9 @@ class PedidoDetail extends Component {
         {pedido.entregado === undefined ||
           (pedido.entregado === false && (
             <button
-              onClick={this.submit}
+              onClick={() =>
+                this.setState({ ...this.state, showConfirm: true })
+              }
               disabled={entregaEstado !== "INI"}
               class="btn btn-success ml-2"
             >
@@ -297,7 +309,7 @@ class PedidoDetail extends Component {
           ))}
         {pedido.entregado === true && (
           <button
-            onClick={this.submit}
+            onClick={() => this.setState({ ...this.state, showConfirm: true })}
             disabled={entregaEstado !== "INI"}
             class="btn btn-danger ml-2"
           >
