@@ -147,24 +147,26 @@ class Inicio extends Component {
                 <div class="card-body">
                   <p class="card-text">
                     ATENCIÓN: antes de iniciar una nueva entrega recuerde:
-                    <ul>
-                      <li>1 - Desvincular el formulario de Google.</li>
-                      <li>
-                        2 - Desde el formulario de Google, borrar todas las
-                        respuestas.
-                      </li>
-                      <li>
-                        3 - Configurar el Formulario nuevamente con los nuevos
-                        productos.
-                      </li>
-                      <li>
-                        4 - Volver a vincular el formulario a la planilla{" "}
-                        <b>existente</b>.
-                      </li>
-                      <li>
-                        5 - Habilitar el formulario para recibir respuestas.
-                      </li>
-                    </ul>
+                  </p>
+                  <ul>
+                    <li>1 - Desvincular el formulario de Google.</li>
+                    <li>
+                      2 - Desde el formulario de Google, borrar todas las
+                      respuestas.
+                    </li>
+                    <li>
+                      3 - Configurar el Formulario nuevamente con los nuevos
+                      productos.
+                    </li>
+                    <li>
+                      4 - Volver a vincular el formulario a la planilla{" "}
+                      <b>existente</b>.
+                    </li>
+                    <li>
+                      5 - Habilitar el formulario para recibir respuestas.
+                    </li>
+                  </ul>
+                  <p>
                     Una vez completados estos puntos mencionados, estara en
                     condiciones de iniciar una nueva entrega.
                   </p>
@@ -216,15 +218,13 @@ class Inicio extends Component {
                     en curso. Una vez iniciado el <b>paso 2</b>, ya no se podrán
                     importar más datos.
                   </p>
-                  <p>
-                    ATENCIÓN: antes de iniciar el paso 2:
-                    <ul>
-                      <li>
-                        1 - Debe cerrar el Formulario de Google, para impedir
-                        que se carguen nuevos pedidos.
-                      </li>
-                    </ul>
-                  </p>
+                  <p>ATENCIÓN: antes de iniciar el paso 2:</p>
+                  <ul>
+                    <li>
+                      1 - Debe cerrar el Formulario de Google, para impedir que
+                      se carguen nuevos pedidos.
+                    </li>
+                  </ul>
                   <button
                     disabled={entrega == null || entrega.estado != "IMP"}
                     onClick={() => this.ImportData()}
