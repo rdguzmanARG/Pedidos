@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import Loader from "react-loader-spinner";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUndo } from "@fortawesome/free-solid-svg-icons";
 import { producto_get, producto_update } from "../services/productoService";
 import { entrega_getCurrent } from "../services/entregaService";
 import auth from "../services/authService";
@@ -135,10 +137,11 @@ class ProductoDetail extends Component {
             Aceptar
           </button>
           <button
+            title="Cancelar"
             onClick={() => this.props.history.push("/productos")}
-            className="btn btn-light ml-2"
+            class="btn btn-primary ml-2"
           >
-            Cancelar
+            <FontAwesomeIcon icon={faUndo} />
           </button>
         </form>
       </React.Fragment>

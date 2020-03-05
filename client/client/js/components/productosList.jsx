@@ -3,6 +3,8 @@ import Scroll from "react-scroll";
 import Loader from "react-loader-spinner";
 import { Link } from "react-router-dom";
 import { producto_getAll } from "../services/productoService";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEdit } from "@fortawesome/free-solid-svg-icons";
 const Element = Scroll.Element;
 
 class ProductosList extends Component {
@@ -92,9 +94,9 @@ class ProductosList extends Component {
                   <td className="cell-right">${p.precio.toFixed(2)}</td>
                   {this.props.user.isAdmin && (
                     <td className="cell-right">
-                      <Link to={`/productos/ver/${p._id}`}>
+                      <Link to={`/productos/ver/${p._id}`} title="Modificar">
                         <button type="button" class="btn btn-primary btn-sm">
-                          Editar
+                          <FontAwesomeIcon icon={faEdit} />
                         </button>
                       </Link>
                     </td>

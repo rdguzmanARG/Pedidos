@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import Loader from "react-loader-spinner";
 import moment from "moment";
 import SweetAlert from "react-bootstrap-sweetalert";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUndo } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 import { pedido_get, pedido_update } from "../services/pedidoService";
 import { entrega_getCurrent } from "../services/entregaService";
@@ -317,10 +319,11 @@ class PedidoDetail extends Component {
           </button>
         )}
         <button
+          title="Volver"
           onClick={() => this.props.history.push("/pedidos")}
           class="btn btn-primary ml-2"
         >
-          Volver
+          <FontAwesomeIcon icon={faUndo} />
         </button>
       </div>
     );

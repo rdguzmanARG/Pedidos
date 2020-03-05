@@ -39,8 +39,26 @@ body {
   width: 50%;
 }
 
-// Detalle del pedido
+// Entregas config
+.entregas-config {
+  .btn {
+    width: 100%;
+    font-weight: bold;
+  }
+  .btn-pasos {
+    width: 250px;
+    margin: 0 auto;
+    display: block;
+    margin-top: 10px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+  .btn:focus {
+    box-shadow: none;
+  }
+}
 
+// Detalle del pedido
 .pedido-detail {
   .form-group {
     input.form-control {
@@ -76,6 +94,13 @@ table {
     }
     td {
       vertical-align: middle;
+    }
+    &.bg-entregado {
+      background-color: #00800070 !important;
+      color: white;
+      a {
+        color: white;
+      }
     }
     &.bg-danger {
       color: white;
@@ -155,7 +180,7 @@ table {
 
 //Nav
 
-.breadcrumb {
+ol.breadcrumb {
   background-color: teal;
   a {
     color: white;

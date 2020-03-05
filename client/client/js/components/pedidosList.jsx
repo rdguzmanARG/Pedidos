@@ -4,6 +4,8 @@ import Loader from "react-loader-spinner";
 import { Link } from "react-router-dom";
 import { pedido_getAll } from "../services/pedidoService";
 import auth from "../services/authService";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEdit } from "@fortawesome/free-solid-svg-icons";
 const Element = Scroll.Element;
 
 class PedidosList extends Component {
@@ -106,7 +108,7 @@ class PedidosList extends Component {
                 return 0;
               })
               .map(p => (
-                <tr key={p._id} className={p.entregado ? "bg-success" : ""}>
+                <tr key={p._id} className={p.entregado ? "bg-entregado" : ""}>
                   <td>
                     {p.nombre}, {p.apellido}
                   </td>
@@ -117,9 +119,9 @@ class PedidosList extends Component {
                     {p.entregado ? p.usuarioMod.toUpperCase() : ""}
                   </td>
                   <td className="cell-right">
-                    <Link to={`/pedidos/ver/${p._id}`}>
+                    <Link title="Ver pedido" to={`/pedidos/ver/${p._id}`}>
                       <button type="button" class="btn btn-sm btn-success">
-                        Ver
+                        <FontAwesomeIcon icon={faEdit} />
                       </button>
                     </Link>
                   </td>

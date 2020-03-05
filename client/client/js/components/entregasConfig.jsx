@@ -1,12 +1,16 @@
 import React, { Component } from "react";
+import Scroll from "react-scroll";
 import Loader from "react-loader-spinner";
 import Moment from "react-moment";
+import { Link } from "react-router-dom";
 import { pedido_import } from "../services/pedidoService";
 import {
   entrega_getCurrent,
   entrega_setStatus
 } from "../services/entregaService";
 import auth from "../services/authService";
+const Element = Scroll.Element;
+const scroller = Scroll.scroller;
 
 class Inicio extends Component {
   state = {
@@ -15,11 +19,20 @@ class Inicio extends Component {
     isLoading: true
   };
 
+  scrollTo = () => {
+    scroller.scrollTo("myScrollToElement", {
+      duration: 1000,
+      delay: 100,
+      smooth: true,
+      offset: -5 // Scrolls to element + 50 pixels down the page
+    });
+  };
   componentDidMount() {
     entrega_getCurrent()
       .then(res => {
         if (res.status === 200) {
           this.setState({ entrega: res.data, isLoading: false });
+          this.scrollTo();
         }
       })
       .catch(ex => {
@@ -38,6 +51,7 @@ class Inicio extends Component {
         console.log("Datos importados");
         if (res.status === 200) {
           this.setState({ entrega: res.data, isLoading: false });
+          this.scrollTo();
         }
       })
       .catch(ex => {
@@ -54,6 +68,7 @@ class Inicio extends Component {
       .then(res => {
         if (res.status === 200) {
           this.setState({ entrega: res.data, isLoading: false });
+          this.scrollTo();
         }
       })
       .catch(ex => {
@@ -82,46 +97,52 @@ class Inicio extends Component {
 
     const estado =
       entrega == null || entrega.estado === "IMP"
-        ? " Paso 1 - Importación de datos"
+        ? " Paso 1 - IMPORTACION DE DATOS"
         : entrega.estado === "PRE"
-        ? " Paso 2 - Ajuste de precios"
+        ? " Paso 2 - AJUSTE DE PRECIOS"
         : entrega.estado === "INI"
-        ? " Paso 3 - Entrega de pedidosEntrega de pedidos"
-        : " Paso 4 - Entrega finalizada";
+        ? " Paso 3 - ENTREGA DE PEDIDOS"
+        : " Paso 4 - ENTREGA FINALIZADA";
     return (
-      <div>
+      <div className="entregas-config">
         <div class="card border-secondary mb-3">
           <div class="card-header text-white bg-secondary">
-            Administración de Entregas
+            Configuración de Entregas
           </div>
           <h5 class="card-header">Información de la Entrega en curso</h5>
           <div class="card-body">
             {entrega && (
               <React.Fragment>
                 <p class="card-text">
-                  Estado: <b>{estado}</b>
+                  Estado actual: <b>{estado}</b>
                 </p>
                 <p class="card-text">
-                  Fecha / Hora de última Importacion:{" "}
-                  <Moment format="DD/MM/YYYY HH:mm">
-                    {entrega.fechaImportacion}
-                  </Moment>
+                  Ultima Importación:{" "}
+                  <b>
+                    <Moment format="DD/MM/YYYY HH:mm">
+                      {entrega.fechaImportacion}
+                    </Moment>
+                  </b>
                 </p>
                 <p class="card-text">
-                  Cantidad de productos: {entrega.cantProductos}
+                  Cantidad de productos: <b>{entrega.cantProductos}</b>
                 </p>
                 <p class="card-text">
-                  Cantidad de productos: {entrega.cantPedidos}
+                  Cantidad de pedidos: <b>{entrega.cantPedidos}</b>
                 </p>
               </React.Fragment>
             )}
-            {!entrega && <p class="card-text">No hay Entrega dosponible</p>}
+            {!entrega && <p class="card-text">No hay Entrega disponible</p>}
           </div>
         </div>
 
         <div id="accordion">
           <div class="card">
-            <div class="card-header bg-light" id="headingCero">
+            <div class="card-header bg-warning" id="headingCero">
+              {entrega == null ||
+                (entrega.estado == "CER" && (
+                  <Element name="myScrollToElement"></Element>
+                ))}
               <button
                 class="btn btn-lg"
                 data-toggle="collapse"
@@ -129,7 +150,7 @@ class Inicio extends Component {
                 aria-expanded="true"
                 aria-controls="collapseCero"
               >
-                Paso 0 - Iniciar nueva entrega
+                Iniciar nueva entrega{" "}
               </button>
             </div>
 
@@ -143,45 +164,39 @@ class Inicio extends Component {
               aria-labelledby="headingCero"
               data-parent="#accordion"
             >
-              <div class="card border-light">
+              <div class="card border-warning">
                 <div class="card-body">
                   <p class="card-text">
-                    ATENCIÓN: antes de iniciar una nueva entrega recuerde:
+                    ATENCIÓN: antes de iniciar una nueva entrega debe:
                   </p>
-                  <ul>
-                    <li>1 - Desvincular el formulario de Google.</li>
-                    <li>
-                      2 - Desde el formulario de Google, borrar todas las
-                      respuestas.
-                    </li>
-                    <li>
-                      3 - Configurar el Formulario nuevamente con los nuevos
-                      productos.
-                    </li>
-                    <li>
-                      4 - Volver a vincular el formulario a la planilla{" "}
-                      <b>existente</b>.
-                    </li>
-                    <li>
-                      5 - Habilitar el formulario para recibir respuestas.
-                    </li>
-                  </ul>
                   <p>
-                    Una vez completados estos puntos mencionados, estara en
-                    condiciones de iniciar una nueva entrega.
+                    Desde el <b>formulario de Google</b>:
                   </p>
+                  <ol>
+                    <li>
+                      Desvincular de la planilla <b>Excel</b>.
+                    </li>
+                    <li>Borrar todas las respuestas.</li>
+                    <li>Armar el formulario con los nuevos productos.</li>
+                    <li>
+                      Volver a vincular la misma planilla <b>Excel</b>.
+                    </li>
+                    <li>
+                      Habilitar el formulario para comenzar a recibir pedidos.
+                    </li>
+                  </ol>
                   <p>
                     <i>
-                      Nota: Hasta que no haya un pedido cargado, los productos
-                      no serán importados.
+                      Nota: Hasta que no haya un pedido cargado, los productos y
+                      pedidos no podrán ser importados.
                     </i>
                   </p>
                   <button
                     disabled={entrega != null && entrega.estado != "CER"}
                     onClick={() => this.ImportData()}
-                    class="btn btn-success mr-1"
+                    class="btn btn-warning btn-pasos"
                   >
-                    Iniciar nueva entrega
+                    Iniciar
                   </button>
                 </div>
               </div>
@@ -189,6 +204,9 @@ class Inicio extends Component {
           </div>
           <div class="card">
             <div class="card-header text-white bg-danger" id="headingOne">
+              {entrega != null && entrega.estado === "IMP" && (
+                <Element name="myScrollToElement"></Element>
+              )}
               <button
                 class="btn btn-lg text-white"
                 data-toggle="collapse"
@@ -213,31 +231,16 @@ class Inicio extends Component {
               <div class="card border-danger">
                 <div class="card-body">
                   <p class="card-text">
-                    Este paso puede ser ejecutado todas las veces que sea
-                    necesario, actualiza el sistema con los productos y pedidos
-                    en curso. Una vez iniciado el <b>paso 2</b>, ya no se podrán
-                    importar más datos.
+                    La <b>importación de los datos</b> puede realizarce todas
+                    las veces que sea necesaria, la misma permite ir importando
+                    los pedidos que se han realizado hasta el momento.
                   </p>
-                  <p>ATENCIÓN: antes de iniciar el paso 2:</p>
-                  <ul>
-                    <li>
-                      1 - Debe cerrar el Formulario de Google, para impedir que
-                      se carguen nuevos pedidos.
-                    </li>
-                  </ul>
                   <button
                     disabled={entrega == null || entrega.estado != "IMP"}
                     onClick={() => this.ImportData()}
-                    class="btn btn-danger mr-1"
+                    class="btn btn-danger btn-pasos"
                   >
-                    Importar datos
-                  </button>
-                  <button
-                    disabled={entrega === null || entrega.estado != "IMP"}
-                    onClick={() => this.CambioDeEstado("PRE")}
-                    class="btn btn-info mr-1"
-                  >
-                    Iniciar Paso 2
+                    Importar
                   </button>
                 </div>
               </div>
@@ -245,6 +248,9 @@ class Inicio extends Component {
           </div>
           <div class="card">
             <div class="card-header text-white bg-info" id="headingTwo">
+              {entrega != null && entrega.estado === "PRE" && (
+                <Element name="myScrollToElement"></Element>
+              )}
               <button
                 class="btn btn-lg collapsed text-white"
                 data-toggle="collapse"
@@ -268,19 +274,21 @@ class Inicio extends Component {
               <div class="card border-info">
                 <div class="card-body">
                   <p class="card-text">
-                    Permite ajustar los precios y anular los productos que no
-                    fueron recibidos.
+                    El <b>ajuste de precios</b> le permitira modificar los
+                    precios que sean necesarios así como anular los productos
+                    que no fueron recibidos.{" "}
                   </p>
                   <p>
-                    ATENCIÓN: Una vez iniciado el <b>paso 3</b>, ya no se podrán
-                    modificar estos datos.
+                    ATENCION: Antes de iniciar este paso, el{" "}
+                    <b>formulario de google</b> debe estar cerrado para impedir
+                    que lleguen nuevos pedidos.
                   </p>
                   <button
-                    disabled={entrega === null || entrega.estado != "PRE"}
-                    onClick={() => this.CambioDeEstado("INI")}
-                    class="btn btn-success mr-1"
+                    disabled={entrega === null || entrega.estado != "IMP"}
+                    onClick={() => this.CambioDeEstado("PRE")}
+                    class="btn btn-info btn-pasos"
                   >
-                    Iniciar Paso 3
+                    Iniciar
                   </button>
                 </div>
               </div>
@@ -288,6 +296,9 @@ class Inicio extends Component {
           </div>
           <div class="card">
             <div class="card-header text-white bg-success" id="headingThree">
+              {entrega != null && entrega.estado === "INI" && (
+                <Element name="myScrollToElement"></Element>
+              )}
               <button
                 class="btn btn-lg collapsed text-white"
                 data-toggle="collapse"
@@ -311,15 +322,16 @@ class Inicio extends Component {
               <div class="card border-sucess">
                 <div class="card-body">
                   <p class="card-text">
-                    Permite realizar la entrega de los pedidos, debe cerrar la
-                    enterga una ves completado todo el proceso.
+                    La <b>entrega de pedidos</b> le permitira confirmar los
+                    pedidos que fueron retirados, asi como asentar ajustes o
+                    compras en el almacén.
                   </p>
                   <button
-                    disabled={entrega === null || entrega.estado != "INI"}
-                    onClick={() => this.CambioDeEstado("CER")}
-                    class="btn btn-primary mr-1"
+                    disabled={entrega === null || entrega.estado != "PRE"}
+                    onClick={() => this.CambioDeEstado("INI")}
+                    class="btn btn-success btn-pasos"
                   >
-                    Cerrar Entrega
+                    Iniciar
                   </button>
                 </div>
               </div>
@@ -334,7 +346,7 @@ class Inicio extends Component {
                   aria-expanded="false"
                   aria-controls="collapseFour"
                 >
-                  Paso 4 - Entrega finalizada
+                  Paso 4 - Finalización de entrega
                 </button>
               </div>
               <div
@@ -350,9 +362,17 @@ class Inicio extends Component {
                 <div class="card border-primary">
                   <div class="card-body">
                     <p class="card-text">
-                      Este es el último paso del proceso, una vez cerrada la
-                      entrega no se podran modificar más datos de pedidos.
+                      Este es el último paso de la entrega, una vez finalizada
+                      se prodrán visualizar los totales obtenidos desde el{" "}
+                      <Link to="/entregas">Historial</Link> de las entregas.
                     </p>
+                    <button
+                      disabled={entrega === null || entrega.estado != "INI"}
+                      onClick={() => this.CambioDeEstado("CER")}
+                      class="btn btn-primary btn-pasos"
+                    >
+                      Finalizar
+                    </button>
                   </div>
                 </div>
               </div>

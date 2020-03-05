@@ -75,7 +75,7 @@ class Navbar extends React.Component {
                         to="/entregas-configuracion"
                         onClick={this.changeSelection}
                       >
-                        Configuracion
+                        Configuración
                       </Link>
                     )}
                     <div class="dropdown-divider"></div>
