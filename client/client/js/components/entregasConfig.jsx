@@ -97,12 +97,12 @@ class Inicio extends Component {
 
     const estado =
       entrega == null || entrega.estado === "IMP"
-        ? " Paso 1 - IMPORTACION DE DATOS"
+        ? " 1 - IMPORTACION DE DATOS"
         : entrega.estado === "PRE"
-        ? " Paso 2 - AJUSTE DE PRECIOS"
+        ? " 2 - AJUSTE DE PRECIOS"
         : entrega.estado === "INI"
-        ? " Paso 3 - ENTREGA DE PEDIDOS"
-        : " Paso 4 - ENTREGA FINALIZADA";
+        ? " 3 - ENTREGA DE PEDIDOS"
+        : " 4 - ENTREGA FINALIZADA";
     return (
       <div className="entregas-config">
         <div class="card border-secondary mb-3">
@@ -214,7 +214,7 @@ class Inicio extends Component {
                 aria-expanded="true"
                 aria-controls="collapseOne"
               >
-                Paso 1 - Importación de datos
+                1 - Importación de datos
               </button>
             </div>
 
@@ -258,7 +258,7 @@ class Inicio extends Component {
                 aria-expanded="false"
                 aria-controls="collapseTwo"
               >
-                Paso 2 - Ajuste de precios
+                2 - Ajuste de precios
               </button>
             </div>
             <div
@@ -306,7 +306,7 @@ class Inicio extends Component {
                 aria-expanded="false"
                 aria-controls="collapseThree"
               >
-                Paso 3 - Entrega de pedidos
+                3 - Entrega de pedidos
               </button>
             </div>
             <div
@@ -346,7 +346,7 @@ class Inicio extends Component {
                   aria-expanded="false"
                   aria-controls="collapseFour"
                 >
-                  Paso 4 - Finalización de entrega
+                  4 - Finalización de entrega
                 </button>
               </div>
               <div
