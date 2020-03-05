@@ -8,12 +8,38 @@ body {
 .navbar-brand {
   font-size: 18px;
   font-weight: bold;
-}
-
-@media (max-width: 720px) {
-  .navbar-brand {
-    font-size: 16px;
+  margin-left: 0;
+  @media (max-width: 991px) {
+    margin-left: 15px;
   }
+}
+.navbar-dark {
+  .navbar-text.current-user {
+    color: white;
+    font-weight: bold;
+  }
+}
+.navbar {
+  position: fixed;
+  padding-right: 0;
+  padding-left: 0;
+  top: 0;
+  width: 100%;
+  z-index: 10;
+  .navbar-toggler {
+    padding-right: 15px;
+  }
+}
+.main-container {
+  padding-top: 57px;
+}
+footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #343a40;
+  color: white;
 }
 
 #overlay {
@@ -32,6 +58,39 @@ body {
 }
 
 // Home page
+.home-page {
+  background: url(/images/home.png) no-repeat center center fixed;
+  background-size: cover;
+  height: 100%;
+  overflow: hidden;
+  width: 100%;
+  position: fixed;
+  left: 0;
+  top: 0;
+  .main-box {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(100, 100, 100, 0.5);
+    .secondary-box {
+      position: relative;
+      top: 25%;
+      text-align: center;
+      color: white;
+      font-family: cursive;
+      h1 {
+        font-family: fantasy;
+        font-weight: bolder;
+        font-size: 60px;
+      }
+      h2 {
+        font-size: 42px;
+      }
+    }
+  }
+}
 .jumbotron {
   text-align: center;
 }
@@ -134,12 +193,6 @@ table {
   }
   .totales {
     background-color: black;
-    color: white;
-    font-weight: bold;
-  }
-}
-.navbar-dark {
-  .navbar-text.current-user {
     color: white;
     font-weight: bold;
   }

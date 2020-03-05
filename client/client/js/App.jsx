@@ -72,132 +72,138 @@ class App extends Component {
       );
     }
     return (
-      <div className="container mt-2">
-        <ToastContainer
-          position="top-center"
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnVisibilityChange
-          draggable
-          pauseOnHover
-        />
+      <React.Fragment>
         <NavBar user={user}></NavBar>
-        <div className="mt-2 mb-2">
-          <Route
-            path="/"
-            render={({ location, history }) => {
-              if (typeof window.ga === "function") {
-                window.ga("set", "page", location.pathname + location.search);
-                window.ga("send", "pageview");
-              }
-              return null;
-            }}
+        <div className="container">
+          <ToastContainer
+            position="top-center"
+            autoClose={5000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnVisibilityChange
+            draggable
+            pauseOnHover
           />
-          <Switch>
+
+          <div className="main-container">
             <Route
-              path="/pedidos/:verb/:id"
-              render={props => {
-                if (!user) return <Redirect to="/login"></Redirect>;
-                return (
-                  <PedidoDetail
-                    user={user}
-                    onGlobalError={this.SetGlobalError}
-                    {...props}
-                  ></PedidoDetail>
-                );
+              path="/"
+              render={({ location, history }) => {
+                if (typeof window.ga === "function") {
+                  window.ga("set", "page", location.pathname + location.search);
+                  window.ga("send", "pageview");
+                }
+                return null;
               }}
             />
-            <Route
-              path="/pedidos"
-              render={props => {
-                if (!user) return <Redirect to="/login"></Redirect>;
-                return (
-                  <PedidosList
-                    filter={this.state.filterPedidos}
-                    onChangeFilter={this.ChangeFilterPedidos}
-                    onGlobalError={this.SetGlobalError}
-                    {...props}
-                  ></PedidosList>
-                );
-              }}
-            />
-            <Route
-              path="/productos/:verb/:id"
-              render={props => {
-                if (!user) return <Redirect to="/login"></Redirect>;
-                if (!user.isAdmin) return <Redirect to="/404"></Redirect>;
-                return (
-                  <ProductoDetail
-                    onGlobalError={this.SetGlobalError}
-                    user={user}
-                    {...props}
-                  ></ProductoDetail>
-                );
-              }}
-            />
-            <Route
-              path="/productos"
-              render={props => {
-                if (!user) return <Redirect to="/login"></Redirect>;
-                return (
-                  <ProductosList
-                    onGlobalError={this.SetGlobalError}
-                    user={user}
-                    filter={this.state.filterProductos}
-                    onChangeFilter={this.ChangeFilterProductos}
-                    {...props}
-                  ></ProductosList>
-                );
-              }}
-            />
-            <Route
-              path="/entregas"
-              render={props => {
-                if (!user) return <Redirect to="/login"></Redirect>;
-                return (
-                  <Entregas
-                    onGlobalError={this.SetGlobalError}
-                    {...props}
-                  ></Entregas>
-                );
-              }}
-            />
-            <Route
-              path="/entregas-configuracion"
-              render={props => {
-                if (!user) return <Redirect to="/login"></Redirect>;
-                if (!user.isAdmin) return <Redirect to="/404"></Redirect>;
-                return (
-                  <EntregasConfig
-                    onGlobalError={this.SetGlobalError}
-                    {...props}
-                  ></EntregasConfig>
-                );
-              }}
-            />
-            <Route path="/404">
-              <div class="mt-5 mb-5 pt-5 pb-5 alert alert-danger" role="alert">
-                <h4 class="alert-heading">
-                  La página que esta buscando no existe!
-                </h4>
-              </div>
-            </Route>
-            <Route
-              path="/login"
-              render={() => (
-                <LoginForm onGlobalError={this.SetGlobalError}></LoginForm>
-              )}
-            />
-            <Route path="/logout" component={Logout} />
-            <Route path="/" exact component={Inicio} />
-            <Redirect to="/404" />
-          </Switch>
+            <Switch>
+              <Route
+                path="/pedidos/:verb/:id"
+                render={props => {
+                  if (!user) return <Redirect to="/login"></Redirect>;
+                  return (
+                    <PedidoDetail
+                      user={user}
+                      onGlobalError={this.SetGlobalError}
+                      {...props}
+                    ></PedidoDetail>
+                  );
+                }}
+              />
+              <Route
+                path="/pedidos"
+                render={props => {
+                  if (!user) return <Redirect to="/login"></Redirect>;
+                  return (
+                    <PedidosList
+                      filter={this.state.filterPedidos}
+                      onChangeFilter={this.ChangeFilterPedidos}
+                      onGlobalError={this.SetGlobalError}
+                      {...props}
+                    ></PedidosList>
+                  );
+                }}
+              />
+              <Route
+                path="/productos/:verb/:id"
+                render={props => {
+                  if (!user) return <Redirect to="/login"></Redirect>;
+                  if (!user.isAdmin) return <Redirect to="/404"></Redirect>;
+                  return (
+                    <ProductoDetail
+                      onGlobalError={this.SetGlobalError}
+                      user={user}
+                      {...props}
+                    ></ProductoDetail>
+                  );
+                }}
+              />
+              <Route
+                path="/productos"
+                render={props => {
+                  if (!user) return <Redirect to="/login"></Redirect>;
+                  return (
+                    <ProductosList
+                      onGlobalError={this.SetGlobalError}
+                      user={user}
+                      filter={this.state.filterProductos}
+                      onChangeFilter={this.ChangeFilterProductos}
+                      {...props}
+                    ></ProductosList>
+                  );
+                }}
+              />
+              <Route
+                path="/entregas"
+                render={props => {
+                  if (!user) return <Redirect to="/login"></Redirect>;
+                  return (
+                    <Entregas
+                      onGlobalError={this.SetGlobalError}
+                      {...props}
+                    ></Entregas>
+                  );
+                }}
+              />
+              <Route
+                path="/entregas-configuracion"
+                render={props => {
+                  if (!user) return <Redirect to="/login"></Redirect>;
+                  if (!user.isAdmin) return <Redirect to="/404"></Redirect>;
+                  return (
+                    <EntregasConfig
+                      onGlobalError={this.SetGlobalError}
+                      {...props}
+                    ></EntregasConfig>
+                  );
+                }}
+              />
+              <Route path="/404">
+                <div
+                  class="mt-5 mb-5 pt-5 pb-5 alert alert-danger"
+                  role="alert"
+                >
+                  <h4 class="alert-heading">
+                    La página que esta buscando no existe!
+                  </h4>
+                </div>
+              </Route>
+              <Route
+                path="/login"
+                render={() => (
+                  <LoginForm onGlobalError={this.SetGlobalError}></LoginForm>
+                )}
+              />
+              <Route path="/logout" component={Logout} />
+              <Route path="/" exact component={Inicio} />
+              <Redirect to="/404" />
+            </Switch>
+          </div>
+          <Footer />
         </div>
-        <Footer />
-      </div>
+      </React.Fragment>
     );
   }
 }
