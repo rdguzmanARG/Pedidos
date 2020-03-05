@@ -20,6 +20,7 @@ body {
   }
 }
 .navbar {
+  -webkit-backface-visibility: hidden;
   position: fixed;
   padding-right: 0;
   padding-left: 0;
@@ -29,9 +30,16 @@ body {
   .navbar-toggler {
     padding-right: 15px;
   }
+  .navbar-nav {
+    padding-left: 20px;
+  }
+  .navbar-text.current-user {
+    padding-left: 15px;
+  }
 }
 .main-container {
   padding-top: 57px;
+  padding-bottom: 70px;
 }
 footer {
   position: fixed;
