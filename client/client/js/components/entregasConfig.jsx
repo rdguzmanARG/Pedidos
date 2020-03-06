@@ -46,13 +46,17 @@ class Inicio extends Component {
         }
       });
   }
-  ImportData = () => {
+  ImportData = next => {
     this.setState({ isLoading: true, action: "" });
     pedido_import()
       .then(res => {
         console.log("Datos importados");
         if (res.status === 200) {
           this.setState({ entrega: res.data, isLoading: false });
+          if (next != null) {
+            next();
+            return;
+          }
           this.scrollTo();
         }
       })
@@ -129,9 +133,13 @@ class Inicio extends Component {
             }
             onConfirm={() => {
               if (action == "STA" || action == "IMP") {
-                this.ImportData();
+                this.ImportData(null);
               } else {
-                this.CambioDeEstado(action);
+                if (action == "PRE") {
+                  this.ImportData(() => this.CambioDeEstado("PRE"));
+                } else {
+                  this.CambioDeEstado(action);
+                }
               }
             }}
             onCancel={() => {
@@ -187,10 +195,9 @@ class Inicio extends Component {
         <div id="accordion">
           <div class="card">
             <div class="card-header bg-warning" id="headingCero">
-              {entrega == null ||
-                (entrega.estado == "CER" && (
-                  <Element name="myScrollToElement"></Element>
-                ))}
+              {(entrega == null || entrega.estado == "CER") && (
+                <Element name="myScrollToElement"></Element>
+              )}
               <button
                 class="btn btn-lg"
                 data-toggle="collapse"
