@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Scroll from "react-scroll";
 import Loader from "react-loader-spinner";
+import SweetAlert from "react-bootstrap-sweetalert";
 import Moment from "react-moment";
 import { Link } from "react-router-dom";
 import { pedido_import } from "../services/pedidoService";
@@ -16,7 +17,8 @@ class Inicio extends Component {
   state = {
     entrega: { estado: "" },
     error: null,
-    isLoading: true
+    isLoading: true,
+    action: ""
   };
 
   scrollTo = () => {
@@ -45,7 +47,7 @@ class Inicio extends Component {
       });
   }
   ImportData = () => {
-    this.setState({ isLoading: true });
+    this.setState({ isLoading: true, action: "" });
     pedido_import()
       .then(res => {
         console.log("Datos importados");
@@ -60,7 +62,7 @@ class Inicio extends Component {
   };
 
   CambioDeEstado = nuevoEstado => {
-    this.setState({ isLoading: true });
+    this.setState({ isLoading: true, action: "" });
     entrega_setStatus(this.state.entrega._id, {
       ...this.state.entrega,
       estado: nuevoEstado
@@ -81,7 +83,7 @@ class Inicio extends Component {
       });
   };
   render() {
-    const { entrega, isLoading } = this.state;
+    const { entrega, isLoading, action } = this.state;
     const { user } = this.props;
     if (isLoading) {
       return (
@@ -106,6 +108,51 @@ class Inicio extends Component {
         : " 4 - ENTREGA FINALIZADA";
     return (
       <div className="entregas-config">
+        {action != "" && (
+          <SweetAlert
+            showCancel
+            reverseButtons
+            btnSize="sm"
+            confirmBtnText="Confirmar!"
+            confirmBtnBsStyle="danger"
+            cancelBtnBsStyle="primary"
+            title={
+              action == "STA"
+                ? "Iniciar nueva Entrega"
+                : action == "IMP"
+                ? "Importación de datos"
+                : action == "PRE"
+                ? "Iniciar ajuste de precios"
+                : action == "INI"
+                ? "Iniciar Entrega de pedidos"
+                : "Finalización de Entrega"
+            }
+            onConfirm={() => {
+              if (action == "STA" || action == "IMP") {
+                this.ImportData();
+              } else {
+                this.CambioDeEstado(action);
+              }
+            }}
+            onCancel={() => {
+              this.setState({ ...this.state, action: "" });
+            }}
+            focusCancelBtn
+          >
+            <div>
+              {action == "STA"
+                ? "ATENCIÓN: asegurese haber completados los datos mencionados en el formulario de Google. ¿Desea continuar?"
+                : action == "IMP"
+                ? "Se actualizarán los pedidos y productos. ¿Desea continuar?"
+                : action == "PRE"
+                ? "ATENCION: una vez iniciado el Ajuste de Pedidos, no se podran importar nuevos datos, asegurese de haber cerrad el Formulario de Google antes de continuar. ¿Desea continuar?"
+                : action == "INI"
+                ? "ATENCION: una vez iniciada la Entrega de Pedidos, no se podran modificar los precios ni anular los productos que no esten disponibles. ¿Desea continuar?"
+                : "ATENCION: si finaliza la entrega, no se podrán registrar nuevos pedidos. ¿Desea continuar?"}
+            </div>
+          </SweetAlert>
+        )}
+
         <div class="card border-secondary mb-3">
           <div class="card-header text-white bg-secondary">
             Configuración de Entregas
@@ -195,7 +242,9 @@ class Inicio extends Component {
                   {user.isAdmin && (
                     <button
                       disabled={entrega != null && entrega.estado != "CER"}
-                      onClick={() => this.ImportData()}
+                      onClick={() =>
+                        this.setState({ ...this.state, action: "STA" })
+                      }
                       class="btn btn-warning btn-pasos"
                     >
                       Iniciar
@@ -241,7 +290,9 @@ class Inicio extends Component {
                   {user.isAdmin && (
                     <button
                       disabled={entrega == null || entrega.estado != "IMP"}
-                      onClick={() => this.ImportData()}
+                      onClick={() =>
+                        this.setState({ ...this.state, action: "IMP" })
+                      }
                       class="btn btn-danger btn-pasos"
                     >
                       Importar
@@ -291,7 +342,9 @@ class Inicio extends Component {
                   {user.isAdmin && (
                     <button
                       disabled={entrega === null || entrega.estado != "IMP"}
-                      onClick={() => this.CambioDeEstado("PRE")}
+                      onClick={() =>
+                        this.setState({ ...this.state, action: "PRE" })
+                      }
                       class="btn btn-info btn-pasos"
                     >
                       Iniciar
@@ -336,7 +389,9 @@ class Inicio extends Component {
                   {user.isAdmin && (
                     <button
                       disabled={entrega === null || entrega.estado != "PRE"}
-                      onClick={() => this.CambioDeEstado("INI")}
+                      onClick={() =>
+                        this.setState({ ...this.state, action: "INI" })
+                      }
                       class="btn btn-success btn-pasos"
                     >
                       Iniciar
@@ -372,13 +427,15 @@ class Inicio extends Component {
                   <div class="card-body">
                     <p class="card-text">
                       Este es el último paso de la entrega, una vez finalizada
-                      se prodrán visualizar los totales obtenidos desde el{" "}
+                      se podrán visualizar los totales obtenidos desde el{" "}
                       <Link to="/entregas">Historial</Link> de las entregas.
                     </p>
                     {user.isAdmin && (
                       <button
                         disabled={entrega === null || entrega.estado != "INI"}
-                        onClick={() => this.CambioDeEstado("CER")}
+                        onClick={() =>
+                          this.setState({ ...this.state, action: "CER" })
+                        }
                         class="btn btn-primary btn-pasos"
                       >
                         Finalizar

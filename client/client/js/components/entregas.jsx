@@ -75,7 +75,7 @@ class Entregas extends Component {
                 <th className="d-none d-sm-table-cell cell-right">
                   Total Almacen
                 </th>
-                <th className="d-none d-sm-table-cell cell-right">Total</th>
+                <th className="cell-right">Total</th>
               </tr>
             </thead>
             <tbody>
@@ -92,7 +92,7 @@ class Entregas extends Component {
                   <td className="d-none d-sm-table-cell cell-right">
                     ${p.totalAlmacen.toFixed(2)}
                   </td>
-                  <td className="d-none d-sm-table-cell cell-right">
+                  <td className="cell-right">
                     ${(p.totalEntrega + p.totalAlmacen).toFixed(2)}
                   </td>
                 </tr>
