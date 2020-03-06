@@ -82,6 +82,7 @@ class Inicio extends Component {
   };
   render() {
     const { entrega, isLoading } = this.state;
+    const { user } = this.props;
     if (isLoading) {
       return (
         <div id="overlay">
@@ -191,13 +192,15 @@ class Inicio extends Component {
                       pedidos no podrán ser importados.
                     </i>
                   </p>
-                  <button
-                    disabled={entrega != null && entrega.estado != "CER"}
-                    onClick={() => this.ImportData()}
-                    class="btn btn-warning btn-pasos"
-                  >
-                    Iniciar
-                  </button>
+                  {user.isAdmin && (
+                    <button
+                      disabled={entrega != null && entrega.estado != "CER"}
+                      onClick={() => this.ImportData()}
+                      class="btn btn-warning btn-pasos"
+                    >
+                      Iniciar
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
@@ -235,13 +238,15 @@ class Inicio extends Component {
                     las veces que sea necesaria, la misma permite ir importando
                     los pedidos que se han realizado hasta el momento.
                   </p>
-                  <button
-                    disabled={entrega == null || entrega.estado != "IMP"}
-                    onClick={() => this.ImportData()}
-                    class="btn btn-danger btn-pasos"
-                  >
-                    Importar
-                  </button>
+                  {user.isAdmin && (
+                    <button
+                      disabled={entrega == null || entrega.estado != "IMP"}
+                      onClick={() => this.ImportData()}
+                      class="btn btn-danger btn-pasos"
+                    >
+                      Importar
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
@@ -283,13 +288,15 @@ class Inicio extends Component {
                     <b>formulario de google</b> debe estar cerrado para impedir
                     que lleguen nuevos pedidos.
                   </p>
-                  <button
-                    disabled={entrega === null || entrega.estado != "IMP"}
-                    onClick={() => this.CambioDeEstado("PRE")}
-                    class="btn btn-info btn-pasos"
-                  >
-                    Iniciar
-                  </button>
+                  {user.isAdmin && (
+                    <button
+                      disabled={entrega === null || entrega.estado != "IMP"}
+                      onClick={() => this.CambioDeEstado("PRE")}
+                      class="btn btn-info btn-pasos"
+                    >
+                      Iniciar
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
@@ -326,13 +333,15 @@ class Inicio extends Component {
                     pedidos que fueron retirados, asi como asentar ajustes o
                     compras en el almacén.
                   </p>
-                  <button
-                    disabled={entrega === null || entrega.estado != "PRE"}
-                    onClick={() => this.CambioDeEstado("INI")}
-                    class="btn btn-success btn-pasos"
-                  >
-                    Iniciar
-                  </button>
+                  {user.isAdmin && (
+                    <button
+                      disabled={entrega === null || entrega.estado != "PRE"}
+                      onClick={() => this.CambioDeEstado("INI")}
+                      class="btn btn-success btn-pasos"
+                    >
+                      Iniciar
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
@@ -366,13 +375,15 @@ class Inicio extends Component {
                       se prodrán visualizar los totales obtenidos desde el{" "}
                       <Link to="/entregas">Historial</Link> de las entregas.
                     </p>
-                    <button
-                      disabled={entrega === null || entrega.estado != "INI"}
-                      onClick={() => this.CambioDeEstado("CER")}
-                      class="btn btn-primary btn-pasos"
-                    >
-                      Finalizar
-                    </button>
+                    {user.isAdmin && (
+                      <button
+                        disabled={entrega === null || entrega.estado != "INI"}
+                        onClick={() => this.CambioDeEstado("CER")}
+                        class="btn btn-primary btn-pasos"
+                      >
+                        Finalizar
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>

@@ -171,9 +171,9 @@ class App extends Component {
                 path="/entregas-configuracion"
                 render={props => {
                   if (!user) return <Redirect to="/login"></Redirect>;
-                  if (!user.isAdmin) return <Redirect to="/404"></Redirect>;
                   return (
                     <EntregasConfig
+                      user={user}
                       onGlobalError={this.SetGlobalError}
                       {...props}
                     ></EntregasConfig>

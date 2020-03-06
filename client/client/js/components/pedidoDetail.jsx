@@ -272,7 +272,7 @@ class PedidoDetail extends Component {
                       disabled={entregaEstado !== "INI" || pedido.entregado}
                       onChange={this.onFieldChange}
                       thousandSeparator={false}
-                      defaultValue={pedido.ajuste}
+                      defaultValue={pedido.ajuste == 0 ? "" : pedido.ajuste}
                       prefix={"$"}
                       className="form-control"
                       placeholder="$0.00"
