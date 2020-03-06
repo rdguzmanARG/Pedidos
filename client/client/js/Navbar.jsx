@@ -12,7 +12,7 @@ class Navbar extends React.Component {
   render() {
     const { user } = this.props;
     return (
-      <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+      <nav className="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
         <div className="container">
           <Link className="navbar-brand" to="/">
             <FontAwesomeIcon icon={faHome} />
