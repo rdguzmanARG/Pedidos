@@ -1,5 +1,7 @@
 import React from "react";
 import { Link, NavLink } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faHome } from "@fortawesome/free-solid-svg-icons";
 
 class Navbar extends React.Component {
   state = { collapse: false };
@@ -13,7 +15,8 @@ class Navbar extends React.Component {
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
         <div className="container">
           <Link className="navbar-brand" to="/">
-            Pedidos
+            <FontAwesomeIcon icon={faHome} />
+            <span className="ml-1">Inicio</span>
           </Link>
           <button
             className="navbar-toggler"
@@ -70,15 +73,13 @@ class Navbar extends React.Component {
                       Entregas
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                      {user.isAdmin && (
-                        <Link
-                          className="dropdown-item"
-                          to="/entregas-configuracion"
-                          onClick={this.changeSelection}
-                        >
-                          Configuración
-                        </Link>
-                      )}
+                      <Link
+                        className="dropdown-item"
+                        to="/entregas-configuracion"
+                        onClick={this.changeSelection}
+                      >
+                        Configuración
+                      </Link>
                       <div class="dropdown-divider"></div>
                       <Link
                         className="dropdown-item"

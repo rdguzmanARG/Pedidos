@@ -11,6 +11,16 @@
       "src": "./images/apple-icon-144x144.png",
       "sizes": "144x144",
       "type": "image/png"
+    },
+    {
+      "src": "./images/apple-icon-57x57.png",
+      "sizes": "57x57",
+      "type": "image/png"
+    },
+    {
+      "src": "./images/favicon-32x32.png",
+      "sizes": "32x32",
+      "type": "image/png"
     }
   ],
   "start_url": "/",

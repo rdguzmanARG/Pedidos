@@ -1,0 +1,36 @@
+.navbar {
+  backface-visibility: hidden;
+  position: fixed;
+  padding-right: 0;
+  padding-left: 0;
+  top: 0;
+  width: 100%;
+  z-index: 10;
+  .navbar-toggler {
+    padding-right: 15px;
+  }
+  .navbar-nav {
+    padding-left: 20px;
+    @media (max-width: 991px) {
+      margin-left: 10px;
+    }
+  }
+  .navbar-text.current-user {
+    padding-left: 15px;
+  }
+  .navbar-brand {
+    font-size: 18px;
+    font-weight: bold;
+    margin-left: 0;
+    margin-right: 0;
+    @media (max-width: 991px) {
+      margin-left: 15px;
+    }
+  }
+  .navbar-dark {
+    .navbar-text.current-user {
+      color: white;
+      font-weight: bold;
+    }
+  }
+}

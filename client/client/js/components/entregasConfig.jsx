@@ -274,7 +274,7 @@ class Inicio extends Component {
               <div class="card border-info">
                 <div class="card-body">
                   <p class="card-text">
-                    El <b>ajuste de precios</b> le permitira modificar los
+                    El <b>ajuste de precios</b> le permitirá modificar los
                     precios que sean necesarios así como anular los productos
                     que no fueron recibidos.{" "}
                   </p>

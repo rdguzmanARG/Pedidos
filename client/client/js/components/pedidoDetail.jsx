@@ -7,6 +7,7 @@ import { faUndo } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 import { pedido_get, pedido_update } from "../services/pedidoService";
 import { entrega_getCurrent } from "../services/entregaService";
+import NumberFormat from "react-number-format";
 import auth from "../services/authService";
 
 class PedidoDetail extends Component {
@@ -65,8 +66,16 @@ class PedidoDetail extends Component {
   arrSum = arr => arr.reduce((a, b) => a + b, 0);
 
   onFieldChange = e => {
+    let valor = e.target.value;
+    if (
+      e.target.value == "" ||
+      e.target.value == "-" ||
+      e.target.value == "$."
+    ) {
+      valor = "0";
+    }
     const ped = { ...this.state.pedido };
-    ped[e.target.name] = Number(e.target.value);
+    ped[e.target.name] = Number(valor.replace("$", ""));
     this.setState({ ...this.state, pedido: ped });
   };
 
@@ -257,14 +266,15 @@ class PedidoDetail extends Component {
                 <td colSpan="4" className="cell-right d-none d-md-table-cell  ">
                   <div className="form-group">
                     <label for="ajusteporPesoD">Ajuste:</label>
-                    <input
+                    <NumberFormat
                       id="ajusteporPesoD"
-                      type="text"
                       name="ajuste"
                       disabled={entregaEstado !== "INI" || pedido.entregado}
-                      value={pedido.ajuste}
                       onChange={this.onFieldChange}
-                      class="form-control"
+                      thousandSeparator={false}
+                      defaultValue={pedido.ajuste}
+                      prefix={"$"}
+                      className="form-control"
                       placeholder="$0.00"
                     />
                   </div>
@@ -272,14 +282,15 @@ class PedidoDetail extends Component {
                 <td colSpan="3" className="cell-right d-table-cell d-md-none ">
                   <div className="form-group">
                     <label for="ajusteporPesoM">Ajuste:</label>
-                    <input
+                    <NumberFormat
                       id="ajusteporPesoM"
-                      type="text"
                       name="ajuste"
                       disabled={entregaEstado !== "INI" || pedido.entregado}
-                      value={pedido.ajuste}
                       onChange={this.onFieldChange}
-                      class="form-control"
+                      thousandSeparator={false}
+                      defaultValue={pedido.ajuste}
+                      prefix={"$"}
+                      className="form-control"
                       placeholder="$0.00"
                     />
                   </div>
