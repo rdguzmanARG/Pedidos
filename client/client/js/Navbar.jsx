@@ -92,7 +92,11 @@ class Navbar extends React.Component {
                   </li>
 
                   <li>
-                    <NavLink className="nav-link" to="/logout">
+                    <NavLink
+                      className="nav-link"
+                      to="/logout"
+                      onClick={this.changeSelection}
+                    >
                       Cerrar Sesión
                     </NavLink>
                   </li>
@@ -100,7 +104,11 @@ class Navbar extends React.Component {
               )}
               {!user && (
                 <li className="nav-item">
-                  <NavLink className="nav-link" to="/login">
+                  <NavLink
+                    className="nav-link"
+                    to="/login"
+                    onClick={this.changeSelection}
+                  >
                     Iniciar sesión
                   </NavLink>
                 </li>

@@ -40,7 +40,7 @@ class LoginForm extends Form {
 
   render() {
     return (
-      <div className="pt-5 pb-5">
+      <div className="pt-4 pb-5">
         <h1>Iniciar Sesión</h1>
         <form onSubmit={this.handleSubmit}>
           {this.renderInput("username", "Usuario", "text", true)}

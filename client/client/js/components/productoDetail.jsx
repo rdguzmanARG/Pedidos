@@ -127,7 +127,7 @@ class ProductoDetail extends Component {
               onChange={this.onFieldChange}
               id="anulado"
             />
-            <label for="anulado">Producto anulado</label>
+            <label for="anulado">Producto faltante</label>
           </div>
           <button
             type="submit"
