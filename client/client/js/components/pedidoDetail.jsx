@@ -34,8 +34,8 @@ class PedidoDetail extends Component {
                 ? pedido.totalPedido
                 : this.arrSum(
                     pedido.items
-                      .filter(f => !f.anulado)
-                      .map(m => m.cantidad * m.precio)
+                      .filter(f => !f.producto.anulado)
+                      .map(m => m.cantidad * m.producto.precio)
                   );
               this.setState({
                 pedido,
@@ -107,7 +107,6 @@ class PedidoDetail extends Component {
             confirmBtnText="Confirmar!"
             confirmBtnBsStyle="danger"
             cancelBtnBsStyle="primary"
-            showCloseButton={true}
             title="¿Desea continuar?"
             onConfirm={() => {
               const { pedido, totalPedidos, totalAlmacen } = this.state;
@@ -214,12 +213,12 @@ class PedidoDetail extends Component {
               </tr>
             </thead>
             <tbody>
-              {pedido.items.map((item, index) => (
-                <tr key={index} className={item.anulado ? "bg-danger" : ""}>
+              {pedido.items.map(({ producto, cantidad }, index) => (
+                <tr key={index} className={producto.anulado ? "bg-danger" : ""}>
                   <td className="pedido-detail-mobile d-table-cell d-md-none">
                     <div class="row2">
                       <div class="pedido-detail-item-title col pb-3">
-                        <b>{item.nombre}</b>
+                        <b>{producto.nombre}</b>
                       </div>
                     </div>
                     <table className="table m-0">
@@ -231,16 +230,16 @@ class PedidoDetail extends Component {
                         </tr>
                       </thead>
                       <tbody>
-                        <tr className={item.anulado ? "bg-danger" : ""}>
-                          <td>{item.cantidad}</td>
+                        <tr className={producto.anulado ? "bg-danger" : ""}>
+                          <td>{cantidad}</td>
                           <td className="cell-right">
-                            ${item.precio.toFixed(2)}
+                            ${producto.precio.toFixed(2)}
                           </td>
                           <td className="cell-right">
                             $
-                            {(item.anulado
+                            {(producto.anulado
                               ? 0
-                              : item.precio * item.cantidad
+                              : producto.precio * cantidad
                             ).toFixed(2)}
                           </td>
                         </tr>
@@ -249,16 +248,17 @@ class PedidoDetail extends Component {
                     <div className="space"></div>
                   </td>
 
-                  <td className="d-none d-md-table-cell">{item.nombre}</td>
-                  <td className="d-none d-md-table-cell">{item.cantidad}</td>
+                  <td className="d-none d-md-table-cell">{producto.nombre}</td>
+                  <td className="d-none d-md-table-cell">{cantidad}</td>
                   <td className="d-none d-md-table-cell cell-right">
-                    ${item.precio.toFixed(2)}
+                    ${producto.precio.toFixed(2)}
                   </td>
                   <td className="d-none d-md-table-cell cell-right">
                     $
-                    {(item.anulado ? 0 : item.precio * item.cantidad).toFixed(
-                      2
-                    )}
+                    {(producto.anulado
+                      ? 0
+                      : producto.precio * cantidad
+                    ).toFixed(2)}
                   </td>
                 </tr>
               ))}

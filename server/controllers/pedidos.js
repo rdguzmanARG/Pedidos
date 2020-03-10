@@ -14,6 +14,15 @@ exports.pedidos_get_all = (req, res, next) => {
 
 exports.pedidos_get_pedido = (req, res, next) => {
   Pedido.findById(req.params.idPedido)
+    .populate("items.producto")
+    .then(pedido => {
+      res.status(200).json(pedido);
+    })
+    .catch(err => res.status(500).json({ error: err }));
+
+  return;
+
+  Pedido.findById(req.params.idPedido)
     .then(pedido => {
       if (pedido) {
         Producto.find({ _id: { $in: pedido.items.map(p => p._id) } })
@@ -114,7 +123,7 @@ function ImportarDatos(response, entrega) {
   console.log("Imp - Inicio");
   Pedido.deleteMany({}).then(() => {
     console.log("Imp - Borra pedidos");
-    Pedido.deleteMany({}).then(() => {
+    Producto.deleteMany({}).then(() => {
       console.log("Imp - Borra productos");
       fetch(
         "https://sheet.best/api/sheets/2c84077a-9587-4180-898d-56b0ad076f16"
@@ -209,7 +218,7 @@ function ImportarDatos(response, entrega) {
                         )
                         .map(pr => {
                           return {
-                            _id: pr._id,
+                            producto: pr._id,
                             cantidad: d[pr.nombre]
                           };
                         })
@@ -255,7 +264,9 @@ function ImportarDatos(response, entrega) {
                           ped.items.map(item => {
                             if (
                               item &&
-                              item._id.toString() === prod._id.toString()
+                              item.producto &&
+                              item.producto._id.toString() ===
+                                prod._id.toString()
                             ) {
                               prod.cantidad += item.cantidad;
                             }

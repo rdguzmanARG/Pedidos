@@ -22,7 +22,7 @@ const schema = mongoose.Schema(
     },
     items: [
       {
-        _id: mongoose.Schema.Types.ObjectId,
+        producto: { type: mongoose.Schema.Types.ObjectId, ref: "Producto" },
         cantidad: Number
       }
     ],
