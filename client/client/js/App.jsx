@@ -5,7 +5,7 @@ import {
   Route,
   Redirect
 } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer, toast, Flip } from "react-toastify";
 import Loader from "react-loader-spinner";
 import Footer from "./Footer";
 import NavBar from "./Navbar";
@@ -77,10 +77,11 @@ class App extends Component {
         <div className="container">
           <ToastContainer
             position="top-center"
-            autoClose={5000}
+            autoClose={8000}
             hideProgressBar={false}
             newestOnTop={false}
             closeOnClick
+            transition={Flip}
             rtl={false}
             pauseOnVisibilityChange
             draggable

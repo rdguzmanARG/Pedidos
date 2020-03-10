@@ -5,57 +5,25 @@ let Producto = require("../models/producto.model");
 let Pedido = require("../models/pedido.model");
 let Entrega = require("../models/entrega.model");
 
-exports.pedidos_get_all = (req, res, next) => {
+exports.pedidos_get_all = (req, res) => {
   Pedido.find()
     .select("_id nombre apellido celular entregado usuarioMod")
-    .then(pedidos => res.status(200).json(pedidos))
+    .then(pedidos => res.status(200).json({ pedidos, last: new Date() }))
     .catch(err => res.status(500).json({ error: err }));
 };
 
-exports.pedidos_get_pedido = (req, res, next) => {
+exports.pedidos_get_last = (req, res) => {
+  Pedido.find({ updatedAt: { $gt: req.params.date } })
+    .select("_id nombre apellido celular entregado usuarioMod")
+    .then(pedidos => res.status(200).json({ pedidos, last: new Date() }))
+    .catch(err => res.status(500).json({ error: err }));
+};
+
+exports.pedidos_get_pedido = (req, res) => {
   Pedido.findById(req.params.idPedido)
     .populate("items.producto")
     .then(pedido => {
       res.status(200).json(pedido);
-    })
-    .catch(err => res.status(500).json({ error: err }));
-
-  return;
-
-  Pedido.findById(req.params.idPedido)
-    .then(pedido => {
-      if (pedido) {
-        Producto.find({ _id: { $in: pedido.items.map(p => p._id) } })
-          .then(prod => {
-            res.status(200).json({
-              _id: pedido._id,
-              nombre: pedido.nombre,
-              apellido: pedido.apellido,
-              celular: pedido.celular,
-              email: pedido.email,
-              entregado: pedido.entregado,
-              ajuste: pedido.ajuste,
-              totalPedido: pedido.totalPedido,
-              totalAlmacen: pedido.totalAlmacen,
-              usuarioMod: pedido.usuarioMod,
-              date: pedido.date,
-              items: prod.map(p => {
-                return {
-                  _id: p._id,
-                  nombre: p.nombre,
-                  precio: p.precio,
-                  anulado: p.anulado,
-                  cantidad: pedido.items.filter(
-                    i => i._id.toString() === p._id.toString()
-                  )[0].cantidad
-                };
-              })
-            });
-          })
-          .catch(err => res.status(500).json({ error: err }));
-      } else {
-        res.status(404).json({ message: "Pedido inexistente." });
-      }
     })
     .catch(err => res.status(500).json({ error: err }));
 };

@@ -6,6 +6,10 @@ export function pedido_getAll() {
   return http.get(apiUrl + "/pedidos");
 }
 
+export function pedido_getLast(lastCheck) {
+  return http.get(apiUrl + "/pedidos/last/" + lastCheck);
+}
+
 export function pedido_get(idPedido) {
   return http.get(apiUrl + "/pedidos/" + idPedido);
 }

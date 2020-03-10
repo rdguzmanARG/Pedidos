@@ -2,23 +2,27 @@ import React, { Component } from "react";
 import Scroll from "react-scroll";
 import Loader from "react-loader-spinner";
 import { Link } from "react-router-dom";
-import { pedido_getAll } from "../services/pedidoService";
+import { pedido_getAll, pedido_getLast } from "../services/pedidoService";
 import auth from "../services/authService";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit } from "@fortawesome/free-solid-svg-icons";
+import { toast } from "react-toastify";
 const Element = Scroll.Element;
 
 class PedidosList extends Component {
   state = {
     isLoading: true,
-    pedidos: []
+    pedidos: [],
+    last: null,
+    intervalId: null
   };
 
   componentDidMount() {
     pedido_getAll()
       .then(res => {
         if (res.status === 200) {
-          this.setState({ pedidos: res.data, isLoading: false });
+          const { pedidos, last } = res.data;
+          this.setState({ pedidos, last, isLoading: false });
           const scroller = Scroll.scroller;
           scroller.scrollTo("myScrollToElement", {
             duration: 1000,
@@ -26,6 +30,9 @@ class PedidosList extends Component {
             smooth: true,
             offset: -65 // Scrolls to element + 50 pixels down the page
           });
+
+          const intervalId = setInterval(this.updatePedidosList, 1000 * 60);
+          this.setState({ ...this.state, intervalId: intervalId });
         }
       })
       .catch(ex => {
@@ -37,6 +44,69 @@ class PedidosList extends Component {
         }
       });
   }
+
+  componentWillUnmount() {
+    clearInterval(this.state.intervalId);
+  }
+
+  updatePedidosList = () => {
+    if (this.state.last != null) {
+      pedido_getLast(this.state.last)
+        .then(res => {
+          if (res.status == 200 && res.data) {
+            // Validate if has new data
+            if (res.data.pedidos.length > 0) {
+              const newPedidos = res.data.pedidos;
+              const pedidos = this.state.pedidos.filter(function(item) {
+                return !newPedidos.map(p => p._id).includes(item._id)
+                  ? true
+                  : false;
+              });
+
+              this.setState({
+                ...this.state,
+                pedidos: [...pedidos, ...newPedidos],
+                last: res.data.last
+              });
+              const restantes =
+                pedidos.length - pedidos.filter(f => f.entregado).length;
+              const entregados = newPedidos.filter(p => p.entregado).length;
+              if (entregados > 0) {
+                toast.info(
+                  <div>
+                    <h2>Atención:</h2>
+                    {entregados == 1 && (
+                      <div>
+                        <b>{entregados}</b> nuevo pedido entregado
+                        recientemente.
+                      </div>
+                    )}
+                    {entregados > 1 && (
+                      <div>
+                        <b>{entregados}</b> nuevos pedidos entregados
+                        recientemente.
+                      </div>
+                    )}
+                    {restantes == 0 && (
+                      <div>
+                        <b>Felicitaciones</b>, no quedan más pedidos por
+                        entregar.
+                      </div>
+                    )}
+                    {restantes > 0 && (
+                      <div>Restan {restantes} por entregar.</div>
+                    )}
+                  </div>
+                );
+              }
+            } else {
+              this.setState({ ...this.state, last: res.data.last });
+            }
+          }
+        })
+        .catch();
+    }
+  };
 
   render() {
     const { pedidos, isLoading } = this.state;
