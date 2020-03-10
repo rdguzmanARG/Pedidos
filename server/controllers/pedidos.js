@@ -8,14 +8,32 @@ let Entrega = require("../models/entrega.model");
 exports.pedidos_get_all = (req, res) => {
   Pedido.find()
     .select("_id nombre apellido celular entregado usuarioMod")
-    .then(pedidos => res.status(200).json({ pedidos, last: new Date() }))
+    .then(pedidos => {
+      Entrega.findOne()
+        .sort({ fechaImportacion: -1 })
+        .then(entrega => {
+          res
+            .status(200)
+            .json({ pedidos, last: new Date(), entregaEstado: entrega.estado });
+        })
+        .catch(err => res.status(500).json({ error: err }));
+    })
     .catch(err => res.status(500).json({ error: err }));
 };
 
 exports.pedidos_get_last = (req, res) => {
   Pedido.find({ updatedAt: { $gt: req.params.date } })
     .select("_id nombre apellido celular entregado usuarioMod")
-    .then(pedidos => res.status(200).json({ pedidos, last: new Date() }))
+    .then(pedidos => {
+      Entrega.findOne()
+        .sort({ fechaImportacion: -1 })
+        .then(entrega => {
+          res
+            .status(200)
+            .json({ pedidos, last: new Date(), entregaEstado: entrega.estado });
+        })
+        .catch(err => res.status(500).json({ error: err }));
+    })
     .catch(err => res.status(500).json({ error: err }));
 };
 

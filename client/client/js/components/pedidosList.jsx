@@ -14,15 +14,16 @@ class PedidosList extends Component {
     isLoading: true,
     pedidos: [],
     last: null,
-    intervalId: null
+    intervalId: null,
+    entregaEstado: null
   };
 
   componentDidMount() {
     pedido_getAll()
       .then(res => {
         if (res.status === 200) {
-          const { pedidos, last } = res.data;
-          this.setState({ pedidos, last, isLoading: false });
+          const { pedidos, last, entregaEstado } = res.data;
+          this.setState({ pedidos, last, isLoading: false, entregaEstado });
           const scroller = Scroll.scroller;
           scroller.scrollTo("myScrollToElement", {
             duration: 1000,
@@ -57,54 +58,72 @@ class PedidosList extends Component {
             // Validate if has new data
             if (res.data.pedidos.length > 0) {
               const newPedidos = res.data.pedidos;
-              const pedidos = this.state.pedidos.filter(function(item) {
-                return !newPedidos.map(p => p._id).includes(item._id)
-                  ? true
-                  : false;
-              });
 
-              this.setState({
-                ...this.state,
-                pedidos: [...pedidos, ...newPedidos],
-                last: res.data.last
-              });
-              const restantes =
-                pedidos.length - pedidos.filter(f => f.entregado).length;
-              const entregados = newPedidos.filter(p => p.entregado).length;
-              if (entregados > 0) {
-                toast.info(
-                  <div>
-                    <h2>Atención:</h2>
-                    {entregados == 1 && (
-                      <div>
-                        <b>{entregados}</b> nuevo pedido entregado
-                        recientemente.
-                      </div>
-                    )}
-                    {entregados > 1 && (
-                      <div>
-                        <b>{entregados}</b> nuevos pedidos entregados
-                        recientemente.
-                      </div>
-                    )}
-                    {restantes == 0 && (
-                      <div>
-                        <b>Felicitaciones</b>, no quedan más pedidos por
-                        entregar.
-                      </div>
-                    )}
-                    {restantes > 0 && (
-                      <div>Restan {restantes} por entregar.</div>
-                    )}
-                  </div>
-                );
+              if (this.state.entregaEstado == "INI") {
+                const pedidos = this.state.pedidos.filter(function(item) {
+                  return !newPedidos.map(p => p._id).includes(item._id)
+                    ? true
+                    : false;
+                });
+                this.setState({
+                  ...this.state,
+                  pedidos: [...pedidos, ...newPedidos],
+                  last: res.data.last,
+                  entregaEstado: res.data.entregaEstado
+                });
+                const restantes =
+                  this.state.pedidos.length -
+                  this.state.pedidos.filter(f => f.entregado).length;
+                const entregados = newPedidos.filter(p => p.entregado).length;
+                if (entregados > 0) {
+                  toast.info(
+                    <div>
+                      <h2>Atención:</h2>
+                      {entregados == 1 && (
+                        <div>
+                          <b>{entregados}</b> nuevo pedido entregado
+                          recientemente.
+                        </div>
+                      )}
+                      {entregados > 1 && (
+                        <div>
+                          <b>{entregados}</b> nuevos pedidos entregados
+                          recientemente.
+                        </div>
+                      )}
+                      {restantes == 0 && (
+                        <div>
+                          <b>Felicitaciones</b>, no quedan más pedidos por
+                          entregar.
+                        </div>
+                      )}
+                      {restantes > 0 && (
+                        <div>Restan {restantes} por entregar.</div>
+                      )}
+                    </div>
+                  );
+                }
+              } else {
+                this.setState({
+                  ...this.state,
+                  pedidos: [...newPedidos],
+                  last: res.data.last,
+                  entregaEstado: res.data.entregaEstado
+                });
+                toast.info("Se han importado datos recientemente.");
               }
             } else {
-              this.setState({ ...this.state, last: res.data.last });
+              this.setState({
+                ...this.state,
+                last: res.data.last,
+                entregaEstado: res.data.entregaEstado
+              });
             }
           }
         })
-        .catch();
+        .catch(() => {
+          clearInterval(this.state.intervalId);
+        });
     }
   };
 
