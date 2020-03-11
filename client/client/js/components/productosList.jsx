@@ -66,7 +66,6 @@ class ProductosList extends Component {
           <Element name="myScrollToElement"></Element>
           <input
             type="text"
-            autoFocus
             class="form-control"
             placeholder="Ingresar texto para buscar..."
             value={this.props.filter}

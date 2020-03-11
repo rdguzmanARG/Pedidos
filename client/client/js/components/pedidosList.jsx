@@ -155,7 +155,6 @@ class PedidosList extends Component {
           <input
             type="text"
             class="form-control"
-            autoFocus
             placeholder="Ingresar texto para buscar..."
             value={this.props.filter}
             onChange={e =>
