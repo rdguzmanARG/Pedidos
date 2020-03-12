@@ -103,6 +103,10 @@ footer {
 
 // Detalle del pedido
 .pedido-detail {
+  .card-header {
+    background-color: teal;
+    color: white;
+  }
   .form-group {
     input.form-control {
       width: unset;

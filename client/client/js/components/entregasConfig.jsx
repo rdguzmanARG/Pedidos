@@ -34,7 +34,7 @@ class Inicio extends Component {
       .then(res => {
         if (res.status === 200) {
           this.setState({ entrega: res.data, isLoading: false });
-          this.scrollTo();
+          //this.scrollTo();
         }
       })
       .catch(ex => {
@@ -161,7 +161,7 @@ class Inicio extends Component {
           </SweetAlert>
         )}
 
-        <div class="card border-secondary mb-3">
+        <div class="card border-secondary mb-2 mt-2">
           <div class="card-header text-white bg-secondary">
             Configuración de Entregas
           </div>

@@ -155,21 +155,7 @@ class PedidoDetail extends Component {
             </div>
           </SweetAlert>
         )}
-        <nav aria-label="breadcrumb">
-          <ol class="breadcrumb">
-            <li class="breadcrumb-item">
-              <Link to="/">Inicio</Link>
-            </li>
-            <li class="breadcrumb-item">
-              <Link to="/pedidos">Pedidos</Link>
-            </li>
-            <li class="breadcrumb-item active" aria-current="page">
-              Detalle
-            </li>
-          </ol>
-        </nav>
-
-        <div className="card">
+        <div className="card mt-2 mb-2">
           <div className="card-header">
             <div class="d-flex">
               <div>
@@ -201,7 +187,7 @@ class PedidoDetail extends Component {
           </div>
         </div>
         {pedido.items && (
-          <table className="table mt-2">
+          <table className="table ">
             <thead>
               <tr className="main-header">
                 <th>Detalle del pedido</th>

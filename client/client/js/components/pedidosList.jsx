@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import Scroll from "react-scroll";
 import Loader from "react-loader-spinner";
 import { Link } from "react-router-dom";
 import { pedido_getAll, pedido_getLast } from "../services/pedidoService";
@@ -7,7 +6,6 @@ import auth from "../services/authService";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
-const Element = Scroll.Element;
 
 class PedidosList extends Component {
   state = {
@@ -24,14 +22,6 @@ class PedidosList extends Component {
         if (res.status === 200) {
           const { pedidos, last, entregaEstado } = res.data;
           this.setState({ pedidos, last, isLoading: false, entregaEstado });
-          const scroller = Scroll.scroller;
-          scroller.scrollTo("myScrollToElement", {
-            duration: 1000,
-            delay: 100,
-            smooth: true,
-            offset: -65 // Scrolls to element + 50 pixels down the page
-          });
-
           const intervalId = setInterval(this.updatePedidosList, 1000 * 60);
           this.setState({ ...this.state, intervalId: intervalId });
         }
@@ -140,18 +130,7 @@ class PedidosList extends Component {
     const restantes = cantidad - pedidos.filter(f => f.entregado).length;
     return (
       <React.Fragment>
-        <nav aria-label="breadcrumb">
-          <ol class="breadcrumb">
-            <li class="breadcrumb-item">
-              <Link to="/">Inicio</Link>
-            </li>
-            <li class="breadcrumb-item active" aria-current="page">
-              Pedidos
-            </li>
-          </ol>
-        </nav>
-        <div class="input-group mb-3">
-          <Element name="myScrollToElement"></Element>
+        <div class="input-group mb-2 mt-2">
           <input
             type="text"
             class="form-control"

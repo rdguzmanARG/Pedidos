@@ -78,73 +78,70 @@ class ProductoDetail extends Component {
       );
     }
     return (
-      <React.Fragment>
-        <nav aria-label="breadcrumb">
-          <ol className="breadcrumb">
-            <li className="breadcrumb-item">
-              <Link to="/">Inicio</Link>
-            </li>
-            <li className="breadcrumb-item">
-              <Link to="/productos">Productos</Link>
-            </li>
-            <li className="breadcrumb-item active" aria-current="page">
-              Detalle
-            </li>
-          </ol>
-        </nav>
-
-        <form onSubmit={this.submitForm}>
-          <div className="form-group">
-            <label for="exampleInputEmail1">Nombre del Producto</label>
-            <input
-              type="text"
-              className="form-control"
-              name="nombre"
-              value={producto.nombre}
-              onChange={this.onFieldChange}
-              disabled={true}
-            />
+      <div className="producto-detail">
+        <div className="card mt-2 mb-2">
+          <div className="card-header">
+            <div class="d-flex">
+              <div>
+                <b>Detalle del Producto</b>
+              </div>
+            </div>
           </div>
-          <div className="form-group">
-            <label for="exampleInputPassword1">Precio de Venta</label>
-            <input
-              type="text"
-              name="precio"
-              disabled={entregaEstado != "PRE"}
-              value={producto.precio}
-              onChange={this.onFieldChange}
-              class="form-control"
-              placeholder="$0.00"
-            />
+          <div className="card-body m-1">
+            <form onSubmit={this.submitForm}>
+              <div className="form-group">
+                <label for="exampleInputEmail1">Nombre del Producto</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  name="nombre"
+                  value={producto.nombre}
+                  onChange={this.onFieldChange}
+                  disabled={true}
+                />
+              </div>
+              <div className="form-group">
+                <label for="exampleInputPassword1">Precio de Venta</label>
+                <input
+                  type="text"
+                  name="precio"
+                  disabled={entregaEstado != "PRE"}
+                  value={producto.precio}
+                  onChange={this.onFieldChange}
+                  class="form-control"
+                  placeholder="$0.00"
+                />
+              </div>
+              <div className="form-group">
+                <input
+                  className="form-check"
+                  type="checkbox"
+                  disabled={entregaEstado != "PRE"}
+                  defaultChecked={producto.anulado}
+                  name="anulado"
+                  onChange={this.onFieldChange}
+                  id="anulado"
+                />
+                <label for="anulado">Producto faltante</label>
+              </div>
+              <button
+                type="submit"
+                className="btn btn-success"
+                disabled={entregaEstado != "PRE"}
+              >
+                Aceptar
+              </button>
+              <button
+                title="Cancelar"
+                onClick={() => this.props.history.push("/productos")}
+                class="btn btn-primary ml-2"
+              >
+                <FontAwesomeIcon icon={faUndo} />
+              </button>
+            </form>
           </div>
-          <div className="form-group">
-            <input
-              className="form-check"
-              type="checkbox"
-              disabled={entregaEstado != "PRE"}
-              defaultChecked={producto.anulado}
-              name="anulado"
-              onChange={this.onFieldChange}
-              id="anulado"
-            />
-            <label for="anulado">Producto faltante</label>
-          </div>
-          <button
-            type="submit"
-            className="btn btn-success"
-            disabled={entregaEstado != "PRE"}
-          >
-            Aceptar
-          </button>
-          <button
-            title="Cancelar"
-            onClick={() => this.props.history.push("/productos")}
-            class="btn btn-primary ml-2"
-          >
-            <FontAwesomeIcon icon={faUndo} />
-          </button>
-        </form>
-      </React.Fragment>
+        </div>
+      </div>
     );
   }
 }

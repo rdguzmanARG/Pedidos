@@ -42,18 +42,8 @@ class Entregas extends Component {
     }
     return (
       <React.Fragment>
-        <nav aria-label="breadcrumb">
-          <ol class="breadcrumb">
-            <li class="breadcrumb-item">
-              <Link to="/">Inicio</Link>
-            </li>
-            <li class="breadcrumb-item active" aria-current="page">
-              Entregas cerradas
-            </li>
-          </ol>
-        </nav>
         {entregas.length == 0 && (
-          <div>
+          <div className="mt-2 mb-2">
             <div class="alert alert-success" role="alert">
               <h4 class="alert-heading">
                 No hay entregas registradas por el momento.

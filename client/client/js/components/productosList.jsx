@@ -1,11 +1,9 @@
 import React, { Component } from "react";
-import Scroll from "react-scroll";
 import Loader from "react-loader-spinner";
 import { Link } from "react-router-dom";
 import { producto_getAll } from "../services/productoService";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit } from "@fortawesome/free-solid-svg-icons";
-const Element = Scroll.Element;
 
 class ProductosList extends Component {
   state = {
@@ -22,13 +20,6 @@ class ProductosList extends Component {
       .then(res => {
         if (res.status === 200) {
           this.setState({ productos: res.data, isLoading: false });
-          const scroller = Scroll.scroller;
-          scroller.scrollTo("myScrollToElement", {
-            duration: 1000,
-            delay: 100,
-            smooth: true,
-            offset: -65 // Scrolls to element + 50 pixels down the page
-          });
         }
       })
       .catch(ex => {
@@ -52,18 +43,7 @@ class ProductosList extends Component {
     }
     return (
       <React.Fragment>
-        <nav aria-label="breadcrumb">
-          <ol class="breadcrumb">
-            <li class="breadcrumb-item">
-              <Link to="/">Inicio</Link>
-            </li>
-            <li class="breadcrumb-item active" aria-current="page">
-              Productos
-            </li>
-          </ol>
-        </nav>
-        <div class="input-group mb-3">
-          <Element name="myScrollToElement"></Element>
+        <div class="input-group mb-2 mt-2">
           <input
             type="text"
             class="form-control"
