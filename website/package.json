@@ -1,0 +1,65 @@
+{
+  "name": "react-ticket-client",
+  "version": "1.0.0",
+  "description": "Cliente HTML de React Ticket",
+  "private": true,
+  "scripts": {
+    "build": "webpack --env.development --mode=development --env.API_URL=http://lachapanay-api.azurewebsites.net/api",
+    "build-prod": "webpack --env.production --mode=production --env.API_URL=http://lachapanay-api.azurewebsites.net/api",
+    "dev": "webpack-dev-server --env.development --mode=development  --env.API_URL=http://lachapanay-api.azurewebsites.net/api --progress --port 8081",
+    "dev-local": "webpack-dev-server --env.development --mode=development --env.API_URL=http://localhost:5000/api --progress --port 8081",
+    "watch": "webpack --env.development --mode=development --watch"
+  },
+  "engines": {
+    "node": ">=10.16.0"
+  },
+  "author": {
+    "name": "MRGo",
+    "email": "ricardo.deguzman@gmail.com"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.27",
+    "@fortawesome/free-solid-svg-icons": "^5.12.1",
+    "@fortawesome/react-fontawesome": "^0.1.8",
+    "axios": "^0.19.0",
+    "babel-core": "^6.26.3",
+    "babel-loader": "7",
+    "babel-plugin-react-html-attrs": "^2.1.0",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-react": "^6.24.1",
+    "bootstrap": "^4.4.1",
+    "css-loader": "^3.2.0",
+    "extract-text-webpack-plugin": "^4.0.0-beta.0",
+    "fibers": "^4.0.2",
+    "graceful-fs": "^4.2.3",
+    "joi-browser": "^13.4.0",
+    "jquery": "^3.4.1",
+    "jwt-decode": "^2.2.0",
+    "moment": "^2.24.0",
+    "node-sass": "^4.13.0",
+    "popper.js": "^1.16.1",
+    "react": "^16.11.0",
+    "react-bootstrap-sweetalert": "^5.1.9",
+    "react-dom": "^16.11.0",
+    "react-loader-spinner": "^3.1.5",
+    "react-moment": "^0.9.7",
+    "react-number-format": "^4.4.1",
+    "react-redux": "^7.1.1",
+    "react-router-dom": "^5.1.2",
+    "react-scroll": "^1.7.16",
+    "react-toastify": "^5.5.0",
+    "sass": "^1.23.1",
+    "sass-loader": "^8.0.0",
+    "serialize-javascript": "^3.0.0",
+    "style-loader": "^1.0.0",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.9"
+  },
+  "devDependencies": {
+    "url-loader": "^3.0.0",
+    "webpack-dev-server": "^3.9.0"
+  }
+}

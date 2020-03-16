@@ -1,0 +1,11 @@
+@import "nav.scss";
+
+// Global styles
+iframe {
+  display: block;
+  overflow: hidden;
+  border: none; /* Reset default border */
+  height: calc(100vh - 50px); /* Viewport-relative units */
+  width: calc(100% + 17px);
+  //margin-top: 56px;
+}
