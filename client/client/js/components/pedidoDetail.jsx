@@ -386,18 +386,17 @@ class PedidoDetail extends Component {
           </table>
         )}
 
-        {(entregaEstado === "INI" && pedido.entregado === undefined) ||
-          (pedido.entregado === false && (
-            <button
-              onClick={() =>
-                this.setState({ ...this.state, showConfirmAceptado: true })
-              }
-              disabled={entregaEstado !== "INI"}
-              class="btn btn-success ml-2"
-            >
-              Confirmar retiro
-            </button>
-          ))}
+        {entregaEstado === "INI" && pedido.entregado === false && (
+          <button
+            onClick={() =>
+              this.setState({ ...this.state, showConfirmAceptado: true })
+            }
+            disabled={entregaEstado !== "INI"}
+            class="btn btn-success ml-2"
+          >
+            Confirmar retiro
+          </button>
+        )}
         {entregaEstado === "INI" && pedido.entregado === true && (
           <button
             onClick={() =>

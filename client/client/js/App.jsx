@@ -131,7 +131,6 @@ class App extends Component {
                 path="/productos/:verb/:id"
                 render={props => {
                   if (!user) return <Redirect to="/login"></Redirect>;
-                  if (!user.isAdmin) return <Redirect to="/404"></Redirect>;
                   return (
                     <ProductoDetail
                       onGlobalError={this.SetGlobalError}

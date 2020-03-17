@@ -60,7 +60,7 @@ class ProductosList extends Component {
               <th>Nombre del producto</th>
               <th className="d-none d-sm-table-cell">Cantidad</th>
               <th className="cell-right">P.Venta</th>
-              {this.props.user.isAdmin && <th></th>}
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -71,15 +71,13 @@ class ProductosList extends Component {
                   <td>{p.nombre}</td>
                   <td className="d-none d-sm-table-cell">{p.cantidad}</td>
                   <td className="cell-right">${p.precio.toFixed(2)}</td>
-                  {this.props.user.isAdmin && (
-                    <td className="cell-right">
-                      <Link to={`/productos/ver/${p._id}`} title="Modificar">
-                        <button type="button" class="btn btn-primary btn-sm">
-                          <FontAwesomeIcon icon={faEdit} />
-                        </button>
-                      </Link>
-                    </td>
-                  )}
+                  <td className="cell-right">
+                    <Link to={`/productos/ver/${p._id}`} title="Modificar">
+                      <button type="button" class="btn btn-primary btn-sm">
+                        <FontAwesomeIcon icon={faEdit} />
+                      </button>
+                    </Link>
+                  </td>
                 </tr>
               ))}
           </tbody>

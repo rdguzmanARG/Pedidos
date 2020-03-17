@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import Loader from "react-loader-spinner";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUndo } from "@fortawesome/free-solid-svg-icons";
+import { faEdit } from "@fortawesome/free-solid-svg-icons";
 import { producto_get, producto_update } from "../services/productoService";
 import { entrega_getCurrent } from "../services/entregaService";
 import auth from "../services/authService";
@@ -11,6 +12,7 @@ class ProductoDetail extends Component {
   state = {
     isLoading: true,
     producto: {},
+    pedidos: [],
     entregaEstado: ""
   };
 
@@ -22,7 +24,8 @@ class ProductoDetail extends Component {
           entrega_getCurrent()
             .then(resEntrega => {
               this.setState({
-                producto: resProducto.data,
+                producto: resProducto.data.producto,
+                pedidos: resProducto.data.pedidos,
                 isLoading: false,
                 entregaEstado: resEntrega.data ? resEntrega.data.estado : ""
               });
@@ -69,7 +72,8 @@ class ProductoDetail extends Component {
   };
 
   render() {
-    const { producto, isLoading, entregaEstado } = this.state;
+    const { producto, pedidos, isLoading, entregaEstado } = this.state;
+    const { user } = this.props;
     if (isLoading) {
       return (
         <div id="overlay">
@@ -105,7 +109,7 @@ class ProductoDetail extends Component {
                 <input
                   type="text"
                   name="precio"
-                  disabled={entregaEstado != "INI"}
+                  disabled={!user.isAdmin || entregaEstado != "INI"}
                   value={producto.precio}
                   onChange={this.onFieldChange}
                   class="form-control"
@@ -116,7 +120,7 @@ class ProductoDetail extends Component {
                 <input
                   className="form-check"
                   type="checkbox"
-                  disabled={entregaEstado != "INI"}
+                  disabled={!user.isAdmin || entregaEstado != "INI"}
                   defaultChecked={producto.anulado}
                   name="anulado"
                   onChange={this.onFieldChange}
@@ -124,13 +128,16 @@ class ProductoDetail extends Component {
                 />
                 <label for="anulado">Producto faltante</label>
               </div>
-              <button
-                type="submit"
-                className="btn btn-success"
-                disabled={entregaEstado != "INI"}
-              >
-                Aceptar
-              </button>
+              {entregaEstado == "INI" && (
+                <button
+                  type="submit"
+                  className="btn btn-success"
+                  disabled={!user.isAdmin}
+                >
+                  Aceptar
+                </button>
+              )}
+
               <button
                 title="Cancelar"
                 onClick={() => this.props.history.push("/productos")}
@@ -141,6 +148,75 @@ class ProductoDetail extends Component {
             </form>
           </div>
         </div>
+        {pedidos.length == 0 && (
+          <div class="mt-5 mb-5 pt-5 pb-5 alert alert-success" role="alert">
+            <h4 class="alert-heading">
+              El producto no fue comprado hasta el momento.
+            </h4>
+          </div>
+        )}
+        {pedidos.length > 0 && (
+          <div class="card border-success mb-2 mt-2">
+            <div class="card-header text-white bg-success">
+              Productos pedidos por:
+            </div>
+            <div class="card-body">
+              <table className="table table-striped table-sm table-pedidos">
+                <thead className="thead-dark">
+                  <tr>
+                    <th>Nombre y Apellido</th>
+                    <th>Entregado por</th>
+                    <th className="cell-right"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {pedidos
+                    .sort((a, b) => {
+                      var nameA =
+                        a.nombre.toLowerCase() + a.apellido.toLowerCase(); // ignore upper and lowercase
+                      var nameB =
+                        b.nombre.toLowerCase() + b.apellido.toLowerCase(); // ignore upper and lowercase
+                      if (nameA < nameB) {
+                        return -1;
+                      }
+                      if (nameA > nameB) {
+                        return 1;
+                      }
+
+                      // names must be equal
+                      return 0;
+                    })
+                    .map((pedido, index) => (
+                      <tr
+                        key={index}
+                        className={pedido.entregado ? "bg-entregado" : ""}
+                      >
+                        <td>
+                          <b>
+                            {pedido.nombre}, {pedido.apellido}
+                          </b>
+                        </td>
+                        <td></td>
+                        <td className="cell-right">
+                          <Link
+                            title="Ver pedido"
+                            to={`/pedidos/ver/${pedido._id}`}
+                          >
+                            <button
+                              type="button"
+                              class="btn btn-sm btn-success"
+                            >
+                              <FontAwesomeIcon icon={faEdit} />
+                            </button>
+                          </Link>
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
       </div>
     );
   }

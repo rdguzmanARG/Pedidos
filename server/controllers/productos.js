@@ -1,4 +1,5 @@
 let Producto = require("../models/producto.model");
+let Pedido = require("../models/pedido.model");
 
 exports.productos_get_all = (req, res) => {
   Producto.find()
@@ -12,7 +13,12 @@ exports.productos_get_producto = (req, res) => {
     .select("_id nombre precio anulado")
     .then(producto => {
       if (producto) {
-        res.status(200).json(producto);
+        Pedido.find({ "items.producto": producto._id.toString() })
+          .select("_id nombre apellido entregado")
+          .then(pedidos => {
+            res.status(200).json({ producto, pedidos: pedidos });
+          })
+          .catch(err => res.status(500).json({ error: err }));
       } else {
         res.status(404).json({ message: "Producto inexistente." });
       }
