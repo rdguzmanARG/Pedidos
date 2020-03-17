@@ -41,6 +41,13 @@ exports.pedidos_get_pedido = (req, res) => {
   Pedido.findById(req.params.idPedido)
     .populate("items.producto")
     .then(pedido => {
+      // Si el pedido no fue entregado, debe completar los valores de precio y pago.
+      if (!pedido.entregado) {
+        pedido.items.forEach(item => {
+          item.precio = item.producto.precio;
+          item.pago = item.producto.precio * item.cantidad;
+        });
+      }
       res.status(200).json(pedido);
     })
     .catch(err => res.status(500).json({ error: err }));
@@ -48,8 +55,16 @@ exports.pedidos_get_pedido = (req, res) => {
 
 exports.pedidos_update_pedido = (req, res) => {
   Pedido.findByIdAndUpdate(req.params.idPedido, req.body, { new: true })
+    .populate("items.producto")
     .exec()
-    .then(pedido => res.json(pedido))
+    .then(pedido => {
+      if (!pedido.entregado) {
+        pedido.items.forEach(item => {
+          item.precio = item.producto.precio;
+        });
+      }
+      res.json(pedido);
+    })
     .catch(err => res.status(500).json("Error: " + err));
 };
 
@@ -205,7 +220,9 @@ function ImportarDatos(response, entrega) {
                         .map(pr => {
                           return {
                             producto: pr._id,
-                            cantidad: d[pr.nombre]
+                            cantidad: d[pr.nombre],
+                            precio: null,
+                            pago: null
                           };
                         })
                     });

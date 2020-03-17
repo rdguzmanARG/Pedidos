@@ -6,9 +6,7 @@ export default function Footer(props) {
       <div class="container text-center">
         <span>
           &copy; 2020 MRCGo <br></br>
-          <a href="mailto:ricardo.deguzman@gmail.com">
-            ricardo.deguzman@gmail.com
-          </a>
+          ricardo.deguzman@gmail.com
         </span>
       </div>
     </footer>

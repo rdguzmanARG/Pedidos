@@ -105,7 +105,7 @@ class ProductoDetail extends Component {
                 <input
                   type="text"
                   name="precio"
-                  disabled={entregaEstado != "PRE"}
+                  disabled={entregaEstado != "PRE" && entregaEstado != "INI"}
                   value={producto.precio}
                   onChange={this.onFieldChange}
                   class="form-control"
@@ -116,7 +116,7 @@ class ProductoDetail extends Component {
                 <input
                   className="form-check"
                   type="checkbox"
-                  disabled={entregaEstado != "PRE"}
+                  disabled={entregaEstado != "PRE" && entregaEstado != "INI"}
                   defaultChecked={producto.anulado}
                   name="anulado"
                   onChange={this.onFieldChange}
@@ -127,7 +127,7 @@ class ProductoDetail extends Component {
               <button
                 type="submit"
                 className="btn btn-success"
-                disabled={entregaEstado != "PRE"}
+                disabled={entregaEstado != "PRE" && entregaEstado != "INI"}
               >
                 Aceptar
               </button>

@@ -107,6 +107,20 @@ footer {
     background-color: teal;
     color: white;
   }
+  .field-pago {
+    display: inline-block;
+    width: 100px;
+  }
+  .btn-reset-pago {
+    padding: 5px;
+    display: inline-flex;
+    margin-bottom: 5px;
+    margin-left: 5px;
+  }
+
+  .table td {
+    vertical-align: middle;
+  }
   .form-group {
     input.form-control {
       width: unset;

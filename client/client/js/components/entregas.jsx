@@ -3,6 +3,7 @@ import Loader from "react-loader-spinner";
 import { Link } from "react-router-dom";
 import { entrega_getAll } from "../services/entregaService";
 import moment from "moment";
+import Moment from "react-moment";
 import auth from "../services/authService";
 
 class Entregas extends Component {
@@ -16,7 +17,9 @@ class Entregas extends Component {
       .then(res => {
         if (res.status === 200) {
           this.setState({
-            entregas: res.data.filter(f => f.estado == "CER"),
+            entregas: res.data.filter(
+              f => f.estado == "INI" || f.estado == "CER"
+            ),
             isLoading: false
           });
         }
@@ -33,6 +36,9 @@ class Entregas extends Component {
 
   render() {
     const { entregas, isLoading } = this.state;
+
+    const entregaActual = entregas.filter(f => f.estado == "INI")[0];
+
     if (isLoading) {
       return (
         <div id="overlay">
@@ -52,43 +58,85 @@ class Entregas extends Component {
             </div>
           </div>
         )}
+        {entregaActual && (
+          <div class="card-body">
+            <p class="card-text">
+              Ultima Importación:{" "}
+              <b>
+                <Moment format="DD/MM/YYYY HH:mm">
+                  {entregaActual.fechaImportacion}
+                </Moment>
+              </b>
+            </p>
+            <p class="card-text">
+              Cantidad de productos: <b>{entregaActual.cantProductos}</b>
+            </p>
+            <p class="card-text">
+              Cantidad de pedidos: <b>{entregaActual.cantPedidos}</b>
+            </p>
+            <p class="card-text">
+              Total almacén: <b>${entregaActual.totalAlmacen.toFixed(2)}</b>
+            </p>
+            <p class="card-text">
+              Total entrega: <b>${entregaActual.totalEntrega.toFixed(2)}</b>
+            </p>
+            <p class="card-text">
+              Total:{" "}
+              <b>
+                $
+                {(
+                  entregaActual.totalAlmacen + entregaActual.totalEntrega
+                ).toFixed(2)}
+              </b>
+            </p>
+          </div>
+        )}
         {entregas.length > 0 && (
-          <table className="table table-striped table-sm table-productos">
-            <thead className="thead-dark">
-              <tr>
-                <th>Fecha de importación</th>
-                <th className="d-none d-sm-table-cell">Productos</th>
-                <th className="d-none d-sm-table-cell">Pedidos</th>
-                <th className="d-none d-sm-table-cell cell-right">
-                  Total Entregas
-                </th>
-                <th className="d-none d-sm-table-cell cell-right">
-                  Total Almacen
-                </th>
-                <th className="cell-right">Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              {entregas.map(p => (
-                <tr key={p._id}>
-                  <td>
-                    {moment(p.fechaImportacion).format("DD/MM/YYYY HH:mm")}
-                  </td>
-                  <td className="d-none d-sm-table-cell">{p.cantProductos}</td>
-                  <td className="d-none d-sm-table-cell">{p.cantPedidos}</td>
-                  <td className="d-none d-sm-table-cell cell-right">
-                    ${p.totalEntrega.toFixed(2)}
-                  </td>
-                  <td className="d-none d-sm-table-cell cell-right">
-                    ${p.totalAlmacen.toFixed(2)}
-                  </td>
-                  <td className="cell-right">
-                    ${(p.totalEntrega + p.totalAlmacen).toFixed(2)}
-                  </td>
+          <React.Fragment>
+            <h1>Entregas previas</h1>
+            <table className="table table-striped table-sm table-productos">
+              <thead className="thead-dark">
+                <tr>
+                  <th>Fecha de importación</th>
+                  <th className="d-none d-sm-table-cell">Productos</th>
+                  <th className="d-none d-sm-table-cell">Pedidos</th>
+                  <th className="d-none d-sm-table-cell cell-right">
+                    Total Entregas
+                  </th>
+                  <th className="d-none d-sm-table-cell cell-right">
+                    Total Almacen
+                  </th>
+                  <th className="cell-right">Total</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {entregas
+                  .filter(f => f.estado == "CER")
+                  .map(p => (
+                    <tr key={p._id}>
+                      <td>
+                        {moment(p.fechaImportacion).format("DD/MM/YYYY HH:mm")}
+                      </td>
+                      <td className="d-none d-sm-table-cell">
+                        {p.cantProductos}
+                      </td>
+                      <td className="d-none d-sm-table-cell">
+                        {p.cantPedidos}
+                      </td>
+                      <td className="d-none d-sm-table-cell cell-right">
+                        ${p.totalEntrega.toFixed(2)}
+                      </td>
+                      <td className="d-none d-sm-table-cell cell-right">
+                        ${p.totalAlmacen.toFixed(2)}
+                      </td>
+                      <td className="cell-right">
+                        ${(p.totalEntrega + p.totalAlmacen).toFixed(2)}
+                      </td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
+          </React.Fragment>
         )}
       </React.Fragment>
     );
