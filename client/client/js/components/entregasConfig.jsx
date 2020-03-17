@@ -105,11 +105,9 @@ class Inicio extends Component {
     const estado =
       entrega == null || entrega.estado === "IMP"
         ? " 1 - IMPORTACION DE DATOS"
-        : entrega.estado === "PRE"
-        ? " 2 - AJUSTE DE PRECIOS"
         : entrega.estado === "INI"
-        ? " 3 - ENTREGA DE PEDIDOS"
-        : " 4 - ENTREGA FINALIZADA";
+        ? " 2 - ENTREGA DE PEDIDOS"
+        : " 3 - ENTREGA FINALIZADA";
     return (
       <div className="entregas-config">
         {action != "" && (
@@ -125,8 +123,6 @@ class Inicio extends Component {
                 ? "Iniciar nueva Entrega"
                 : action == "IMP"
                 ? "Importación de datos"
-                : action == "PRE"
-                ? "Iniciar ajuste de precios"
                 : action == "INI"
                 ? "Iniciar Entrega de pedidos"
                 : "Finalización de Entrega"
@@ -135,8 +131,8 @@ class Inicio extends Component {
               if (action == "STA" || action == "IMP") {
                 this.ImportData(null);
               } else {
-                if (action == "PRE") {
-                  this.ImportData(() => this.CambioDeEstado("PRE"));
+                if (action == "INI") {
+                  this.ImportData(() => this.CambioDeEstado("INI"));
                 } else {
                   this.CambioDeEstado(action);
                 }
@@ -152,10 +148,8 @@ class Inicio extends Component {
                 ? "ATENCIÓN: asegurese haber completados los datos mencionados en el formulario de Google. ¿Desea continuar?"
                 : action == "IMP"
                 ? "Se actualizarán los pedidos y productos. ¿Desea continuar?"
-                : action == "PRE"
-                ? "ATENCION: una vez iniciado el Ajuste de Pedidos, no se podran importar nuevos datos, asegurese de haber cerrad el Formulario de Google antes de continuar. ¿Desea continuar?"
                 : action == "INI"
-                ? "ATENCION: una vez iniciada la Entrega de Pedidos, no se podran modificar los precios ni anular los productos que no esten disponibles. ¿Desea continuar?"
+                ? "ATENCION: una vez iniciada la Entrega de Pedidos,  no se podran importar nuevos datos, asegurese de haber cerrad el Formulario de Google antes de continuar. ¿Desea continuar?"
                 : "ATENCION: si finaliza la entrega, no se podrán registrar nuevos pedidos. ¿Desea continuar?"}
             </div>
           </SweetAlert>
@@ -310,58 +304,6 @@ class Inicio extends Component {
             </div>
           </div>
           <div class="card">
-            <div class="card-header text-white bg-info" id="headingTwo">
-              {entrega != null && entrega.estado === "PRE" && (
-                <Element name="myScrollToElement"></Element>
-              )}
-              <button
-                class="btn btn-lg collapsed text-white"
-                data-toggle="collapse"
-                data-target="#collapseTwo"
-                aria-expanded="false"
-                aria-controls="collapseTwo"
-              >
-                2 - Ajuste de precios
-              </button>
-            </div>
-            <div
-              id="collapseTwo"
-              class={
-                entrega != null && entrega.estado === "PRE"
-                  ? "collapse show"
-                  : "collapse"
-              }
-              aria-labelledby="headingTwo"
-              data-parent="#accordion"
-            >
-              <div class="card border-info">
-                <div class="card-body">
-                  <p class="card-text">
-                    El <b>ajuste de precios</b> le permitirá modificar los
-                    precios que sean necesarios así como anular los productos
-                    que no fueron recibidos.{" "}
-                  </p>
-                  <p>
-                    ATENCION: Antes de iniciar este paso, el{" "}
-                    <b>formulario de google</b> debe estar cerrado para impedir
-                    que lleguen nuevos pedidos.
-                  </p>
-                  {user.isAdmin && (
-                    <button
-                      disabled={entrega === null || entrega.estado != "IMP"}
-                      onClick={() =>
-                        this.setState({ ...this.state, action: "PRE" })
-                      }
-                      class="btn btn-info btn-pasos"
-                    >
-                      Iniciar
-                    </button>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="card">
             <div class="card-header text-white bg-success" id="headingThree">
               {entrega != null && entrega.estado === "INI" && (
                 <Element name="myScrollToElement"></Element>
@@ -373,7 +315,7 @@ class Inicio extends Component {
                 aria-expanded="false"
                 aria-controls="collapseThree"
               >
-                3 - Entrega de pedidos
+                2 - Entrega de pedidos
               </button>
             </div>
             <div
@@ -389,13 +331,18 @@ class Inicio extends Component {
               <div class="card border-sucess">
                 <div class="card-body">
                   <p class="card-text">
-                    La <b>entrega de pedidos</b> le permitira confirmar los
-                    pedidos que fueron retirados, asi como asentar ajustes o
-                    compras en el almacén.
+                    La <b>entrega de pedidos</b> le permitirá confirmar los
+                    pedidos que fueron retirados, así como anular productos y
+                    asentar ajustes o compras en el almacén por cada pedido.{" "}
+                  </p>
+                  <p class="card-text">
+                    ATENCION: Antes de iniciar este paso, el{" "}
+                    <b>formulario de google</b> debe estar cerrado para impedir
+                    que lleguen nuevos pedidos.
                   </p>
                   {user.isAdmin && (
                     <button
-                      disabled={entrega === null || entrega.estado != "PRE"}
+                      disabled={entrega === null || entrega.estado != "IMP"}
                       onClick={() =>
                         this.setState({ ...this.state, action: "INI" })
                       }
@@ -417,7 +364,7 @@ class Inicio extends Component {
                   aria-expanded="false"
                   aria-controls="collapseFour"
                 >
-                  4 - Finalización de entrega
+                  3 - Finalización de entrega
                 </button>
               </div>
               <div

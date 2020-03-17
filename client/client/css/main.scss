@@ -101,6 +101,17 @@ footer {
   }
 }
 
+// Entrega
+.entrega-historial {
+  .totales {
+    text-align: right;
+
+    @media (max-width: 575px) {
+      padding-top: 20px;
+    }
+  }
+}
+
 // Detalle del pedido
 .pedido-detail {
   .card-header {
