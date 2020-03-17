@@ -5,7 +5,6 @@ import SweetAlert from "react-bootstrap-sweetalert";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUndo } from "@fortawesome/free-solid-svg-icons";
 import { faWindowClose } from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router-dom";
 import { pedido_get, pedido_update } from "../services/pedidoService";
 import { entrega_getCurrent } from "../services/entregaService";
 import NumberFormat from "react-number-format";
@@ -19,7 +18,7 @@ class PedidoDetail extends Component {
     },
     entregaEstado: "",
     totalPedidos: 0,
-    totalAlmacen: 0,
+    totalAlmacen: null,
     showConfirmAceptado: false,
     showConfirmAnulado: false
   };
@@ -42,7 +41,8 @@ class PedidoDetail extends Component {
               this.setState({
                 pedido,
                 totalPedidos,
-                totalAlmacen: pedido.totalAlmacen,
+                totalAlmacen:
+                  pedido.totalAlmacen == 0 ? null : pedido.totalAlmacen,
                 isLoading: false,
                 entregaEstado: resEntrega.data ? resEntrega.data.estado : ""
               });
@@ -70,33 +70,26 @@ class PedidoDetail extends Component {
 
   onAlmacenChange = e => {
     let valor = e.target.value;
-    if (
-      e.target.value == "" ||
-      e.target.value == "-" ||
-      e.target.value == "$."
-    ) {
-      valor = "0";
+    let totalAlmacen = Number(valor.replace("$", ""));
+    if (totalAlmacen == 0) {
+      totalAlmacen = null;
     }
 
     this.setState({
       ...this.state,
-      totalAlmacen: Number(valor.replace("$", ""))
+      totalAlmacen
     });
   };
 
   onPagoChange = e => {
     let valor = e.target.value;
-    if (
-      e.target.value == "" ||
-      e.target.value == "-" ||
-      e.target.value == "$."
-    ) {
-      valor = "0";
-    }
     const ped = { ...this.state.pedido };
     // Es el item a modificar
     const item = ped.items.filter(f => f._id === e.target.name)[0];
     item.pago = Number(valor.replace("$", ""));
+    if (item.pago == 0) {
+      item.pago = null;
+    }
 
     const totalPedidos = this.arrSum(
       ped.items.filter(f => !f.producto.anulado).map(m => m.pago)
@@ -243,12 +236,16 @@ class PedidoDetail extends Component {
                     key={index}
                     className={
                       pedido.entregado
-                        ? producto.anulado && pago == 0
-                          ? "bg-danger"
-                          : ""
+                        ? producto.anulado
+                          ? pago != null
+                            ? ""
+                            : "bg-danger"
+                          : pago != null
+                          ? ""
+                          : "bg-warning"
                         : producto.anulado
                         ? "bg-danger"
-                        : pago == 0
+                        : pago == null
                         ? "bg-warning"
                         : ""
                     }
@@ -284,6 +281,7 @@ class PedidoDetail extends Component {
                                 onChange={this.onPagoChange}
                                 thousandSeparator={false}
                                 value={pago}
+                                allowNegative={false}
                                 prefix={"$"}
                                 className="form-control field-pago"
                                 placeholder="$0.00"
@@ -322,6 +320,7 @@ class PedidoDetail extends Component {
                         }
                         onChange={this.onPagoChange}
                         thousandSeparator={false}
+                        allowNegative={false}
                         value={pago}
                         prefix={"$"}
                         className="form-control field-pago"
@@ -350,6 +349,7 @@ class PedidoDetail extends Component {
                       disabled={entregaEstado !== "INI" || pedido.entregado}
                       onChange={this.onAlmacenChange}
                       thousandSeparator={false}
+                      allowNegative={false}
                       value={totalAlmacen}
                       prefix={"$"}
                       className="form-control"
@@ -365,6 +365,7 @@ class PedidoDetail extends Component {
                       disabled={entregaEstado !== "INI" || pedido.entregado}
                       onChange={this.onAlmacenChange}
                       thousandSeparator={false}
+                      allowNegative={false}
                       value={totalAlmacen}
                       prefix={"$"}
                       className="form-control"

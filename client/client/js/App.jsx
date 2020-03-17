@@ -61,8 +61,8 @@ class App extends Component {
           <div class="alert alert-danger alert-dismissible fade show">
             <h2>Sistema de Pedidos</h2>
             <div>
-              No se pudo conectar con el servidor, si el problema persiste
-              comuniquese con el administrador del sistema.
+              No se pudo conectar con el servidor, verifique si tiene conexión a
+              Internet y vuelva a intentar.
             </div>
             <a href="/" class="alert-link">
               Haga click aqui para reintentar
