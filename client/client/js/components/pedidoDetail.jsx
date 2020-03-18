@@ -108,6 +108,17 @@ class PedidoDetail extends Component {
     this.setState({ ...this.state, totalPedidos, pedido: { ...ped } });
   };
 
+  onPagoCero = id => {
+    const ped = { ...this.state.pedido };
+    // Es el item a modificar
+    const item = ped.items.filter(f => f._id === id)[0];
+    item.pago = null;
+    const totalPedidos = this.arrSum(
+      ped.items.filter(f => !f.producto.anulado).map(m => m.pago)
+    );
+    this.setState({ ...this.state, totalPedidos, pedido: { ...ped } });
+  };
+
   render() {
     const {
       pedido,
@@ -237,16 +248,20 @@ class PedidoDetail extends Component {
                     className={
                       pedido.entregado
                         ? producto.anulado
-                          ? pago != null
-                            ? ""
-                            : "bg-danger"
+                          ? pago > 0
+                            ? "bg-danger"
+                            : ""
                           : pago != null
-                          ? ""
+                          ? pago != precio * cantidad
+                            ? "bg-primary"
+                            : ""
                           : "bg-warning"
                         : producto.anulado
                         ? "bg-danger"
                         : pago == null
                         ? "bg-warning"
+                        : pago != precio * cantidad
+                        ? "bg-primary"
                         : ""
                     }
                   >
@@ -280,21 +295,35 @@ class PedidoDetail extends Component {
                                 }
                                 onChange={this.onPagoChange}
                                 thousandSeparator={false}
-                                value={pago}
+                                value={producto.anulado ? null : pago}
                                 allowNegative={false}
                                 prefix={"$"}
                                 className="form-control field-pago"
                                 placeholder="$0.00"
                               />
                               {entregaEstado == "INI" && !pedido.entregado && (
-                                <button
-                                  disabled={producto.anulado}
-                                  title="Volver al valor inicial"
-                                  onClick={() => this.onPagoReset(_id)}
-                                  class="btn btn-danger btn-reset-pago"
-                                >
-                                  <FontAwesomeIcon icon={faWindowClose} />
-                                </button>
+                                <React.Fragment>
+                                  {pago == precio * cantidad && (
+                                    <button
+                                      disabled={producto.anulado}
+                                      title="Volver al valor inicial"
+                                      onClick={() => this.onPagoCero(_id)}
+                                      class="btn btn-danger btn-reset-pago"
+                                    >
+                                      <FontAwesomeIcon icon={faWindowClose} />
+                                    </button>
+                                  )}
+                                  {pago != precio * cantidad && (
+                                    <button
+                                      disabled={producto.anulado}
+                                      title="Volver al valor inicial"
+                                      onClick={() => this.onPagoReset(_id)}
+                                      class="btn btn-primary btn-reset-pago"
+                                    >
+                                      <FontAwesomeIcon icon={faUndo} />
+                                    </button>
+                                  )}
+                                </React.Fragment>
                               )}
                             </td>
                           </tr>
@@ -321,20 +350,34 @@ class PedidoDetail extends Component {
                         onChange={this.onPagoChange}
                         thousandSeparator={false}
                         allowNegative={false}
-                        value={pago}
+                        value={producto.anulado ? null : pago}
                         prefix={"$"}
                         className="form-control field-pago"
                         placeholder="$0.00"
                       />
                       {entregaEstado == "INI" && !pedido.entregado && (
-                        <button
-                          disabled={producto.anulado}
-                          title="Volver al valor inicial"
-                          onClick={() => this.onPagoReset(_id)}
-                          class="btn btn-danger btn-reset-pago"
-                        >
-                          <FontAwesomeIcon icon={faWindowClose} />
-                        </button>
+                        <React.Fragment>
+                          {pago == precio * cantidad && (
+                            <button
+                              disabled={producto.anulado}
+                              title="Volver al valor inicial"
+                              onClick={() => this.onPagoCero(_id)}
+                              class="btn btn-danger btn-reset-pago"
+                            >
+                              <FontAwesomeIcon icon={faWindowClose} />
+                            </button>
+                          )}
+                          {pago != precio * cantidad && (
+                            <button
+                              disabled={producto.anulado}
+                              title="Volver al valor inicial"
+                              onClick={() => this.onPagoReset(_id)}
+                              class="btn btn-primary btn-reset-pago"
+                            >
+                              <FontAwesomeIcon icon={faUndo} />
+                            </button>
+                          )}
+                        </React.Fragment>
                       )}
                     </td>
                   </tr>
