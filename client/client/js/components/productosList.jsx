@@ -34,6 +34,13 @@ class ProductosList extends Component {
 
   render() {
     const { productos, isLoading } = this.state;
+
+    const resultado = productos.filter(
+      f =>
+        f.nombre.toLowerCase().includes(this.props.filter.text) &&
+        (!this.props.filter.soloPedidos || f.cantidad > 0)
+    );
+
     if (isLoading) {
       return (
         <div id="overlay">
@@ -42,17 +49,34 @@ class ProductosList extends Component {
       );
     }
     return (
-      <React.Fragment>
+      <div className="productos-list">
         <div class="input-group mb-2 mt-2">
           <input
             type="text"
-            class="form-control"
+            class="form-control form-control-lg"
             placeholder="Ingresar texto para buscar..."
-            value={this.props.filter}
+            value={this.props.filter.text}
             onChange={e =>
               this.props.onChangeFilter(e.target.value.toLowerCase())
             }
           />
+        </div>
+        <div class="input-group mb-2 mt-2">
+          <div class="form-check">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              checked={this.props.filter.soloPedidos}
+              id="soloPedidos"
+              onChange={e => this.props.onChangeFilter(e.target.checked)}
+            ></input>
+            <label class="form-check-label" for="soloPedidos">
+              Solo productos pedidos
+            </label>
+          </div>
+        </div>
+        <div className="text-right">
+          <b>Pedidos: {resultado.length}</b>
         </div>
         <table className="table table-striped table-sm table-productos">
           <thead className="thead-dark">
@@ -60,29 +84,27 @@ class ProductosList extends Component {
               <th>Nombre del producto</th>
               <th className="d-none d-sm-table-cell">Cantidad</th>
               <th className="cell-right">P.Venta</th>
-              <th></th>
+              <th className="cell-icon"></th>
             </tr>
           </thead>
           <tbody>
-            {productos
-              .filter(f => f.nombre.toLowerCase().includes(this.props.filter))
-              .map(p => (
-                <tr key={p._id} className={p.anulado ? "bg-danger" : ""}>
-                  <td>{p.nombre}</td>
-                  <td className="d-none d-sm-table-cell">{p.cantidad}</td>
-                  <td className="cell-right">${p.precio.toFixed(2)}</td>
-                  <td className="cell-right">
-                    <Link to={`/productos/ver/${p._id}`} title="Modificar">
-                      <button type="button" class="btn btn-primary btn-sm">
-                        <FontAwesomeIcon icon={faEdit} />
-                      </button>
-                    </Link>
-                  </td>
-                </tr>
-              ))}
+            {resultado.map(p => (
+              <tr key={p._id} className={p.anulado ? "bg-danger" : ""}>
+                <td>{p.nombre}</td>
+                <td className="d-none d-sm-table-cell">{p.cantidad}</td>
+                <td className="cell-right">${p.precio.toFixed(2)}</td>
+                <td className="cell-icon">
+                  <Link to={`/productos/ver/${p._id}`} title="Modificar">
+                    <button type="button" class="btn btn-primary btn-sm">
+                      <FontAwesomeIcon icon={faEdit} />
+                    </button>
+                  </Link>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
-      </React.Fragment>
+      </div>
     );
   }
 }

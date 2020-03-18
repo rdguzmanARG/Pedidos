@@ -129,11 +129,11 @@ class PedidosList extends Component {
     const cantidad = pedidos.length;
     const restantes = cantidad - pedidos.filter(f => f.entregado).length;
     return (
-      <React.Fragment>
+      <div className="pedidos-list">
         <div class="input-group mb-2 mt-2">
           <input
             type="text"
-            class="form-control"
+            class="form-control form-control-lg"
             placeholder="Ingresar texto para buscar..."
             value={this.props.filter}
             onChange={e =>
@@ -141,17 +141,18 @@ class PedidosList extends Component {
             }
           />
         </div>
+        <div className="text-right">
+          <b>
+            Pend. ({restantes}/{cantidad})
+          </b>
+        </div>
         <table className="table table-striped table-sm table-pedidos">
           <thead className="thead-dark">
             <tr>
               <th>Nombre y Apellido</th>
               <th className="d-none d-sm-table-cell">Teléfono</th>
               <th className="d-none d-md-table-cell">Entregado por</th>
-              <th className="cell-right">
-                <div>
-                  Pend. ({restantes}/{cantidad})
-                </div>
-              </th>
+              <th className="cell-icon"></th>
             </tr>
           </thead>
           <tbody>
@@ -185,7 +186,7 @@ class PedidosList extends Component {
                   <td className="d-none d-md-table-cell">
                     {p.entregado ? p.usuarioMod.toUpperCase() : ""}
                   </td>
-                  <td className="cell-right">
+                  <td className="cell-icon">
                     <Link title="Ver pedido" to={`/pedidos/ver/${p._id}`}>
                       <button type="button" class="btn btn-sm btn-success">
                         <FontAwesomeIcon icon={faEdit} />
@@ -196,7 +197,7 @@ class PedidosList extends Component {
               ))}
           </tbody>
         </table>
-      </React.Fragment>
+      </div>
     );
   }
 }

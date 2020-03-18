@@ -122,8 +122,8 @@ class Entregas extends Component {
         )}
         {entregas.length > 0 && (
           <React.Fragment>
-            <div class="card border-primary mb-2 mt-2">
-              <div class="card-header text-white bg-primary">
+            <div class="card border-secondary mb-2 mt-2">
+              <div class="card-header text-white bg-secondary">
                 Entregas previas
               </div>
               <table className="table table-striped table-sm table-productos">

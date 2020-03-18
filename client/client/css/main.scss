@@ -112,6 +112,35 @@ footer {
   }
 }
 
+// Listado de Pedidos
+.pedidos-list {
+  table {
+    td {
+      vertical-align: middle;
+      &.cell-icon {
+        text-align: center;
+        width: 44px;
+      }
+    }
+  }
+}
+
+// Listado de Productos
+.productos-list {
+  .form-check-input {
+    margin-top: 7px;
+  }
+  table {
+    td,
+    th {
+      vertical-align: middle;
+      &.cell-icon {
+        text-align: center;
+        width: 44px;
+      }
+    }
+  }
+}
 // Detalle del pedido
 .pedido-detail {
   .card-header {

@@ -10,7 +10,7 @@ exports.productos_get_all = (req, res) => {
 
 exports.productos_get_producto = (req, res) => {
   Producto.findById(req.params.idProducto)
-    .select("_id nombre precio anulado")
+    .select("_id nombre precio anulado cantidad")
     .then(producto => {
       if (producto) {
         Pedido.find({ "items.producto": producto._id.toString() })

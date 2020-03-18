@@ -26,6 +26,7 @@ class App extends Component {
   state = {
     filterPedidos: "",
     filterProductos: "",
+    filterProductosPedidos: false,
     hasError: false,
     isLoading: true
   };
@@ -39,7 +40,11 @@ class App extends Component {
   };
 
   ChangeFilterProductos = filterProductos => {
-    this.setState({ ...this.state, filterProductos });
+    if (typeof filterProductos === "boolean") {
+      this.setState({ ...this.state, filterProductosPedidos: filterProductos });
+    } else {
+      this.setState({ ...this.state, filterProductos });
+    }
   };
 
   SetGlobalError = () => {
@@ -148,7 +153,10 @@ class App extends Component {
                     <ProductosList
                       onGlobalError={this.SetGlobalError}
                       user={user}
-                      filter={this.state.filterProductos}
+                      filter={{
+                        text: this.state.filterProductos,
+                        soloPedidos: this.state.filterProductosPedidos
+                      }}
                       onChangeFilter={this.ChangeFilterProductos}
                       {...props}
                     ></ProductosList>

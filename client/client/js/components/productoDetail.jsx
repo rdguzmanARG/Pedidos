@@ -83,13 +83,9 @@ class ProductoDetail extends Component {
     }
     return (
       <div className="producto-detail">
-        <div className="card mt-2 mb-2">
-          <div className="card-header">
-            <div class="d-flex">
-              <div>
-                <b>Detalle del Producto</b>
-              </div>
-            </div>
+        <div class="card border-primary mb-2 mt-2">
+          <div class="card-header text-white bg-primary">
+            Detalle del producto
           </div>
           <div className="card-body m-1">
             <form onSubmit={this.submitForm}>
@@ -158,15 +154,16 @@ class ProductoDetail extends Component {
         {pedidos.length > 0 && (
           <div class="card border-success mb-2 mt-2">
             <div class="card-header text-white bg-success">
-              Productos pedidos por:
+              Pedidos realizados
             </div>
             <div class="card-body">
               <table className="table table-striped table-sm table-pedidos">
                 <thead className="thead-dark">
                   <tr>
                     <th>Nombre y Apellido</th>
-                    <th>Entregado por</th>
-                    <th className="cell-right"></th>
+                    <th className="cell-right">
+                      (Unidades: {producto.cantidad})
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -196,7 +193,6 @@ class ProductoDetail extends Component {
                             {pedido.nombre}, {pedido.apellido}
                           </b>
                         </td>
-                        <td></td>
                         <td className="cell-right">
                           <Link
                             title="Ver pedido"
