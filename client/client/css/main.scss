@@ -128,7 +128,12 @@ footer {
 // Listado de Productos
 .productos-list {
   .form-check-input {
-    margin-top: 7px;
+    position: relative;
+    display: inline;
+    margin-right: 10px;
+  }
+  .form-check-label {
+    display: inline;
   }
   table {
     td,
