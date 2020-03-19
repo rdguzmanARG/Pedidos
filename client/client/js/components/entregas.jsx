@@ -101,7 +101,7 @@ class Entregas extends Component {
                       <b>${entregaActual.totalAlmacen.toFixed(2)}</b>
                     </div>
                     <div>
-                      Total entrega:{" "}
+                      Total pedidos:{" "}
                       <b>${entregaActual.totalEntrega.toFixed(2)}</b>
                     </div>
                     <div>
@@ -133,7 +133,7 @@ class Entregas extends Component {
                     <th className="d-none d-sm-table-cell">Productos</th>
                     <th className="d-none d-sm-table-cell">Pedidos</th>
                     <th className="d-none d-sm-table-cell cell-right">
-                      Total Entregas
+                      Total Pedidos
                     </th>
                     <th className="d-none d-sm-table-cell cell-right">
                       Total Almacen

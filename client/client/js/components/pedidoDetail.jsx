@@ -242,146 +242,169 @@ class PedidoDetail extends Component {
             </thead>
             <tbody>
               {pedido.items.map(
-                ({ producto, cantidad, precio, pago, _id }, index) => (
-                  <tr
-                    key={index}
-                    className={
-                      pedido.entregado
-                        ? producto.anulado
-                          ? pago > 0
-                            ? "bg-danger"
-                            : ""
-                          : pago != null
-                          ? pago != precio * cantidad
-                            ? "bg-primary"
-                            : ""
-                          : "bg-warning"
-                        : producto.anulado
-                        ? "bg-danger"
-                        : pago == null
-                        ? "bg-warning"
-                        : pago != precio * cantidad
-                        ? "bg-primary"
-                        : ""
-                    }
-                  >
-                    <td className="pedido-detail-mobile d-table-cell d-md-none">
-                      <div class="row2">
-                        <div class="pedido-detail-item-title col pb-3">
-                          <b>{producto.nombre}</b>
-                        </div>
-                      </div>
-                      <table className="table m-0">
-                        <thead>
-                          <tr className="secondary-header">
-                            <th>Cant.</th>
-                            <th className="cell-right">P. Unit.</th>
-                            <th className="cell-right">Total</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr className={producto.anulado ? "bg-danger" : ""}>
-                            <td>{cantidad}</td>
-                            <td className="cell-right">
-                              ${producto.precio.toFixed(2)}
-                            </td>
-                            <td className="cell-right">
-                              <NumberFormat
-                                name={_id}
-                                disabled={
-                                  entregaEstado !== "INI" ||
-                                  pedido.entregado ||
-                                  producto.anulado
-                                }
-                                onChange={this.onPagoChange}
-                                thousandSeparator={false}
-                                value={producto.anulado ? null : pago}
-                                allowNegative={false}
-                                prefix={"$"}
-                                className="form-control field-pago"
-                                placeholder="$0.00"
-                              />
-                              {entregaEstado == "INI" && !pedido.entregado && (
-                                <React.Fragment>
-                                  {pago == precio * cantidad && (
-                                    <button
-                                      disabled={producto.anulado}
-                                      title="Volver al valor inicial"
-                                      onClick={() => this.onPagoCero(_id)}
-                                      class="btn btn-danger btn-reset-pago"
-                                    >
-                                      <FontAwesomeIcon icon={faWindowClose} />
-                                    </button>
-                                  )}
-                                  {pago != precio * cantidad && (
-                                    <button
-                                      disabled={producto.anulado}
-                                      title="Volver al valor inicial"
-                                      onClick={() => this.onPagoReset(_id)}
-                                      class="btn btn-primary btn-reset-pago"
-                                    >
-                                      <FontAwesomeIcon icon={faUndo} />
-                                    </button>
-                                  )}
-                                </React.Fragment>
-                              )}
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                      <div className="space"></div>
-                    </td>
+                (
+                  {
+                    producto,
+                    cantidad,
+                    precio: currentPrecio,
+                    pago: currentPago,
+                    _id
+                  },
+                  index
+                ) => {
+                  const precio =
+                    currentPrecio == undefined
+                      ? producto.precio
+                      : currentPrecio;
+                  const pago =
+                    currentPrecio == undefined
+                      ? precio * cantidad
+                      : currentPago;
 
-                    <td className="d-none d-md-table-cell">
-                      {producto.nombre}
-                    </td>
-                    <td className="d-none d-md-table-cell">{cantidad}</td>
-                    <td className="d-none d-md-table-cell cell-right">
-                      ${precio.toFixed(2)}
-                    </td>
-                    <td className="d-none d-md-table-cell cell-right">
-                      <NumberFormat
-                        name={_id}
-                        disabled={
-                          entregaEstado !== "INI" ||
-                          pedido.entregado ||
-                          producto.anulado
-                        }
-                        onChange={this.onPagoChange}
-                        thousandSeparator={false}
-                        allowNegative={false}
-                        value={producto.anulado ? null : pago}
-                        prefix={"$"}
-                        className="form-control field-pago"
-                        placeholder="$0.00"
-                      />
-                      {entregaEstado == "INI" && !pedido.entregado && (
-                        <React.Fragment>
-                          {pago == precio * cantidad && (
-                            <button
-                              disabled={producto.anulado}
-                              title="Volver al valor inicial"
-                              onClick={() => this.onPagoCero(_id)}
-                              class="btn btn-danger btn-reset-pago"
-                            >
-                              <FontAwesomeIcon icon={faWindowClose} />
-                            </button>
-                          )}
-                          {pago != precio * cantidad && (
-                            <button
-                              disabled={producto.anulado}
-                              title="Volver al valor inicial"
-                              onClick={() => this.onPagoReset(_id)}
-                              class="btn btn-primary btn-reset-pago"
-                            >
-                              <FontAwesomeIcon icon={faUndo} />
-                            </button>
-                          )}
-                        </React.Fragment>
-                      )}
-                    </td>
-                  </tr>
-                )
+                  return (
+                    <tr
+                      key={index}
+                      className={
+                        pedido.entregado
+                          ? producto.anulado
+                            ? pago > 0
+                              ? "bg-danger"
+                              : ""
+                            : pago != null
+                            ? pago != precio * cantidad
+                              ? "bg-primary"
+                              : ""
+                            : "bg-warning"
+                          : producto.anulado
+                          ? "bg-danger"
+                          : pago == null
+                          ? "bg-warning"
+                          : pago != precio * cantidad
+                          ? "bg-primary"
+                          : ""
+                      }
+                    >
+                      <td className="pedido-detail-mobile d-table-cell d-md-none">
+                        <div class="row2">
+                          <div class="pedido-detail-item-title col pb-3">
+                            <b>{producto.nombre}</b>
+                          </div>
+                        </div>
+                        <table className="table m-0">
+                          <thead>
+                            <tr className="secondary-header">
+                              <th>Cant.</th>
+                              <th className="cell-right">P. Unit.</th>
+                              <th className="cell-right">Total</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr className={producto.anulado ? "bg-danger" : ""}>
+                              <td>{cantidad}</td>
+                              <td className="cell-right">
+                                ${producto.precio.toFixed(2)}
+                              </td>
+                              <td className="cell-right">
+                                <NumberFormat
+                                  name={_id}
+                                  disabled={
+                                    entregaEstado !== "INI" ||
+                                    pedido.entregado ||
+                                    producto.anulado
+                                  }
+                                  onChange={this.onPagoChange}
+                                  thousandSeparator={false}
+                                  value={producto.anulado ? null : pago}
+                                  allowNegative={false}
+                                  prefix={"$"}
+                                  className="form-control field-pago"
+                                  placeholder="$0.00"
+                                />
+                                {entregaEstado == "INI" && !pedido.entregado && (
+                                  <React.Fragment>
+                                    {pago == precio * cantidad && (
+                                      <button
+                                        disabled={producto.anulado}
+                                        title="Volver al valor inicial"
+                                        onClick={() => this.onPagoCero(_id)}
+                                        class="btn btn-danger btn-reset-pago"
+                                      >
+                                        <FontAwesomeIcon icon={faWindowClose} />
+                                      </button>
+                                    )}
+                                    {pago != precio * cantidad && (
+                                      <button
+                                        disabled={producto.anulado}
+                                        title="Volver al valor inicial"
+                                        onClick={() => this.onPagoReset(_id)}
+                                        class="btn btn-primary btn-reset-pago"
+                                      >
+                                        <FontAwesomeIcon icon={faUndo} />
+                                      </button>
+                                    )}
+                                  </React.Fragment>
+                                )}
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                        <div className="space"></div>
+                      </td>
+
+                      <td className="d-none d-md-table-cell">
+                        {producto.nombre}
+                      </td>
+                      <td className="d-none d-md-table-cell">{cantidad}</td>
+                      <td className="d-none d-md-table-cell cell-right">
+                        $
+                        {precio == undefined
+                          ? producto.precio.toFixed(2)
+                          : precio.toFixed(2)}
+                      </td>
+                      <td className="d-none d-md-table-cell cell-right">
+                        <NumberFormat
+                          name={_id}
+                          disabled={
+                            entregaEstado !== "INI" ||
+                            pedido.entregado ||
+                            producto.anulado
+                          }
+                          onChange={this.onPagoChange}
+                          thousandSeparator={false}
+                          allowNegative={false}
+                          value={producto.anulado ? null : pago}
+                          prefix={"$"}
+                          className="form-control field-pago"
+                          placeholder="$0.00"
+                        />
+                        {entregaEstado == "INI" && !pedido.entregado && (
+                          <React.Fragment>
+                            {pago == precio * cantidad && (
+                              <button
+                                disabled={producto.anulado}
+                                title="Volver al valor inicial"
+                                onClick={() => this.onPagoCero(_id)}
+                                class="btn btn-danger btn-reset-pago"
+                              >
+                                <FontAwesomeIcon icon={faWindowClose} />
+                              </button>
+                            )}
+                            {pago != precio * cantidad && (
+                              <button
+                                disabled={producto.anulado}
+                                title="Volver al valor inicial"
+                                onClick={() => this.onPagoReset(_id)}
+                                class="btn btn-primary btn-reset-pago"
+                              >
+                                <FontAwesomeIcon icon={faUndo} />
+                              </button>
+                            )}
+                          </React.Fragment>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                }
               )}
               <tr>
                 <td colSpan="4" className="cell-right d-none d-md-table-cell  ">
