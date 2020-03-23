@@ -210,20 +210,23 @@ class PedidoDetail extends Component {
           <div className="card-body m-1">
             {pedido.celular && (
               <div>
-                Teléfono:
-                <b>{pedido.celular}</b>
+                Teléfono: <b>{pedido.celular}</b>
               </div>
             )}
             {pedido.email && (
               <div>
-                Email:
-                <b>{pedido.email}</b>
+                Email: <b>{pedido.email}</b>
               </div>
             )}
             {pedido.date && (
               <div>
                 Fecha - Hora:{" "}
                 <b>{moment(pedido.date).format("DD/MM/YYYY HH:mm")}</b>
+              </div>
+            )}
+            {pedido.comentarios && (
+              <div>
+                Comentarios: <b>{pedido.comentarios}</b>{" "}
               </div>
             )}
           </div>

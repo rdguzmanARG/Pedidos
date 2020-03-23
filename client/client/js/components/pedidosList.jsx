@@ -160,7 +160,8 @@ class PedidosList extends Component {
               .filter(
                 f =>
                   f.nombre.toLowerCase().includes(this.props.filter) ||
-                  f.apellido.toLowerCase().includes(this.props.filter)
+                  f.apellido.toLowerCase().includes(this.props.filter) ||
+                  (this.props.filter === "*" && f.comentarios)
               )
               .sort((a, b) => {
                 var nameA = a.nombre.toLowerCase() + a.apellido.toLowerCase(); // ignore upper and lowercase
@@ -178,7 +179,7 @@ class PedidosList extends Component {
               .map(p => (
                 <tr key={p._id} className={p.entregado ? "bg-entregado" : ""}>
                   <td>
-                    {p.nombre}, {p.apellido}
+                    {p.nombre}, {p.apellido} {p.comentarios ? "(*)" : ""}
                   </td>
                   <td className="d-none d-sm-table-cell">
                     <a href={"tel:+" + p.celular}>{p.celular}</a>{" "}

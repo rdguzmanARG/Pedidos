@@ -32,6 +32,7 @@ const schema = mongoose.Schema(
       type: Boolean,
       default: false
     },
+    comentarios: { type: String },
     ajuste: {
       type: Number
     },

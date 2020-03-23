@@ -7,7 +7,7 @@ let Entrega = require("../models/entrega.model");
 
 exports.pedidos_get_all = (req, res) => {
   Pedido.find()
-    .select("_id nombre apellido celular entregado usuarioMod")
+    .select("_id nombre apellido celular entregado comentarios usuarioMod")
     .then(pedidos => {
       Entrega.findOne()
         .sort({ fechaImportacion: -1 })
@@ -23,7 +23,7 @@ exports.pedidos_get_all = (req, res) => {
 
 exports.pedidos_get_last = (req, res) => {
   Pedido.find({ updatedAt: { $gt: req.params.date } })
-    .select("_id nombre apellido celular entregado usuarioMod")
+    .select("_id nombre apellido celular entregado comentarios usuarioMod")
     .then(pedidos => {
       Entrega.findOne()
         .sort({ fechaImportacion: -1 })
