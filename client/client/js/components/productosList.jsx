@@ -11,10 +11,6 @@ class ProductosList extends Component {
     productos: []
   };
 
-  search = e => {
-    this.setState({ filter: e.target.value.toLowerCase() });
-  };
-
   componentDidMount() {
     producto_getAll()
       .then(res => {
@@ -37,7 +33,7 @@ class ProductosList extends Component {
 
     const resultado = productos.filter(
       f =>
-        f.nombre.toLowerCase().includes(this.props.filter.text) &&
+        f.nombre.toLowerCase().includes(this.props.filter.text.toLowerCase()) &&
         (!this.props.filter.soloPedidos || f.cantidad > 0)
     );
 
@@ -56,9 +52,7 @@ class ProductosList extends Component {
             class="form-control form-control-lg"
             placeholder="Ingresar texto para buscar..."
             value={this.props.filter.text}
-            onChange={e =>
-              this.props.onChangeFilter(e.target.value.toLowerCase())
-            }
+            onChange={e => this.props.onChangeFilter(e.target.value)}
           />
         </div>
         <div class="input-group mb-2 mt-2">

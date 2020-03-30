@@ -6,6 +6,25 @@ iframe {
   overflow: hidden;
   border: none; /* Reset default border */
   height: calc(100vh - 50px); /* Viewport-relative units */
-  width: calc(100% + 17px);
+  width: calc(100% + 0px);
   //margin-top: 56px;
+}
+
+.form {
+  padding-top: 10px;
+}
+
+.carousel {
+  background-color: lightslategray;
+  .carousel-inner {
+    margin: 0 auto;
+    max-width: 1024px;
+  }
+  .carousel-item {
+    height: 120px;
+    // background-image: url("/images/banners-publicite-aqui.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
 }

@@ -119,6 +119,12 @@ class PedidosList extends Component {
 
   render() {
     const { pedidos, isLoading } = this.state;
+    const pedidosFilteres = pedidos.filter(
+      f =>
+        f.nombre.toLowerCase().includes(this.props.filter.toLowerCase()) ||
+        f.apellido.toLowerCase().includes(this.props.filter.toLowerCase()) ||
+        (this.props.filter === "*" && f.comentarios)
+    );
     if (isLoading) {
       return (
         <div id="overlay">
@@ -126,8 +132,9 @@ class PedidosList extends Component {
         </div>
       );
     }
-    const cantidad = pedidos.length;
-    const restantes = cantidad - pedidos.filter(f => f.entregado).length;
+    const cantidad = pedidosFilteres.length;
+    const restantes =
+      cantidad - pedidosFilteres.filter(f => f.entregado).length;
     return (
       <div className="pedidos-list">
         <div class="input-group mb-2 mt-2">
@@ -136,9 +143,7 @@ class PedidosList extends Component {
             class="form-control form-control-lg"
             placeholder="Ingresar texto para buscar..."
             value={this.props.filter}
-            onChange={e =>
-              this.props.onChangeFilter(e.target.value.toLowerCase())
-            }
+            onChange={e => this.props.onChangeFilter(e.target.value)}
           />
         </div>
         <div className="text-right">
@@ -156,13 +161,7 @@ class PedidosList extends Component {
             </tr>
           </thead>
           <tbody>
-            {pedidos
-              .filter(
-                f =>
-                  f.nombre.toLowerCase().includes(this.props.filter) ||
-                  f.apellido.toLowerCase().includes(this.props.filter) ||
-                  (this.props.filter === "*" && f.comentarios)
-              )
+            {pedidosFilteres
               .sort((a, b) => {
                 var nameA = a.nombre.toLowerCase() + a.apellido.toLowerCase(); // ignore upper and lowercase
                 var nameB = b.nombre.toLowerCase() + b.apellido.toLowerCase(); // ignore upper and lowercase

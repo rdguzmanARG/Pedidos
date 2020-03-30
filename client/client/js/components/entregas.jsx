@@ -58,6 +58,15 @@ class Entregas extends Component {
             </div>
           </div>
         )}
+        {!entregaActual && (
+          <div className="mt-2 mb-2">
+            <div class="alert alert-success" role="alert">
+              <h4 class="alert-heading">
+                No hay una entregas Inicida en este momento
+              </h4>
+            </div>
+          </div>
+        )}
         {entregaActual && (
           <React.Fragment>
             <div class="card border-success mb-2 mt-2">
