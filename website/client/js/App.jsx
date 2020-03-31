@@ -2,6 +2,7 @@
 import { Switch, Route, Redirect } from "react-router-dom";
 import Header from "./Header";
 import Form from "./components/form";
+import Contact from "./components/contact";
 import Footer from "./Footer";
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 
@@ -12,7 +13,21 @@ class App extends Component {
     return (
       <React.Fragment>
         <Header></Header>
-        <Form></Form>
+        <Switch>
+          <Route
+            path="/contactos"
+            render={props => {
+              return <Contact></Contact>;
+            }}
+          />
+          <Route
+            path="/"
+            render={props => {
+              return <Form></Form>;
+            }}
+          />
+        </Switch>
+
         <Footer></Footer>
       </React.Fragment>
     );

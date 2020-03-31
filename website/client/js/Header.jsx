@@ -14,20 +14,21 @@ class Header extends React.Component {
         >
           <div class="carousel-inner" role="listbox">
             <a
-              href="//"
+              href="/contactos"
               class="carousel-item active"
               style={{
                 backgroundImage:
                   "url(" + "/images/banners-publicite-aqui.jpg" + ")"
               }}
             ></a>
-            <div
+            <a
+              href="/contactos"
               className="carousel-item"
               style={{
                 backgroundImage:
                   "url(" + "/images/publicite-banner-fino.png" + ")"
               }}
-            ></div>
+            ></a>
           </div>
         </div>
       </header>
