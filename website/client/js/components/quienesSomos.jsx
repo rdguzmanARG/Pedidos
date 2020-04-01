@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function Contact(props) {
+export default function QuienesSomos(props) {
   return (
     <div>
       <div class="jumbotron jumbotron-fluid">
