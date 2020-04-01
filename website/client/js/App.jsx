@@ -3,7 +3,7 @@ import { Switch, Route, Redirect } from "react-router-dom";
 import Header from "./Header";
 import Form from "./components/form";
 import Contact from "./components/contact";
-import QuienesSomos from "./components/quienessomos";
+import QuienesSomos from "./components/quienes-somos";
 import Footer from "./Footer";
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 
