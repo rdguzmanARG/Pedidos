@@ -1,4 +1,8 @@
 .navbar {
+  &.box-shadow {
+    box-shadow: 0 0.25rem 0.75rem rgb(0, 0, 0);
+  }
+
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
   // position: fixed;
