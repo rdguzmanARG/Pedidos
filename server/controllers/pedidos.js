@@ -7,7 +7,9 @@ let Entrega = require("../models/entrega.model");
 
 exports.pedidos_get_all = (req, res) => {
   Pedido.find()
-    .select("_id nombre apellido celular entregado comentarios usuarioMod")
+    .select(
+      "_id nombre apellido celular entregado comentarios conEntrega direccion usuarioMod"
+    )
     .then(pedidos => {
       Entrega.findOne()
         .sort({ fechaImportacion: -1 })
@@ -23,7 +25,9 @@ exports.pedidos_get_all = (req, res) => {
 
 exports.pedidos_get_last = (req, res) => {
   Pedido.find({ updatedAt: { $gt: req.params.date } })
-    .select("_id nombre apellido celular entregado comentarios usuarioMod")
+    .select(
+      "_id nombre apellido celular entregado comentarios conEntrega direccion usuarioMod"
+    )
     .then(pedidos => {
       Entrega.findOne()
         .sort({ fechaImportacion: -1 })
@@ -111,7 +115,9 @@ function ImportarDatos(response, entrega) {
   const colCelular = "Celular";
   const colMarcaTemporal = "Marca temporal";
   const colEmail = "Dirección de correo electrónico";
-  const colcomentarios = "Comentarios ";
+  const colComentarios = "Comentarios";
+  const colDireccion = "Dirección";
+  const colConEntrega = "¿Pedido con entrega a domicilio?";
   const excludeCols = [
     "2",
     colNombre,
@@ -119,7 +125,9 @@ function ImportarDatos(response, entrega) {
     colCelular,
     colMarcaTemporal,
     colEmail,
-    colcomentarios
+    colComentarios,
+    colDireccion,
+    colConEntrega
   ];
   console.log("Imp - Inicio");
   Pedido.deleteMany({}).then(() => {
@@ -206,7 +214,9 @@ function ImportarDatos(response, entrega) {
                       apellido: d[colApellido].trim(),
                       celular: d[colCelular],
                       email: d[colEmail],
-                      comentarios: d[colcomentarios],
+                      comentarios: d[colComentarios],
+                      direccion: d[colDireccion],
+                      conEntrega: d[colConEntrega] == "Si",
                       totalAlmacen: 0,
                       totalPedido: 0,
                       ajuste: 0,

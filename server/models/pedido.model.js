@@ -20,6 +20,12 @@ const schema = mongoose.Schema(
     celular: {
       type: String
     },
+    direccion: {
+      type: String
+    },
+    conEntrega: {
+      type: Boolean
+    },
     items: [
       {
         producto: { type: mongoose.Schema.Types.ObjectId, ref: "Producto" },

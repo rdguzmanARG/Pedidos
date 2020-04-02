@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { pedido_getAll, pedido_getLast } from "../services/pedidoService";
 import auth from "../services/authService";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit } from "@fortawesome/free-solid-svg-icons";
+import { faEdit, faTruck } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
 
 class PedidosList extends Component {
@@ -187,10 +187,35 @@ class PedidosList extends Component {
                     {p.entregado ? p.usuarioMod.toUpperCase() : ""}
                   </td>
                   <td className="cell-icon">
-                    <Link title="Ver pedido" to={`/pedidos/ver/${p._id}`}>
-                      <button type="button" class="btn btn-sm btn-success">
-                        <FontAwesomeIcon icon={faEdit} />
-                      </button>
+                    <Link to={`/pedidos/ver/${p._id}`}>
+                      {p.conEntrega && p.direccion && (
+                        <button
+                          title="Pedido con Entrega"
+                          type="button"
+                          class="btn btn-sm btn-primary"
+                        >
+                          <FontAwesomeIcon icon={faTruck} />
+                        </button>
+                      )}
+                      {p.conEntrega && !p.direccion && (
+                        <button
+                          title="Falta Dirección"
+                          type="button"
+                          class="btn btn-sm btn-danger"
+                        >
+                          <FontAwesomeIcon icon={faTruck} />
+                        </button>
+                      )}
+
+                      {!p.conEntrega && (
+                        <button
+                          title="Pedido sin entrega"
+                          type="button"
+                          class="btn btn-sm btn-success"
+                        >
+                          <FontAwesomeIcon icon={faEdit} />
+                        </button>
+                      )}
                     </Link>
                   </td>
                 </tr>

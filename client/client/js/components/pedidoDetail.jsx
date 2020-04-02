@@ -130,7 +130,6 @@ class PedidoDetail extends Component {
       showConfirmAnulado
     } = this.state;
 
-    const address = "Albarracín+1343,+Temperley";
     if (isLoading) {
       return (
         <div id="overlay">
@@ -233,18 +232,28 @@ class PedidoDetail extends Component {
                     Comentarios: <b>{pedido.comentarios}</b>{" "}
                   </div>
                 )}
+                {pedido.direccion && (
+                  <div>
+                    Dirección: <b>{pedido.direccion}</b>{" "}
+                  </div>
+                )}
+                <div>
+                  Entrega a domicilio: <b>{pedido.conEntrega ? "Si" : "No"}</b>{" "}
+                </div>
               </div>
               <div className="col-md-6 map-position">
-                <iframe
-                  width="300"
-                  height="300"
-                  frameborder="0"
-                  src={
-                    "https://www.google.com/maps/embed/v1/place?key=AIzaSyCh0CejOsqJPPExI64OAx_66Qq78zcaAgY&q=" +
-                    address
-                  }
-                  allowfullscreen
-                ></iframe>
+                {pedido.direccion && (
+                  <iframe
+                    width="300"
+                    height="300"
+                    frameborder="0"
+                    src={
+                      "https://www.google.com/maps/embed/v1/place?key=AIzaSyCh0CejOsqJPPExI64OAx_66Qq78zcaAgY&q=" +
+                      pedido.direccion
+                    }
+                    allowfullscreen
+                  ></iframe>
+                )}
               </div>
             </div>
           </div>
