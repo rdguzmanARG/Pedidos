@@ -1,6 +1,8 @@
 import React from "react";
+import ReactGA from "react-ga";
 
 export default function QuienesSomos(props) {
+  ReactGA.pageview(window.location.pathname + window.location.search);
   return (
     <div>
       <div class="jumbotron jumbotron-fluid">

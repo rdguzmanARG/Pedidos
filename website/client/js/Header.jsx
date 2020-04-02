@@ -1,10 +1,23 @@
 import React from "react";
-// import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
+import ReactGA from "react-ga";
 // import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 // import { faHome } from "@fortawesome/free-solid-svg-icons";
 
 class Header extends React.Component {
+  state = {
+    collapse: true
+  };
+
+  clickBanner = banner => {
+    ReactGA.event({
+      category: "Banner",
+      action: "Click",
+      label: banner
+    });
+  };
   render() {
+    console.log("header");
     return (
       <header>
         <div
@@ -13,31 +26,38 @@ class Header extends React.Component {
           data-ride="carousel"
         >
           <div class="carousel-inner" role="listbox">
-            <a
-              href="/contactos"
+            <Link
+              onClick={() => this.clickBanner("banner-1")}
+              to="/contactos"
               class="carousel-item active"
               style={{
                 backgroundImage:
                   "url(" + "/images/banners-publicite-aqui.jpg" + ")"
               }}
-            ></a>
-            <a
-              href="/contactos"
-              className="carousel-item"
+            ></Link>
+            <Link
+              onClick={() => this.clickBanner("banner-2")}
+              to="/contactos"
+              class="carousel-item"
               style={{
                 backgroundImage:
                   "url(" + "/images/publicite-banner-fino.png" + ")"
               }}
-            ></a>
+            ></Link>
           </div>
         </div>
         <nav class="container navbar navbar-expand-lg navbar-light bg-light">
-          <a class="navbar-brand" href="/">
+          <NavLink
+            to="/"
+            onClick={() => this.setState({ collapse: true })}
+            className="navbar-brand"
+          >
             Nodo Temperley
-          </a>
+          </NavLink>
           <button
             class="navbar-toggler"
             type="button"
+            onClick={() => this.setState({ collapse: !this.state.collapse })}
             data-toggle="collapse"
             data-target="#navbarNavDropdown"
             aria-controls="navbarNavDropdown"
@@ -46,17 +66,32 @@ class Header extends React.Component {
           >
             <span class="navbar-toggler-icon"></span>
           </button>
-          <div class="collapse navbar-collapse" id="navbarNavDropdown">
+          <div
+            class={
+              this.state.collapse
+                ? "collapse navbar-collapse"
+                : "navbar-collapse"
+            }
+            id="navbarNavDropdown"
+          >
             <ul class="navbar-nav">
               <li class="nav-item">
-                <a class="nav-link" href="/quienes-somos">
+                <NavLink
+                  to="/quienes-somos"
+                  onClick={() => this.setState({ collapse: true })}
+                  className="nav-link"
+                >
                   ¿Quienes somos?
-                </a>
+                </NavLink>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="/contactos">
+                <NavLink
+                  to="/contactos"
+                  onClick={() => this.setState({ collapse: true })}
+                  className="nav-link"
+                >
                   Contactenos
-                </a>
+                </NavLink>
               </li>
             </ul>
           </div>

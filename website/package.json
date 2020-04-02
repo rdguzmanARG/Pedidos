@@ -44,6 +44,7 @@
     "react": "^16.11.0",
     "react-bootstrap-sweetalert": "^5.1.9",
     "react-dom": "^16.11.0",
+    "react-ga": "^2.7.0",
     "react-loader-spinner": "^3.1.5",
     "react-moment": "^0.9.7",
     "react-number-format": "^4.4.1",

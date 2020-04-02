@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { entrega_getCurrent } from "../services/entregaService";
+import ReactGA from "react-ga";
 
 class Form extends Component {
   state = {
@@ -9,6 +10,7 @@ class Form extends Component {
   componentDidMount() {
     entrega_getCurrent().then(res => {
       this.setState({ estado: res.data.estado });
+      ReactGA.pageview(window.location.pathname + window.location.search);
     });
   }
   render() {

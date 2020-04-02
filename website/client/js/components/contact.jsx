@@ -1,11 +1,16 @@
 import React, { Component } from "react";
 import { contacto_send } from "../services/contactoService";
+import ReactGA from "react-ga";
 
 class Contact extends Component {
   state = {
     contacto: {},
     enviado: false
   };
+
+  componentDidMount() {
+    ReactGA.pageview(window.location.pathname + window.location.search);
+  }
 
   onFieldChange = e => {
     const contacto = { ...this.state.contacto };
@@ -15,6 +20,10 @@ class Contact extends Component {
 
   submitForm = e => {
     const { contacto } = this.state;
+    ReactGA.event({
+      category: "Form",
+      action: "Send"
+    });
     e.preventDefault();
     contacto_send(contacto)
       .then(res => {
@@ -104,6 +113,7 @@ class Contact extends Component {
                       placeholder="fernando.otto@gmail.com"
                       onChange={this.onFieldChange}
                       aria-describedby="emailHelp"
+                      required
                     ></input>
                   </div>
                   <div class="col-md-6 mb-3">
@@ -115,6 +125,7 @@ class Contact extends Component {
                       id="exampleInputTel"
                       placeholder="11 3322 3322"
                       onChange={this.onFieldChange}
+                      required
                     ></input>
                   </div>
                 </div>
