@@ -13,6 +13,15 @@ body {
   }
 }
 
+iframe {
+  display: block;
+  overflow: hidden;
+  border: none; /* Reset default border */
+
+  width: calc(100% + 0px);
+  //margin-top: 56px;
+}
+
 .main-container {
   padding-top: 57px;
   padding-bottom: 70px;
@@ -148,6 +157,13 @@ footer {
 }
 // Detalle del pedido
 .pedido-detail {
+  .map-position {
+    text-align: right;
+
+    @media (max-width: 769px) {
+      text-align: left;
+    }
+  }
   .card-header {
     background-color: teal;
     color: white;

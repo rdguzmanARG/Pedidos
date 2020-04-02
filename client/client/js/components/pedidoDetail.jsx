@@ -129,6 +129,8 @@ class PedidoDetail extends Component {
       showConfirmAceptado,
       showConfirmAnulado
     } = this.state;
+
+    const address = "Albarracín+1343,+Temperley";
     if (isLoading) {
       return (
         <div id="overlay">
@@ -208,27 +210,43 @@ class PedidoDetail extends Component {
             </div>
           </div>
           <div className="card-body m-1">
-            {pedido.celular && (
-              <div>
-                Teléfono: <b>{pedido.celular}</b>
+            <div className="row">
+              <div className="col-md-6 mb-2">
+                {pedido.celular && (
+                  <div>
+                    Teléfono: <b>{pedido.celular}</b>
+                  </div>
+                )}
+                {pedido.email && (
+                  <div>
+                    Email: <b>{pedido.email}</b>
+                  </div>
+                )}
+                {pedido.date && (
+                  <div>
+                    Fecha - Hora:{" "}
+                    <b>{moment(pedido.date).format("DD/MM/YYYY HH:mm")}</b>
+                  </div>
+                )}
+                {pedido.comentarios && (
+                  <div>
+                    Comentarios: <b>{pedido.comentarios}</b>{" "}
+                  </div>
+                )}
               </div>
-            )}
-            {pedido.email && (
-              <div>
-                Email: <b>{pedido.email}</b>
+              <div className="col-md-6 map-position">
+                <iframe
+                  width="300"
+                  height="300"
+                  frameborder="0"
+                  src={
+                    "https://www.google.com/maps/embed/v1/place?key=AIzaSyCh0CejOsqJPPExI64OAx_66Qq78zcaAgY&q=" +
+                    address
+                  }
+                  allowfullscreen
+                ></iframe>
               </div>
-            )}
-            {pedido.date && (
-              <div>
-                Fecha - Hora:{" "}
-                <b>{moment(pedido.date).format("DD/MM/YYYY HH:mm")}</b>
-              </div>
-            )}
-            {pedido.comentarios && (
-              <div>
-                Comentarios: <b>{pedido.comentarios}</b>{" "}
-              </div>
-            )}
+            </div>
           </div>
         </div>
         {pedido.items && (
