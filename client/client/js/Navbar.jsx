@@ -50,46 +50,52 @@ class Navbar extends React.Component {
                       Pedidos
                     </NavLink>
                   </li>
-                  <li className="nav-item">
-                    <NavLink
-                      className="nav-link"
-                      onClick={this.changeSelection}
-                      to="/productos"
-                    >
-                      Productos
-                    </NavLink>
-                  </li>
-
-                  <li class="nav-item dropdown">
-                    <a
-                      class="nav-link dropdown-toggle"
-                      href="#"
-                      id="navbarDropdown"
-                      role="button"
-                      data-toggle="dropdown"
-                      aria-haspopup="true"
-                      aria-expanded="false"
-                    >
-                      Entregas
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                      <Link
-                        className="dropdown-item"
-                        to="/entregas-configuracion"
+                  {(user.isAdmin || user.isAdminPed) && (
+                    <li className="nav-item">
+                      <NavLink
+                        className="nav-link"
                         onClick={this.changeSelection}
+                        to="/productos"
                       >
-                        Configuración
-                      </Link>
-                      <div class="dropdown-divider"></div>
-                      <Link
-                        className="dropdown-item"
-                        to="/entregas"
-                        onClick={this.changeSelection}
+                        Productos
+                      </NavLink>
+                    </li>
+                  )}
+                  {(user.isAdmin || user.isAdminPed) && (
+                    <li class="nav-item dropdown">
+                      <a
+                        class="nav-link dropdown-toggle"
+                        href="#"
+                        id="navbarDropdown"
+                        role="button"
+                        data-toggle="dropdown"
+                        aria-haspopup="true"
+                        aria-expanded="false"
                       >
-                        Historial
-                      </Link>
-                    </div>
-                  </li>
+                        Entregas
+                      </a>
+                      <div
+                        class="dropdown-menu"
+                        aria-labelledby="navbarDropdown"
+                      >
+                        <Link
+                          className="dropdown-item"
+                          to="/entregas-configuracion"
+                          onClick={this.changeSelection}
+                        >
+                          Configuración
+                        </Link>
+                        <div class="dropdown-divider"></div>
+                        <Link
+                          className="dropdown-item"
+                          to="/entregas"
+                          onClick={this.changeSelection}
+                        >
+                          Historial
+                        </Link>
+                      </div>
+                    </li>
+                  )}
 
                   <li>
                     <NavLink

@@ -18,7 +18,8 @@ exports.users_signup = (req, res) => {
               _id: new mongoose.Types.ObjectId(),
               username: req.body.username,
               password: hash,
-              isAdmin: req.body.isAdmin
+              isAdmin: req.body.isAdmin,
+              isAdminPed: req.body.isAdminPed
             });
             user
               .save()
@@ -76,7 +77,8 @@ exports.users_login = (req, res) => {
             {
               username: user[0].username,
               userId: user[0]._id,
-              isAdmin: user[0].isAdmin
+              isAdmin: user[0].isAdmin,
+              isAdminPed: user[0].isAdminPed
             },
             process.env.JWT_KEY,
             {

@@ -136,6 +136,8 @@ class App extends Component {
                 path="/productos/:verb/:id"
                 render={props => {
                   if (!user) return <Redirect to="/login"></Redirect>;
+                  if (!user.isAdmin && !user.isAdminPed)
+                    return <Redirect to="/404"></Redirect>;
                   return (
                     <ProductoDetail
                       onGlobalError={this.SetGlobalError}
@@ -149,6 +151,8 @@ class App extends Component {
                 path="/productos"
                 render={props => {
                   if (!user) return <Redirect to="/login"></Redirect>;
+                  if (!user.isAdmin && !user.isAdminPed)
+                    return <Redirect to="/404"></Redirect>;
                   return (
                     <ProductosList
                       onGlobalError={this.SetGlobalError}
@@ -167,6 +171,8 @@ class App extends Component {
                 path="/entregas"
                 render={props => {
                   if (!user) return <Redirect to="/login"></Redirect>;
+                  if (!user.isAdmin && !user.isAdminPed)
+                    return <Redirect to="/404"></Redirect>;
                   return (
                     <Entregas
                       onGlobalError={this.SetGlobalError}
@@ -179,6 +185,8 @@ class App extends Component {
                 path="/entregas-configuracion"
                 render={props => {
                   if (!user) return <Redirect to="/login"></Redirect>;
+                  if (!user.isAdmin && !user.isAdminPed)
+                    return <Redirect to="/404"></Redirect>;
                   return (
                     <EntregasConfig
                       user={user}

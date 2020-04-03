@@ -139,6 +139,7 @@ class PedidoDetail extends Component {
     }
 
     const total = totalPedidos + totalAlmacen;
+    const { user } = this.props;
 
     return (
       <div className="pedido-detail">
@@ -481,29 +482,33 @@ class PedidoDetail extends Component {
             </tbody>
           </table>
         )}
+        {(user.isAdmin || user.isAdminPed) && (
+          <React.Fragment>
+            {entregaEstado === "INI" && pedido.entregado === false && (
+              <button
+                onClick={() =>
+                  this.setState({ ...this.state, showConfirmAceptado: true })
+                }
+                disabled={entregaEstado !== "INI"}
+                class="btn btn-success ml-2"
+              >
+                Confirmar retiro
+              </button>
+            )}
+            {entregaEstado === "INI" && pedido.entregado === true && (
+              <button
+                onClick={() =>
+                  this.setState({ ...this.state, showConfirmAnulado: true })
+                }
+                disabled={entregaEstado !== "INI"}
+                class="btn btn-danger ml-2"
+              >
+                Anular retiro
+              </button>
+            )}
+          </React.Fragment>
+        )}
 
-        {entregaEstado === "INI" && pedido.entregado === false && (
-          <button
-            onClick={() =>
-              this.setState({ ...this.state, showConfirmAceptado: true })
-            }
-            disabled={entregaEstado !== "INI"}
-            class="btn btn-success ml-2"
-          >
-            Confirmar retiro
-          </button>
-        )}
-        {entregaEstado === "INI" && pedido.entregado === true && (
-          <button
-            onClick={() =>
-              this.setState({ ...this.state, showConfirmAnulado: true })
-            }
-            disabled={entregaEstado !== "INI"}
-            class="btn btn-danger ml-2"
-          >
-            Anular retiro
-          </button>
-        )}
         <button
           title="Volver"
           onClick={() => this.props.history.push("/pedidos")}

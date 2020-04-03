@@ -15,6 +15,7 @@ class Form extends Component {
   }
   render() {
     const { estado } = this.state;
+    if (estado == "") return null;
     return (
       <div className="form">
         {estado != "IMP" && (
