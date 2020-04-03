@@ -13,7 +13,12 @@ iframe {
 .form {
   padding-top: 10px;
 }
-
+.awssld__bullets {
+  position: relative;
+  bottom: 0px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
 .carousel {
   background-color: lightslategray;
   .carousel-inner {

@@ -13,12 +13,12 @@ class PedidosList extends Component {
     pedidos: [],
     last: null,
     intervalId: null,
-    entregaEstado: null
+    entregaEstado: null,
   };
 
   componentDidMount() {
     pedido_getAll()
-      .then(res => {
+      .then((res) => {
         if (res.status === 200) {
           const { pedidos, last, entregaEstado } = res.data;
           this.setState({ pedidos, last, isLoading: false, entregaEstado });
@@ -26,7 +26,7 @@ class PedidosList extends Component {
           this.setState({ ...this.state, intervalId: intervalId });
         }
       })
-      .catch(ex => {
+      .catch((ex) => {
         if (ex.response && ex.response.status === 401) {
           auth.logout();
           window.location = "/login";
@@ -43,15 +43,15 @@ class PedidosList extends Component {
   updatePedidosList = () => {
     if (this.state.last != null) {
       pedido_getLast(this.state.last)
-        .then(res => {
+        .then((res) => {
           if (res.status == 200 && res.data) {
             // Validate if has new data
             if (res.data.pedidos.length > 0) {
               const newPedidos = res.data.pedidos;
 
               if (this.state.entregaEstado == "INI") {
-                const pedidos = this.state.pedidos.filter(function(item) {
-                  return !newPedidos.map(p => p._id).includes(item._id)
+                const pedidos = this.state.pedidos.filter(function (item) {
+                  return !newPedidos.map((p) => p._id).includes(item._id)
                     ? true
                     : false;
                 });
@@ -59,12 +59,12 @@ class PedidosList extends Component {
                   ...this.state,
                   pedidos: [...pedidos, ...newPedidos],
                   last: res.data.last,
-                  entregaEstado: res.data.entregaEstado
+                  entregaEstado: res.data.entregaEstado,
                 });
                 const restantes =
                   this.state.pedidos.length -
-                  this.state.pedidos.filter(f => f.entregado).length;
-                const entregados = newPedidos.filter(p => p.entregado).length;
+                  this.state.pedidos.filter((f) => f.entregado).length;
+                const entregados = newPedidos.filter((p) => p.entregado).length;
                 if (entregados > 0) {
                   toast.info(
                     <div>
@@ -98,7 +98,7 @@ class PedidosList extends Component {
                   ...this.state,
                   pedidos: [...newPedidos],
                   last: res.data.last,
-                  entregaEstado: res.data.entregaEstado
+                  entregaEstado: res.data.entregaEstado,
                 });
                 toast.info("Se han importado datos recientemente.");
               }
@@ -106,7 +106,7 @@ class PedidosList extends Component {
               this.setState({
                 ...this.state,
                 last: res.data.last,
-                entregaEstado: res.data.entregaEstado
+                entregaEstado: res.data.entregaEstado,
               });
             }
           }
@@ -119,12 +119,18 @@ class PedidosList extends Component {
 
   render() {
     const { pedidos, isLoading } = this.state;
-    const pedidosFilteres = pedidos.filter(
-      f =>
-        f.nombre.toLowerCase().includes(this.props.filter.toLowerCase()) ||
-        f.apellido.toLowerCase().includes(this.props.filter.toLowerCase()) ||
-        (this.props.filter === "*" && f.comentarios)
-    );
+    const { text, pendientes, conEntrega } = this.props.filter;
+
+    const pedidosFilteres = pedidos
+      .filter(
+        (f) =>
+          f.nombre.toLowerCase().includes(text.toLowerCase()) ||
+          f.apellido.toLowerCase().includes(text.toLowerCase()) ||
+          (text === "*" && f.comentarios)
+      )
+      .filter((f) => !pendientes || !f.entregado)
+      .filter((f) => !conEntrega || f.conEntrega);
+
     if (isLoading) {
       return (
         <div id="overlay">
@@ -134,7 +140,7 @@ class PedidosList extends Component {
     }
     const cantidad = pedidosFilteres.length;
     const restantes =
-      cantidad - pedidosFilteres.filter(f => f.entregado).length;
+      cantidad - pedidosFilteres.filter((f) => f.entregado).length;
     return (
       <div className="pedidos-list">
         <div class="input-group mb-2 mt-2">
@@ -142,9 +148,35 @@ class PedidosList extends Component {
             type="text"
             class="form-control form-control-lg"
             placeholder="Ingresar texto para buscar..."
-            value={this.props.filter}
-            onChange={e => this.props.onChangeFilter(e.target.value)}
+            value={this.props.filter.text}
+            onChange={(e) => this.props.onChangeFilter(e.target.value)}
           />
+        </div>
+        <div class="input-group mb-2 mt-2 ">
+          <div class="form-check mr-2">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              checked={pendientes}
+              id="pendientes"
+              onChange={(e) => this.props.onChangeFilter("filter-pendientes")}
+            ></input>
+            <label class="form-check-label" for="pendientes">
+              Pendientes
+            </label>
+          </div>
+          <div class="form-check">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              checked={conEntrega}
+              id="conEntrega"
+              onChange={(e) => this.props.onChangeFilter("filter-con-entrega")}
+            ></input>
+            <label class="form-check-label" for="conEntrega">
+              Con entrega a domiciio
+            </label>
+          </div>
         </div>
         <div className="text-right">
           <b>
@@ -175,7 +207,7 @@ class PedidosList extends Component {
                 // names must be equal
                 return 0;
               })
-              .map(p => (
+              .map((p) => (
                 <tr key={p._id} className={p.entregado ? "bg-entregado" : ""}>
                   <td>
                     {p.nombre}, {p.apellido} {p.comentarios ? "(*)" : ""}

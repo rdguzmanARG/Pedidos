@@ -3,7 +3,7 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Redirect
+  Redirect,
 } from "react-router-dom";
 import { ToastContainer, toast, Flip } from "react-toastify";
 import Loader from "react-loader-spinner";
@@ -25,21 +25,35 @@ import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 class App extends Component {
   state = {
     filterPedidos: "",
+    filterPedidosPendientes: false,
+    filterPedidosConEntrega: false,
     filterProductos: "",
     filterProductosPedidos: false,
     hasError: false,
-    isLoading: true
+    isLoading: true,
   };
   componentDidMount() {
     const user = auth.getCurrentUser();
     this.setState({ ...this.state, user, isLoading: false });
   }
 
-  ChangeFilterPedidos = filterPedidos => {
-    this.setState({ ...this.state, filterPedidos });
+  ChangeFilterPedidos = (filter) => {
+    if (filter == "filter-pendientes") {
+      this.setState({
+        ...this.state,
+        filterPedidosPendientes: !this.state.filterPedidosPendientes,
+      });
+    } else if (filter == "filter-con-entrega") {
+      this.setState({
+        ...this.state,
+        filterPedidosConEntrega: !this.state.filterPedidosConEntrega,
+      });
+    } else {
+      this.setState({ ...this.state, filterPedidos: filter });
+    }
   };
 
-  ChangeFilterProductos = filterProductos => {
+  ChangeFilterProductos = (filterProductos) => {
     if (typeof filterProductos === "boolean") {
       this.setState({ ...this.state, filterProductosPedidos: filterProductos });
     } else {
@@ -107,7 +121,7 @@ class App extends Component {
             <Switch>
               <Route
                 path="/pedidos/:verb/:id"
-                render={props => {
+                render={(props) => {
                   if (!user) return <Redirect to="/login"></Redirect>;
                   return (
                     <PedidoDetail
@@ -120,11 +134,15 @@ class App extends Component {
               />
               <Route
                 path="/pedidos"
-                render={props => {
+                render={(props) => {
                   if (!user) return <Redirect to="/login"></Redirect>;
                   return (
                     <PedidosList
-                      filter={this.state.filterPedidos}
+                      filter={{
+                        text: this.state.filterPedidos,
+                        pendientes: this.state.filterPedidosPendientes,
+                        conEntrega: this.state.filterPedidosConEntrega,
+                      }}
                       onChangeFilter={this.ChangeFilterPedidos}
                       onGlobalError={this.SetGlobalError}
                       {...props}
@@ -134,7 +152,7 @@ class App extends Component {
               />
               <Route
                 path="/productos/:verb/:id"
-                render={props => {
+                render={(props) => {
                   if (!user) return <Redirect to="/login"></Redirect>;
                   if (!user.isAdmin && !user.isAdminPed)
                     return <Redirect to="/404"></Redirect>;
@@ -149,7 +167,7 @@ class App extends Component {
               />
               <Route
                 path="/productos"
-                render={props => {
+                render={(props) => {
                   if (!user) return <Redirect to="/login"></Redirect>;
                   if (!user.isAdmin && !user.isAdminPed)
                     return <Redirect to="/404"></Redirect>;
@@ -159,7 +177,7 @@ class App extends Component {
                       user={user}
                       filter={{
                         text: this.state.filterProductos,
-                        soloPedidos: this.state.filterProductosPedidos
+                        soloPedidos: this.state.filterProductosPedidos,
                       }}
                       onChangeFilter={this.ChangeFilterProductos}
                       {...props}
@@ -169,7 +187,7 @@ class App extends Component {
               />
               <Route
                 path="/entregas"
-                render={props => {
+                render={(props) => {
                   if (!user) return <Redirect to="/login"></Redirect>;
                   if (!user.isAdmin && !user.isAdminPed)
                     return <Redirect to="/404"></Redirect>;
@@ -183,7 +201,7 @@ class App extends Component {
               />
               <Route
                 path="/entregas-configuracion"
-                render={props => {
+                render={(props) => {
                   if (!user) return <Redirect to="/login"></Redirect>;
                   if (!user.isAdmin && !user.isAdminPed)
                     return <Redirect to="/404"></Redirect>;

@@ -14,29 +14,29 @@ class PedidoDetail extends Component {
   state = {
     isLoading: true,
     pedido: {
-      items: []
+      items: [],
     },
     entregaEstado: "",
     totalPedidos: 0,
     totalAlmacen: null,
     showConfirmAceptado: false,
-    showConfirmAnulado: false
+    showConfirmAnulado: false,
   };
 
   componentDidMount() {
     const id = this.props.match.params.id;
     pedido_get(id)
-      .then(resPedido => {
+      .then((resPedido) => {
         if (resPedido.status === 200) {
           entrega_getCurrent()
-            .then(resEntrega => {
+            .then((resEntrega) => {
               const pedido = resPedido.data;
               const totalPedidos = pedido.entregado
                 ? pedido.totalPedido
                 : this.arrSum(
                     pedido.items
-                      .filter(f => !f.producto.anulado)
-                      .map(m => m.pago)
+                      .filter((f) => !f.producto.anulado)
+                      .map((m) => m.pago)
                   );
               this.setState({
                 pedido,
@@ -44,10 +44,10 @@ class PedidoDetail extends Component {
                 totalAlmacen:
                   pedido.totalAlmacen == 0 ? null : pedido.totalAlmacen,
                 isLoading: false,
-                entregaEstado: resEntrega.data ? resEntrega.data.estado : ""
+                entregaEstado: resEntrega.data ? resEntrega.data.estado : "",
               });
             })
-            .catch(ex => {
+            .catch((ex) => {
               if (ex.response && ex.response.status === 401) {
                 auth.logout();
                 window.location = "/login";
@@ -57,7 +57,7 @@ class PedidoDetail extends Component {
             });
         }
       })
-      .catch(ex => {
+      .catch((ex) => {
         if (ex.response && ex.response.status === 401) {
           auth.logout();
           window.location = "/login";
@@ -66,9 +66,9 @@ class PedidoDetail extends Component {
         }
       });
   }
-  arrSum = arr => arr.reduce((a, b) => a + b, 0);
+  arrSum = (arr) => arr.reduce((a, b) => a + b, 0);
 
-  onAlmacenChange = e => {
+  onAlmacenChange = (e) => {
     let valor = e.target.value;
     let totalAlmacen = Number(valor.replace("$", ""));
     if (totalAlmacen == 0) {
@@ -77,44 +77,44 @@ class PedidoDetail extends Component {
 
     this.setState({
       ...this.state,
-      totalAlmacen
+      totalAlmacen,
     });
   };
 
-  onPagoChange = e => {
+  onPagoChange = (e) => {
     let valor = e.target.value;
     const ped = { ...this.state.pedido };
     // Es el item a modificar
-    const item = ped.items.filter(f => f._id === e.target.name)[0];
+    const item = ped.items.filter((f) => f._id === e.target.name)[0];
     item.pago = Number(valor.replace("$", ""));
     if (item.pago == 0) {
       item.pago = null;
     }
 
     const totalPedidos = this.arrSum(
-      ped.items.filter(f => !f.producto.anulado).map(m => m.pago)
+      ped.items.filter((f) => !f.producto.anulado).map((m) => m.pago)
     );
     this.setState({ ...this.state, totalPedidos, pedido: { ...ped } });
   };
 
-  onPagoReset = id => {
+  onPagoReset = (id) => {
     const ped = { ...this.state.pedido };
     // Es el item a modificar
-    const item = ped.items.filter(f => f._id === id)[0];
+    const item = ped.items.filter((f) => f._id === id)[0];
     item.pago = item.cantidad * item.precio;
     const totalPedidos = this.arrSum(
-      ped.items.filter(f => !f.producto.anulado).map(m => m.pago)
+      ped.items.filter((f) => !f.producto.anulado).map((m) => m.pago)
     );
     this.setState({ ...this.state, totalPedidos, pedido: { ...ped } });
   };
 
-  onPagoCero = id => {
+  onPagoCero = (id) => {
     const ped = { ...this.state.pedido };
     // Es el item a modificar
-    const item = ped.items.filter(f => f._id === id)[0];
+    const item = ped.items.filter((f) => f._id === id)[0];
     item.pago = null;
     const totalPedidos = this.arrSum(
-      ped.items.filter(f => !f.producto.anulado).map(m => m.pago)
+      ped.items.filter((f) => !f.producto.anulado).map((m) => m.pago)
     );
     this.setState({ ...this.state, totalPedidos, pedido: { ...ped } });
   };
@@ -127,7 +127,7 @@ class PedidoDetail extends Component {
       totalPedidos,
       totalAlmacen,
       showConfirmAceptado,
-      showConfirmAnulado
+      showConfirmAnulado,
     } = this.state;
 
     if (isLoading) {
@@ -160,10 +160,10 @@ class PedidoDetail extends Component {
                 entregado: showConfirmAceptado,
                 totalPedido: showConfirmAceptado ? totalPedidos : 0,
                 totalAlmacen: showConfirmAceptado ? totalAlmacen : 0,
-                usuarioMod: user.username
+                usuarioMod: user.username,
               };
               pedido_update(pedido._id, newPedido)
-                .then(res => {
+                .then((res) => {
                   if (res.status === 200) {
                     if (showConfirmAceptado) {
                       this.props.history.push("/pedidos");
@@ -171,12 +171,12 @@ class PedidoDetail extends Component {
                       this.setState({
                         ...this.state,
                         pedido: res.data,
-                        showConfirmAnulado: false
+                        showConfirmAnulado: false,
                       });
                     }
                   }
                 })
-                .catch(ex => {
+                .catch((ex) => {
                   this.props.onGlobalError();
                 });
             }}
@@ -184,7 +184,7 @@ class PedidoDetail extends Component {
               this.setState({
                 ...this.state,
                 showConfirmAceptado: false,
-                showConfirmAnulado: false
+                showConfirmAnulado: false,
               });
             }}
             focusCancelBtn
@@ -228,19 +228,19 @@ class PedidoDetail extends Component {
                     <b>{moment(pedido.date).format("DD/MM/YYYY HH:mm")}</b>
                   </div>
                 )}
-                {pedido.comentarios && (
-                  <div>
-                    Comentarios: <b>{pedido.comentarios}</b>{" "}
-                  </div>
-                )}
+                <div>
+                  Entrega a domicilio: <b>{pedido.conEntrega ? "Si" : "No"}</b>{" "}
+                </div>
                 {pedido.direccion && (
                   <div>
                     Dirección: <b>{pedido.direccion}</b>{" "}
                   </div>
                 )}
-                <div>
-                  Entrega a domicilio: <b>{pedido.conEntrega ? "Si" : "No"}</b>{" "}
-                </div>
+                {pedido.comentarios && (
+                  <div>
+                    Comentarios: <b>{pedido.comentarios}</b>{" "}
+                  </div>
+                )}
               </div>
               <div className="col-md-6 map-position">
                 {pedido.direccion && (
@@ -279,7 +279,7 @@ class PedidoDetail extends Component {
                     cantidad,
                     precio: currentPrecio,
                     pago: currentPago,
-                    _id
+                    _id,
                   },
                   index
                 ) => {

@@ -1,20 +1,24 @@
 import React, { Component } from "react";
 import { entrega_getCurrent } from "../services/entregaService";
 import ReactGA from "react-ga";
+import AwesomeSlider from "react-awesome-slider";
+import withAutoplay from "react-awesome-slider/dist/autoplay";
+import "react-awesome-slider/dist/styles.css";
 
 class Form extends Component {
   state = {
-    estado: ""
+    estado: "",
   };
 
   componentDidMount() {
-    entrega_getCurrent().then(res => {
+    entrega_getCurrent().then((res) => {
       this.setState({ estado: res.data.estado });
       ReactGA.pageview(window.location.pathname + window.location.search);
     });
   }
   render() {
     const { estado } = this.state;
+    const AutoplaySlider = withAutoplay(AwesomeSlider);
     if (estado == "") return null;
     return (
       <div className="form">
@@ -30,7 +34,21 @@ class Form extends Component {
                 nueva recepción de pedidos.
               </p>
             </div>
-            <div class="card-group">
+            <div>
+              <AutoplaySlider
+                play={true}
+                cancelOnInteraction={false} // should stop playing on user interaction
+                interval={3000}
+              >
+                <div data-src="/images/bolson.jpg" />
+                <div data-src="/images/harina.jpg" />
+                <div data-src="/images/limon.jpg" />
+                <div data-src="/images/mango.jpg" />
+                <div data-src="/images/pesados.jpg" />
+              </AutoplaySlider>
+            </div>
+
+            <div class="card-group pt-3">
               <div class="card">
                 <img
                   class="card-img-top"
