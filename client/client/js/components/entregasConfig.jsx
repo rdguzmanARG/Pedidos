@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 import { pedido_import } from "../services/pedidoService";
 import {
   entrega_getCurrent,
-  entrega_setStatus
+  entrega_setStatus,
 } from "../services/entregaService";
 import auth from "../services/authService";
 const Element = Scroll.Element;
@@ -18,7 +18,7 @@ class Inicio extends Component {
     entrega: { estado: "" },
     error: null,
     isLoading: true,
-    action: ""
+    action: "",
   };
 
   scrollTo = () => {
@@ -26,18 +26,18 @@ class Inicio extends Component {
       duration: 1000,
       delay: 100,
       smooth: true,
-      offset: -65 // Scrolls to element + 50 pixels down the page
+      offset: -65, // Scrolls to element + 50 pixels down the page
     });
   };
   componentDidMount() {
     entrega_getCurrent()
-      .then(res => {
+      .then((res) => {
         if (res.status === 200) {
           this.setState({ entrega: res.data, isLoading: false });
           //this.scrollTo();
         }
       })
-      .catch(ex => {
+      .catch((ex) => {
         if (ex.response && ex.response.status === 401) {
           auth.logout();
           window.location = "/login";
@@ -46,10 +46,10 @@ class Inicio extends Component {
         }
       });
   }
-  ImportData = next => {
+  ImportData = (next) => {
     this.setState({ isLoading: true, action: "" });
     pedido_import()
-      .then(res => {
+      .then((res) => {
         console.log("Datos importados");
         if (res.status === 200) {
           this.setState({ entrega: res.data, isLoading: false });
@@ -60,24 +60,24 @@ class Inicio extends Component {
           this.scrollTo();
         }
       })
-      .catch(ex => {
+      .catch((ex) => {
         this.setState({ error: ex, isLoading: false });
       });
   };
 
-  CambioDeEstado = nuevoEstado => {
+  CambioDeEstado = (nuevoEstado) => {
     this.setState({ isLoading: true, action: "" });
     entrega_setStatus(this.state.entrega._id, {
       ...this.state.entrega,
-      estado: nuevoEstado
+      estado: nuevoEstado,
     })
-      .then(res => {
+      .then((res) => {
         if (res.status === 200) {
           this.setState({ entrega: res.data, isLoading: false });
           this.scrollTo();
         }
       })
-      .catch(ex => {
+      .catch((ex) => {
         if (ex.response && ex.response.status === 401) {
           auth.logout();
           window.location = "/login";
@@ -369,11 +369,7 @@ class Inicio extends Component {
               </div>
               <div
                 id="collapseFour"
-                class={
-                  entrega != null && entrega.estado === "CER"
-                    ? "collapse show"
-                    : "collapse"
-                }
+                class="collapse"
                 aria-labelledby="headingFour"
                 data-parent="#accordion"
               >

@@ -6,6 +6,9 @@ const port = process.env.PORT || 5000;
 app.use("/", express.static(__dirname + "/"));
 
 app.get("/*", (req, res) => {
+  if (req.protocol == "https") {
+    res.redirect("http://" + req.hostname + req.path);
+  }
   res.sendFile(__dirname + "/index.html");
 });
 
