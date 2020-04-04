@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { pedido_getAll, pedido_getLast } from "../services/pedidoService";
 import auth from "../services/authService";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit, faTruck } from "@fortawesome/free-solid-svg-icons";
+import { faEdit, faTruck, faWalking } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
 
 class PedidosList extends Component {
@@ -174,7 +174,7 @@ class PedidosList extends Component {
               onChange={(e) => this.props.onChangeFilter("filter-con-entrega")}
             ></input>
             <label class="form-check-label" for="conEntrega">
-              Con entrega a domiciio
+              Con entrega a domicilio
             </label>
           </div>
         </div>
@@ -189,6 +189,7 @@ class PedidosList extends Component {
               <th>Nombre y Apellido</th>
               <th className="d-none d-sm-table-cell">Teléfono</th>
               <th className="d-none d-md-table-cell">Entregado por</th>
+              <th className="cell-icon"></th>
               <th className="cell-icon"></th>
             </tr>
           </thead>
@@ -219,35 +220,26 @@ class PedidosList extends Component {
                     {p.entregado ? p.usuarioMod.toUpperCase() : ""}
                   </td>
                   <td className="cell-icon">
+                    {!p.conEntrega && <FontAwesomeIcon icon={faWalking} />}
+                    {p.conEntrega && p.direccion && (
+                      <FontAwesomeIcon
+                        icon={faTruck}
+                        className="text-primary"
+                      />
+                    )}
+                    {p.conEntrega && !p.direccion && (
+                      <FontAwesomeIcon icon={faTruck} className="text-danger" />
+                    )}
+                  </td>
+                  <td className="cell-icon">
                     <Link to={`/pedidos/ver/${p._id}`}>
-                      {p.conEntrega && p.direccion && (
-                        <button
-                          title="Pedido con Entrega"
-                          type="button"
-                          class="btn btn-sm btn-primary"
-                        >
-                          <FontAwesomeIcon icon={faTruck} />
-                        </button>
-                      )}
-                      {p.conEntrega && !p.direccion && (
-                        <button
-                          title="Falta Dirección"
-                          type="button"
-                          class="btn btn-sm btn-danger"
-                        >
-                          <FontAwesomeIcon icon={faTruck} />
-                        </button>
-                      )}
-
-                      {!p.conEntrega && (
-                        <button
-                          title="Pedido sin entrega"
-                          type="button"
-                          class="btn btn-sm btn-success"
-                        >
-                          <FontAwesomeIcon icon={faEdit} />
-                        </button>
-                      )}
+                      <button
+                        title="Pedido sin entrega"
+                        type="button"
+                        class="btn btn-sm btn-success"
+                      >
+                        <FontAwesomeIcon icon={faEdit} />
+                      </button>
                     </Link>
                   </td>
                 </tr>
