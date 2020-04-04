@@ -14,10 +14,10 @@ iframe {
   padding-top: 10px;
 }
 .awssld__content {
-  background-color: white;
+  background-color: white !important;
   img {
-    position: relative;
-    width: unset;
+    position: relative !important;
+    width: unset !important;
   }
 }
 .awssld__bullets {
