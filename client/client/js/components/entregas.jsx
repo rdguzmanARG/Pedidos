@@ -9,22 +9,22 @@ import auth from "../services/authService";
 class Entregas extends Component {
   state = {
     isLoading: true,
-    entregas: []
+    entregas: [],
   };
 
   componentDidMount() {
     entrega_getAll()
-      .then(res => {
+      .then((res) => {
         if (res.status === 200) {
           this.setState({
             entregas: res.data.filter(
-              f => f.estado == "INI" || f.estado == "CER"
+              (f) => f.estado == "INI" || f.estado == "CER"
             ),
-            isLoading: false
+            isLoading: false,
           });
         }
       })
-      .catch(ex => {
+      .catch((ex) => {
         if (ex.response && ex.response.status === 401) {
           auth.logout();
           window.location = "/login";
@@ -37,7 +37,7 @@ class Entregas extends Component {
   render() {
     const { entregas, isLoading } = this.state;
 
-    const entregaActual = entregas.filter(f => f.estado == "INI")[0];
+    const entregaActual = entregas.filter((f) => f.estado == "INI")[0];
 
     if (isLoading) {
       return (
@@ -62,7 +62,7 @@ class Entregas extends Component {
           <div className="mt-2 mb-2">
             <div class="alert alert-success" role="alert">
               <h4 class="alert-heading">
-                No hay una entregas Inicida en este momento
+                No hay una entrega inicida en este momento
               </h4>
             </div>
           </div>
@@ -152,8 +152,8 @@ class Entregas extends Component {
                 </thead>
                 <tbody>
                   {entregas
-                    .filter(f => f.estado == "CER")
-                    .map(p => (
+                    .filter((f) => f.estado == "CER")
+                    .map((p) => (
                       <tr key={p._id}>
                         <td>
                           {moment(p.fechaImportacion).format(

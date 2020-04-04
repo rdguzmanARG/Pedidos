@@ -24,7 +24,7 @@ class Form extends Component {
       <div className="form">
         {estado != "IMP" && (
           <div className="container pt-4 pb-4">
-            <div className="pb-4">
+            <div className="pt-4 pb-4">
               <h2>
                 En este momento no se encuentra habilitado el formulario para
                 realizar pedidos.
@@ -34,7 +34,7 @@ class Form extends Component {
                 nueva recepción de pedidos.
               </p>
             </div>
-            <div>
+            <div className="pt-4 pb-4">
               <AutoplaySlider
                 play={true}
                 cancelOnInteraction={false} // should stop playing on user interaction
@@ -124,6 +124,20 @@ class Form extends Component {
             Cargndo...
           </iframe>
         )}
+        <div className="pb-4 pt-4">
+          <AutoplaySlider
+            play={true}
+            cancelOnInteraction={false} // should stop playing on user interaction
+            interval={10000}
+          >
+            <div data-src="/images/higiene-1.jpg" />
+            <div data-src="/images/higiene-2.jpg" />
+            <div data-src="/images/higiene-3.jpg" />
+            <div data-src="/images/higiene-4.jpg" />
+            <div data-src="/images/higiene-5.jpg" />
+            <div data-src="/images/higiene-6.jpg" />
+          </AutoplaySlider>
+        </div>
       </div>
     );
   }

@@ -145,7 +145,7 @@ class Inicio extends Component {
           >
             <div>
               {action == "STA"
-                ? "ATENCIÓN: asegurese haber completados los datos mencionados en el formulario de Google. ¿Desea continuar?"
+                ? "ATENCIÓN: asegurese haber completado los pasos en el formulario de Google. ¿Desea continuar?"
                 : action == "IMP"
                 ? "Se actualizarán los pedidos y productos. ¿Desea continuar?"
                 : action == "INI"

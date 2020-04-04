@@ -13,6 +13,13 @@ iframe {
 .form {
   padding-top: 10px;
 }
+.awssld__content {
+  background-color: white;
+  img {
+    position: relative;
+    width: unset;
+  }
+}
 .awssld__bullets {
   position: relative !important;
   bottom: 0px !important;
