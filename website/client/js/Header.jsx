@@ -6,14 +6,14 @@ import ReactGA from "react-ga";
 
 class Header extends React.Component {
   state = {
-    collapse: true
+    collapse: true,
   };
 
-  clickBanner = banner => {
+  clickBanner = (banner) => {
     ReactGA.event({
       category: "Banner",
       action: "Click",
-      label: banner
+      label: banner,
     });
   };
   render() {
@@ -31,19 +31,30 @@ class Header extends React.Component {
               to="/contactos"
               class="carousel-item active"
               style={{
-                backgroundImage:
-                  "url(" + "/images/banners-publicite-aqui.jpg" + ")"
+                backgroundImage: "url(" + "/images/banner-1.jpg" + ")",
               }}
-            ></Link>
+            >
+              <div className="carousel-caption">
+                <h5>Su oficio aquí!!!</h5>
+                <p>Hagase conocer a la comunidad a travez de este espacio.</p>
+              </div>
+            </Link>
             <Link
-              onClick={() => this.clickBanner("banner-2")}
+              onClick={() => this.clickBanner("banner-1")}
               to="/contactos"
               class="carousel-item"
               style={{
-                backgroundImage:
-                  "url(" + "/images/publicite-banner-fino.png" + ")"
+                backgroundImage: "url(" + "/images/banner-2.jpg" + ")",
               }}
-            ></Link>
+            >
+              <div className="carousel-caption">
+                <h5>Ayudanos a crecer!!!!</h5>
+                <p>
+                  Te ayudamos a conseguir mas trabajos! Pone tu publicidad
+                  aqui!.
+                </p>
+              </div>
+            </Link>
           </div>
         </div>
         <nav class="container navbar navbar-expand-lg navbar-light bg-light">
