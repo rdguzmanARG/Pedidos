@@ -15,17 +15,18 @@ export default function QuienesSomos(props) {
         <h2 className="title">¿Que es el Nodo Temperley?</h2>
         <div className="text">
           <p>
-            Es un nodo de consumo solidario, un grupo de consumidorxs
-            organizadxs que nos permite generar y reforzar lazos sociales
-            promoviendo así relaciones de comunidad. Trabajamos en conjunto con{" "}
-            <b>Mercado Territorial- línea Agricultura Familiar</b>. Junto a
-            ellos hemos establecido acuerdos de asociación y compromiso con
-            organizaciones territoriales como <b> La Chapanay</b>, que tiene
+            Es un nodo de consumo solidario, surgido a partir de la iniciativa
+            de una organización territorial como <b>La Chapanay</b>, que tiene
             entre sus objetivos la lucha por la soberanía alimentaria, precios
             justos, defensa de la producción agroecológica y promoción de
-            productorxs locales. Se busca promover y construir canales
-            alternativos, no especulativos y democráticos de comercialización
-            para los grupos de productorxs de la agricultura familiar.{" "}
+            productorxs locales. Trabajamos en conjunto con{" "}
+            <b>Mercado Territorial- línea Agricultura Familiar</b>. Somos un
+            grupo de consumidorxs organizadxs lo que nos permite generar y
+            reforzar lazos sociales solidarios, promoviendo así relaciones de
+            comunidad. Buscamos promover y construir canales alternativos, no
+            especulativos y democráticos de comercialización para los grupos de
+            productorxs de la agricultura familiar en el esfuerzo por generar
+            otras relaciones de producción, comercialización y consumo.
           </p>
         </div>
         <h2 className="title">¿Por qué nos organizamos en nodos?</h2>
