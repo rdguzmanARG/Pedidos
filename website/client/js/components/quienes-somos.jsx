@@ -4,24 +4,33 @@ import ReactGA from "react-ga";
 export default function QuienesSomos(props) {
   ReactGA.pageview(window.location.pathname + window.location.search);
   return (
-    <div>
-      <div class="jumbotron jumbotron-fluid">
-        <div class="container">
-          <h2>¡CONTRA LA ESPECULACIÓN, ORGANIZACIÓN!</h2>
-          <h2>¿Que es el Nodo Temperley?</h2>
+    <div className="quienes-somos">
+      <div className="hero">
+        <h2 className="title">
+          <div>¡CONTRA LA </div>
+          <div>ESPECULACIÓN,</div>
+          <div>ORGANIZACIÓN!</div>
+        </h2>
+      </div>
+      <div class="container">
+        <h2 className="title">¿Que es el Nodo Temperley?</h2>
+        <div className="text">
           <p>
             Es un nodo de consumo solidario, un grupo de consumidorxs
-            organizadxs que trabajan en conjunto con Mercado Territorial- línea
-            Agricultura Familiar, una iniciativa que surgió en el año 2015 como
-            desarrollo de una de las líneas de trabajo de la Incubadora de
-            Economía, Mercado y Finanzas de la Universidad Nacional de Quilmes.
+            organizadxs que nos permite generar y reforzar lazos sociales
+            promoviendo así relaciones de comunidad. Trabajamos en conjunto con{" "}
+            <b>Mercado Territorial- línea Agricultura Familiar</b>. Junto a
+            ellos hemos establecido acuerdos de asociación y compromiso con
+            organizaciones territoriales como <b> La Chapanay</b>, que tiene
+            entre sus objetivos la lucha por la soberanía alimentaria, precios
+            justos, defensa de la producción agroecológica y promoción de
+            productorxs locales. Se busca promover y construir canales
+            alternativos, no especulativos y democráticos de comercialización
+            para los grupos de productorxs de la agricultura familiar.{" "}
           </p>
-          <p>
-            Se busca promover y construir canales alternativos, no especulativos
-            y democráticos de comercialización para los grupos de productores y
-            productoras de la agricultura familiar.
-          </p>
-          <h2>¿Por qué nos organizamos en nodos?</h2>
+        </div>
+        <h2 className="title">¿Por qué nos organizamos en nodos?</h2>
+        <div className="text">
           <p>
             La propuesta de organizar el consumo a través de nodos se debe
             principalmente a dos razones: la primera es que la organización de

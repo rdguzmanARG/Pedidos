@@ -1,6 +1,9 @@
 import React from "react";
 import { Link, NavLink } from "react-router-dom";
 import ReactGA from "react-ga";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faHome } from "@fortawesome/free-solid-svg-icons";
+
 // import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 // import { faHome } from "@fortawesome/free-solid-svg-icons";
 
@@ -36,7 +39,7 @@ class Header extends React.Component {
             >
               <div className="carousel-caption">
                 <h5>Su oficio aquí!!!</h5>
-                <p>Hagase conocer a la comunidad a travez de este espacio.</p>
+                <p>Hagase conocer a la comunidad a través de este espacio.</p>
               </div>
             </Link>
             <Link
@@ -63,7 +66,7 @@ class Header extends React.Component {
             onClick={() => this.setState({ collapse: true })}
             className="navbar-brand"
           >
-            Nodo Temperley
+            <FontAwesomeIcon icon={faHome} /> Nodo
           </NavLink>
           <button
             class="navbar-toggler"
@@ -86,6 +89,15 @@ class Header extends React.Component {
             id="navbarNavDropdown"
           >
             <ul class="navbar-nav">
+              <li class="nav-item">
+                <NavLink
+                  to="/pedido"
+                  onClick={() => this.setState({ collapse: true })}
+                  className="nav-link"
+                >
+                  Carga tu pedido
+                </NavLink>
+              </li>
               <li class="nav-item">
                 <NavLink
                   to="/quienes-somos"

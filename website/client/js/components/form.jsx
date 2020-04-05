@@ -23,94 +23,14 @@ class Form extends Component {
     return (
       <div className="form">
         {estado != "IMP" && (
-          <div className="container pt-4 pb-4">
-            <div className="pt-4 pb-4">
-              <h2>
-                En este momento no se encuentra habilitado el formulario para
-                realizar pedidos.
-              </h2>
-              <p>
-                Se informara por los medios habituales al momento de iniciar una
-                nueva recepción de pedidos.
-              </p>
-            </div>
-            <div className="pt-4 pb-4">
-              <AutoplaySlider
-                play={true}
-                cancelOnInteraction={false} // should stop playing on user interaction
-                interval={3000}
-              >
-                <div data-src="/images/bolson.jpg" />
-                <div data-src="/images/harina.jpg" />
-                <div data-src="/images/limon.jpg" />
-                <div data-src="/images/mango.jpg" />
-                <div data-src="/images/pesados.jpg" />
-              </AutoplaySlider>
-            </div>
-
-            <div class="card-group pt-3">
-              <div class="card">
-                <img
-                  class="card-img-top"
-                  src="http://mercadoterritorial.observatorioess.org.ar/wp-content/uploads/2017/06/logo.jpg"
-                  alt="Card image cap"
-                ></img>
-                <div class="card-body">
-                  <h5 class="card-title">
-                    ASOCIACIÓN DE PRODUCTORES HORTÍCOLAS LA 1610
-                  </h5>
-                  <p class="card-text">
-                    La 1610 es una Asociación de 17 familias productoras
-                    dedicadas principalmente a la horticultura que se consolida
-                    en el año 2012. El nombre de la organización surge de
-                    reconocer su lugar de origen, es decir del espacio
-                    territorial al cual pertenecen, dado que la sede de la
-                    organización se encuentra en la CALLE 1610 del barrio La
-                    Capilla, partido de Florencio Varela. En los últimos años,
-                    con el apoyo de diversas instituciones públicas, la
-                    organización viene experimentando un proceso de transición
-                    hacia una producción agroecológica
-                  </p>
-                </div>
-              </div>
-              <div class="card">
-                <img
-                  class="card-img-top"
-                  src="http://mercadoterritorial.observatorioess.org.ar/wp-content/uploads/2017/06/Logo-el-progreso.png"
-                  alt="Card image cap"
-                ></img>
-                <div class="card-body">
-                  <h5 class="card-title">
-                    GRUPO DE PRODUCTORES HORTÍCOLAS EL PROGRESO
-                  </h5>
-                  <p class="card-text">
-                    El Progreso es un grupo de productores hortícolas
-                    pertenecientes a la asociación La Guadalquivir. Actualmente
-                    son xxx familias quienes viven en la localidad del Peligro
-                    en el cordón hortícola de la Plata. Hace un año y medio, la
-                    agrupación da inicio a la transición agroecológica con el
-                    acompañamiento del INTA, transformando paulatinamente la
-                    producción convencional por una de base agroecológica.
-                  </p>
-                </div>
-              </div>
-              <div class="card">
-                <img
-                  class="card-img-top"
-                  src="http://mercadoterritorial.observatorioess.org.ar/wp-content/uploads/2018/09/cropped-logo-png-mercado-territorial-.png"
-                  alt="Card image cap"
-                ></img>
-                <div class="card-body">
-                  <h5 class="card-title">Mercado Territorial</h5>
-                  <p class="card-text">
-                    Mercado Territorial- línea Agricultura Familiar es una
-                    iniciativa que surgió en el año 2015 como desarrollo de una
-                    de las líneas de trabajo de la Incubadora de Economía,
-                    Mercado y Finanzas de la Universidad Nacional de Quilmes.{" "}
-                  </p>
-                </div>
-              </div>
-            </div>
+          <div className="container pt-4 pb-4 text-center">
+            <h2 className="title">Vecinxs</h2>
+            <p>
+              <b>
+                Estamos prepadando la próxima entrega, se informará de la misma
+                a través de los canales habituales.
+              </b>
+            </p>
           </div>
         )}
         {estado == "IMP" && (
@@ -124,20 +44,6 @@ class Form extends Component {
             Cargndo...
           </iframe>
         )}
-        <div className="pb-4 pt-4">
-          <AutoplaySlider
-            play={true}
-            cancelOnInteraction={false} // should stop playing on user interaction
-            interval={10000}
-          >
-            <div data-src="/images/higiene-1.jpg" />
-            <div data-src="/images/higiene-2.jpg" />
-            <div data-src="/images/higiene-3.jpg" />
-            <div data-src="/images/higiene-4.jpg" />
-            <div data-src="/images/higiene-5.jpg" />
-            <div data-src="/images/higiene-6.jpg" />
-          </AutoplaySlider>
-        </div>
       </div>
     );
   }
