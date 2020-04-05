@@ -95,7 +95,7 @@ class Header extends React.Component {
                   onClick={() => this.setState({ collapse: true })}
                   className="nav-link"
                 >
-                  Carga tu pedido
+                  Cargá tu pedido
                 </NavLink>
               </li>
               <li class="nav-item">
