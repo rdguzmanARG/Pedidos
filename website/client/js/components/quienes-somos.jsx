@@ -7,8 +7,7 @@ export default function QuienesSomos(props) {
     <div className="quienes-somos">
       <div className="hero">
         <h2 className="title">
-          <div>¡CONTRA LA </div>
-          <div>ESPECULACIÓN,</div>
+          <div>¡CONTRA LA ESPECULACIÓN,</div>
           <div>ORGANIZACIÓN!</div>
         </h2>
       </div>
@@ -33,12 +32,14 @@ export default function QuienesSomos(props) {
         <div className="text">
           <p>
             La propuesta de organizar el consumo a través de nodos se debe
-            principalmente a dos razones: la primera es que la organización de
+            principalmente a tres razones: la primera es que la organización de
             los consumidores permite generar y reforzar lazos sociales
             promoviendo así relaciones de comunidad al tiempo que circula
             información en relación al bolsón (recetas, actividades, etc.); en
             segundo lugar, facilita el acceso a verduras de calidad, para todxs
-            lxs participantes al abaratar los costos de transporte.
+            lxs participantes al abaratar los costos de transporte y la tercera
+            generar mercados para los pequeños productores locales, rurales y
+            urbanos.
           </p>
         </div>
       </div>

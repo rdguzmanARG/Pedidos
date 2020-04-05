@@ -3,15 +3,64 @@ import ReactGA from "react-ga";
 import AwesomeSlider from "react-awesome-slider";
 import withAutoplay from "react-awesome-slider/dist/autoplay";
 import "react-awesome-slider/dist/styles.css";
+import Carousel from "react-bootstrap/Carousel";
 
 class Form extends Component {
   componentDidMount() {
     ReactGA.pageview(window.location.pathname + window.location.search);
   }
   render() {
+    const slides = [
+      {
+        src: "/images/inicio-1.jpg",
+        title: "Acercate a nuestro almacen cooperativo",
+      },
+      {
+        src: "/images/inicio-2.jpg",
+        title: "Relaciones en comunidad",
+      },
+      {
+        src: "/images/inicio-3.jpg",
+        title: "Reforzando y promoviendo lazos!!!",
+      },
+      {
+        src: "/images/inicio-4.jpg",
+        title: "Juntos y organizados",
+      },
+    ].sort(() => Math.random() - 0.5);
+
     const AutoplaySlider = withAutoplay(AwesomeSlider);
     return (
-      <div className="form">
+      <div className="inicio">
+        <Carousel
+          interval={3500}
+          indicators={false}
+          slide={false}
+          fade={true}
+          touch={false}
+          controls={false}
+        >
+          {slides.map((slide, index) => {
+            return (
+              <Carousel.Item
+                key={index}
+                style={{ backgroundImage: "url(" + slide.src + ")" }}
+              >
+                {/* <img
+                  className="d-block w-100"
+                  src={slide.src}
+                  alt={slide.title}
+                /> */}
+                {slide.title && (
+                  <Carousel.Caption>
+                    <h5>{slide.title}</h5>
+                  </Carousel.Caption>
+                )}
+              </Carousel.Item>
+            );
+          })}
+        </Carousel>
+
         <div className="container pt-4 pb-4">
           <h2 className="title">Nuestros productos</h2>
           <div className="pt-4 pb-4">

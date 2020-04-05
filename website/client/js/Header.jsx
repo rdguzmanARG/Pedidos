@@ -66,7 +66,7 @@ class Header extends React.Component {
             onClick={() => this.setState({ collapse: true })}
             className="navbar-brand"
           >
-            <FontAwesomeIcon icon={faHome} /> Nodo
+            <FontAwesomeIcon icon={faHome} /> Nodo Temperley
           </NavLink>
           <button
             class="navbar-toggler"
