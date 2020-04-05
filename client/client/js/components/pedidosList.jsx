@@ -6,6 +6,7 @@ import auth from "../services/authService";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTruck, faWalking } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
+import Moment from "react-moment";
 
 class PedidosList extends Component {
   state = {
@@ -13,15 +14,15 @@ class PedidosList extends Component {
     pedidos: [],
     last: null,
     intervalId: null,
-    entregaEstado: null,
+    entrega: null,
   };
 
   componentDidMount() {
     pedido_getAll()
       .then((res) => {
         if (res.status === 200) {
-          const { pedidos, last, entregaEstado } = res.data;
-          this.setState({ pedidos, last, isLoading: false, entregaEstado });
+          const { pedidos, last, entrega } = res.data;
+          this.setState({ pedidos, last, isLoading: false, entrega });
           const intervalId = setInterval(this.updatePedidosList, 1000 * 60);
           this.setState({ ...this.state, intervalId: intervalId });
         }
@@ -49,7 +50,7 @@ class PedidosList extends Component {
             if (res.data.pedidos.length > 0) {
               const newPedidos = res.data.pedidos;
 
-              if (this.state.entregaEstado == "INI") {
+              if (this.state.entrega.estado == "INI") {
                 const pedidos = this.state.pedidos.filter(function (item) {
                   return !newPedidos.map((p) => p._id).includes(item._id)
                     ? true
@@ -59,7 +60,7 @@ class PedidosList extends Component {
                   ...this.state,
                   pedidos: [...pedidos, ...newPedidos],
                   last: res.data.last,
-                  entregaEstado: res.data.entregaEstado,
+                  entrega: res.data.entrega,
                 });
                 const restantes =
                   this.state.pedidos.length -
@@ -98,7 +99,7 @@ class PedidosList extends Component {
                   ...this.state,
                   pedidos: [...newPedidos],
                   last: res.data.last,
-                  entregaEstado: res.data.entregaEstado,
+                  entrega: res.data.entrega,
                 });
                 toast.info("Se han importado datos recientemente.");
               }
@@ -106,7 +107,7 @@ class PedidosList extends Component {
               this.setState({
                 ...this.state,
                 last: res.data.last,
-                entregaEstado: res.data.entregaEstado,
+                entrega: res.data.entrega,
               });
             }
           }
@@ -118,8 +119,8 @@ class PedidosList extends Component {
   };
 
   render() {
-    const { pedidos, isLoading } = this.state;
-    const { text, pendientes, conEntrega } = this.props.filter;
+    const { pedidos, isLoading, entrega } = this.state;
+    const { text, pendientes, conEntrega, sinEntrega } = this.props.filter;
 
     const pedidosFilteres = pedidos
       .filter(
@@ -129,7 +130,8 @@ class PedidosList extends Component {
           (text === "*" && f.comentarios)
       )
       .filter((f) => !pendientes || !f.entregado)
-      .filter((f) => !conEntrega || f.conEntrega);
+      .filter((f) => !conEntrega || f.conEntrega)
+      .filter((f) => !sinEntrega || !f.conEntrega);
 
     if (isLoading) {
       return (
@@ -162,26 +164,64 @@ class PedidosList extends Component {
               onChange={(e) => this.props.onChangeFilter("filter-pendientes")}
             ></input>
             <label class="form-check-label" for="pendientes">
-              Pendientes
-            </label>
-          </div>
-          <div class="form-check">
-            <input
-              class="form-check-input"
-              type="checkbox"
-              checked={conEntrega}
-              id="conEntrega"
-              onChange={(e) => this.props.onChangeFilter("filter-con-entrega")}
-            ></input>
-            <label class="form-check-label" for="conEntrega">
-              Con entrega a domicilio
+              Pendientes de entrega
             </label>
           </div>
         </div>
-        <div className="text-right">
-          <b>
-            Pend. ({restantes}/{cantidad})
-          </b>
+        <div class="input-group mb-2 mt-2 ">
+          <div class="form-check mr-2">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="entrega"
+              id="filterConSinEntrega"
+              checked={!conEntrega && !sinEntrega}
+              onChange={(e) =>
+                this.props.onChangeFilter("filter-con-sin-entrega")
+              }
+            ></input>
+            <label class="form-check-label" for="filterConSinEntrega">
+              Todos
+            </label>
+          </div>
+          <div class="form-check mr-2">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="entrega"
+              id="filterConEntrega"
+              checked={conEntrega}
+              onChange={(e) => this.props.onChangeFilter("filter-con-entrega")}
+            ></input>
+            <label class="form-check-label" for="filterConEntrega">
+              Con entrega
+            </label>
+          </div>
+          <div class="form-check mr-2">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="entrega"
+              id="filterSinEntrega"
+              checked={sinEntrega}
+              onChange={(e) => this.props.onChangeFilter("filter-sin-entrega")}
+            ></input>
+            <label class="form-check-label" for="filterSinEntrega">
+              Sin entrega
+            </label>
+          </div>
+        </div>
+        <div className="pedidos-list--header">
+          <span>
+            <b>
+              {<Moment format="DD/MM HH:mm">{entrega.fechaImportacion}</Moment>}
+            </b>
+          </span>
+          <span>
+            <b>
+              Pend. ({restantes}/{cantidad})
+            </b>
+          </span>
         </div>
         <table className="table table-striped table-sm table-pedidos">
           <thead className="thead-dark">

@@ -247,12 +247,12 @@ class PedidoDetail extends Component {
                   <iframe
                     width="300"
                     height="300"
-                    frameborder="0"
+                    frameBorder="0"
                     src={
                       "https://www.google.com/maps/embed/v1/place?key=AIzaSyCh0CejOsqJPPExI64OAx_66Qq78zcaAgY&q=" +
                       pedido.direccion
                     }
-                    allowfullscreen
+                    allowFullScreen
                   ></iframe>
                 )}
               </div>

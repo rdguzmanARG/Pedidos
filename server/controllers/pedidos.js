@@ -10,17 +10,15 @@ exports.pedidos_get_all = (req, res) => {
     .select(
       "_id nombre apellido celular entregado comentarios conEntrega direccion usuarioMod"
     )
-    .then(pedidos => {
+    .then((pedidos) => {
       Entrega.findOne()
         .sort({ fechaImportacion: -1 })
-        .then(entrega => {
-          res
-            .status(200)
-            .json({ pedidos, last: new Date(), entregaEstado: entrega.estado });
+        .then((entrega) => {
+          res.status(200).json({ pedidos, last: new Date(), entrega: entrega });
         })
-        .catch(err => res.status(500).json({ error: err }));
+        .catch((err) => res.status(500).json({ error: err }));
     })
-    .catch(err => res.status(500).json({ error: err }));
+    .catch((err) => res.status(500).json({ error: err }));
 };
 
 exports.pedidos_get_last = (req, res) => {
@@ -28,68 +26,66 @@ exports.pedidos_get_last = (req, res) => {
     .select(
       "_id nombre apellido celular entregado comentarios conEntrega direccion usuarioMod"
     )
-    .then(pedidos => {
+    .then((pedidos) => {
       Entrega.findOne()
         .sort({ fechaImportacion: -1 })
-        .then(entrega => {
-          res
-            .status(200)
-            .json({ pedidos, last: new Date(), entregaEstado: entrega.estado });
+        .then((entrega) => {
+          res.status(200).json({ pedidos, last: new Date(), entrega: entrega });
         })
-        .catch(err => res.status(500).json({ error: err }));
+        .catch((err) => res.status(500).json({ error: err }));
     })
-    .catch(err => res.status(500).json({ error: err }));
+    .catch((err) => res.status(500).json({ error: err }));
 };
 
 exports.pedidos_get_pedido = (req, res) => {
   Pedido.findById(req.params.idPedido)
     .populate("items.producto")
-    .then(pedido => {
+    .then((pedido) => {
       // Si el pedido no fue entregado, debe completar los valores de precio y pago.
       if (!pedido.entregado) {
-        pedido.items.forEach(item => {
+        pedido.items.forEach((item) => {
           item.precio = item.producto.precio;
           item.pago = item.producto.precio * item.cantidad;
         });
       }
       res.status(200).json(pedido);
     })
-    .catch(err => res.status(500).json({ error: err }));
+    .catch((err) => res.status(500).json({ error: err }));
 };
 
 exports.pedidos_update_pedido = (req, res) => {
   Pedido.findByIdAndUpdate(req.params.idPedido, req.body, { new: true })
     .populate("items.producto")
     .exec()
-    .then(pedido => {
+    .then((pedido) => {
       if (!pedido.entregado) {
-        pedido.items.forEach(item => {
+        pedido.items.forEach((item) => {
           item.precio = item.producto.precio;
         });
       }
       res.json(pedido);
     })
-    .catch(err => res.status(500).json("Error: " + err));
+    .catch((err) => res.status(500).json("Error: " + err));
 };
 
 exports.pedidos_import = (request, response, next) => {
   // Valida si la Entrega en curso puede ser importada nuevamente.
   Entrega.findOne()
     .sort({ fechaImportacion: -1 })
-    .then(entrega => {
+    .then((entrega) => {
       // Si no hay entrega disponble, debe crear una nueva.
       if (entrega == null || entrega.estado === "CER") {
         Entrega.create(
           new Entrega({
             _id: new mongoose.Types.ObjectId(),
             fechaImportacion: Date(),
-            estado: "IMP"
+            estado: "IMP",
           })
         )
-          .then(entrega => {
+          .then((entrega) => {
             return ImportarDatos(response, entrega._doc);
           })
-          .catch(err => {
+          .catch((err) => {
             console.log(err);
             response.status(500).json({ error: err });
           });
@@ -103,7 +99,7 @@ exports.pedidos_import = (request, response, next) => {
         }
       }
     })
-    .catch(err => {
+    .catch((err) => {
       console.log(err);
       response.status(500).json({ error: err });
     });
@@ -127,7 +123,7 @@ function ImportarDatos(response, entrega) {
     colEmail,
     colComentarios,
     colDireccion,
-    colConEntrega
+    colConEntrega,
   ];
   console.log("Imp - Inicio");
   Pedido.deleteMany({}).then(() => {
@@ -137,8 +133,8 @@ function ImportarDatos(response, entrega) {
       fetch(
         "https://sheet.best/api/sheets/2c84077a-9587-4180-898d-56b0ad076f16"
       )
-        .then(xldRes => xldRes.json())
-        .then(data => {
+        .then((xldRes) => xldRes.json())
+        .then((data) => {
           // Verify if there is data to import.
           if (data.length === 0) {
             ///////////////////////////////
@@ -148,17 +144,17 @@ function ImportarDatos(response, entrega) {
               entrega._id,
               {
                 $set: {
-                  fechaImportacion: Date()
-                }
+                  fechaImportacion: Date(),
+                },
               },
               { new: true }
             )
-              .then(finalEnt => {
+              .then((finalEnt) => {
                 return response.json({
-                  ...finalEnt._doc
+                  ...finalEnt._doc,
                 });
               })
-              .catch(err => {
+              .catch((err) => {
                 console.log(err);
                 response.status(500).json({ error: err });
               });
@@ -167,12 +163,12 @@ function ImportarDatos(response, entrega) {
             // La importacion tiene datos
             ///////////////////////////////
             const cols = Object.keys(data[0]).filter(
-              c => excludeCols.indexOf(c) < 0
+              (c) => excludeCols.indexOf(c) < 0
             );
 
             // INSERT ALL PRODUCTS
             Producto.insertMany(
-              cols.map(c => {
+              cols.map((c) => {
                 return new Producto({
                   _id: new mongoose.Types.ObjectId(),
                   nombre: c,
@@ -190,23 +186,23 @@ function ImportarDatos(response, entrega) {
                           .substring(c.lastIndexOf("$") + 1)
                           .replace("]", "")
                           .trim()
-                      )
+                      ),
                 });
               })
             )
-              .then(resProductos => {
+              .then((resProductos) => {
                 //Inserto los productos
                 console.log("Imp - Inserto productos - " + resProductos.length);
-                const productos = resProductos.map(r => r._doc);
+                const productos = resProductos.map((r) => r._doc);
                 const pedidos = data
                   .filter(
-                    d =>
+                    (d) =>
                       d.Nombre !== null &&
                       d.Nombre !== "" &&
                       d.Apellido !== null &&
                       d.Apellido !== ""
                   )
-                  .map(d => {
+                  .map((d) => {
                     return new Pedido({
                       _id: new mongoose.Types.ObjectId(),
                       date: moment(d[colMarcaTemporal], "DD/MM/YYYY HH:mm:ss"),
@@ -222,19 +218,19 @@ function ImportarDatos(response, entrega) {
                       ajuste: 0,
                       items: productos
                         .filter(
-                          p =>
+                          (p) =>
                             d[p.nombre] !== null &&
                             d[p.nombre] !== "" &&
                             d[p.nombre] > 0
                         )
-                        .map(pr => {
+                        .map((pr) => {
                           return {
                             producto: pr._id,
                             cantidad: d[pr.nombre],
                             precio: null,
-                            pago: null
+                            pago: null,
                           };
-                        })
+                        }),
                     });
                   });
                 ///////////////////////////////////////////
@@ -247,17 +243,17 @@ function ImportarDatos(response, entrega) {
                       ...entrega,
                       fechaImportacion: Date(),
                       cantPedidos: pedidos.length,
-                      cantProductos: productos.length
+                      cantProductos: productos.length,
                     },
                     { new: true }
                   )
                     .exec()
-                    .then(finalEnt => {
+                    .then((finalEnt) => {
                       return response.json({
-                        ...finalEnt._doc
+                        ...finalEnt._doc,
                       });
                     })
-                    .catch(err => {
+                    .catch((err) => {
                       console.log(err);
                       response.status(500).json({ error: err });
                     });
@@ -266,15 +262,15 @@ function ImportarDatos(response, entrega) {
                   // Tiene pedidos para insertar
                   ///////////////////////////////
                   Pedido.insertMany(pedidos)
-                    .then(resPedidos => {
+                    .then((resPedidos) => {
                       console.log(
                         "Imp - Inserto pedidos - " + resPedidos.length
                       );
                       // Calcular cantidades por pedido.
 
-                      productos.map(prod => {
-                        pedidos.map(ped => {
-                          ped.items.map(item => {
+                      productos.map((prod) => {
+                        pedidos.map((ped) => {
+                          ped.items.map((item) => {
                             if (
                               item &&
                               item.producto &&
@@ -287,13 +283,13 @@ function ImportarDatos(response, entrega) {
                         });
                       });
 
-                      let checkADCompletions = function(prods) {
-                        var promises = prods.map(function(pr) {
+                      let checkADCompletions = function (prods) {
+                        var promises = prods.map(function (pr) {
                           return Producto.findByIdAndUpdate(
                             pr._id.toString(),
                             pr,
                             {
-                              new: true
+                              new: true,
                             }
                           );
                         });
@@ -301,7 +297,7 @@ function ImportarDatos(response, entrega) {
                       };
 
                       checkADCompletions(productos)
-                        .then(function(responses) {
+                        .then(function (responses) {
                           ////////////////////////////////
                           // Actualizo las cantidades
                           ///////////////////////////////
@@ -312,12 +308,12 @@ function ImportarDatos(response, entrega) {
                               $set: {
                                 fechaImportacion: Date(),
                                 cantPedidos: pedidos.length,
-                                cantProductos: productos.length
-                              }
+                                cantProductos: productos.length,
+                              },
                             },
                             { new: true }
                           )
-                            .then(finalEnt => {
+                            .then((finalEnt) => {
                               ////////////////////////////////
                               // Actualizo las cantidades
                               ///////////////////////////////
@@ -326,28 +322,28 @@ function ImportarDatos(response, entrega) {
                               );
                               response.json({ ...finalEnt._doc });
                             })
-                            .catch(err => {
+                            .catch((err) => {
                               console.log(err);
                               response.status(500).json({ error: err });
                             });
                         })
-                        .catch(function(err) {
+                        .catch(function (err) {
                           console.log(err);
                         });
                     })
-                    .catch(err => {
+                    .catch((err) => {
                       console.log(err);
                       response.status(500).json({ error: err });
                     });
                 }
               })
-              .catch(err => {
+              .catch((err) => {
                 console.log(err);
                 response.status(500).json({ error: err });
               });
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
           response.status(500).json({ error: err });
         });

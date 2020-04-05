@@ -27,6 +27,7 @@ class App extends Component {
     filterPedidos: "",
     filterPedidosPendientes: false,
     filterPedidosConEntrega: false,
+    filterPedidosSinEntrega: false,
     filterProductos: "",
     filterProductosPedidos: false,
     hasError: false,
@@ -46,7 +47,20 @@ class App extends Component {
     } else if (filter == "filter-con-entrega") {
       this.setState({
         ...this.state,
-        filterPedidosConEntrega: !this.state.filterPedidosConEntrega,
+        filterPedidosConEntrega: true,
+        filterPedidosSinEntrega: false,
+      });
+    } else if (filter == "filter-sin-entrega") {
+      this.setState({
+        ...this.state,
+        filterPedidosSinEntrega: true,
+        filterPedidosConEntrega: false,
+      });
+    } else if (filter == "filter-con-sin-entrega") {
+      this.setState({
+        ...this.state,
+        filterPedidosSinEntrega: false,
+        filterPedidosConEntrega: false,
       });
     } else {
       this.setState({ ...this.state, filterPedidos: filter });
@@ -142,6 +156,7 @@ class App extends Component {
                         text: this.state.filterPedidos,
                         pendientes: this.state.filterPedidosPendientes,
                         conEntrega: this.state.filterPedidosConEntrega,
+                        sinEntrega: this.state.filterPedidosSinEntrega,
                       }}
                       onChangeFilter={this.ChangeFilterPedidos}
                       onGlobalError={this.SetGlobalError}

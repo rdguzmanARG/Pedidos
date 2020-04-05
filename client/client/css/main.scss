@@ -123,6 +123,11 @@ footer {
 
 // Listado de Pedidos
 .pedidos-list {
+  .pedidos-list--header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 16px;
+  }
   table {
     td {
       vertical-align: middle;
