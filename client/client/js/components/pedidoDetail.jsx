@@ -243,7 +243,7 @@ class PedidoDetail extends Component {
                 )}
               </div>
               <div className="col-md-6 map-position">
-                {pedido.direccion && (
+                {pedido.conEntrega && pedido.direccion && (
                   <iframe
                     width="300"
                     height="300"
