@@ -23,14 +23,21 @@ class Form extends Component {
     return (
       <div className="form">
         {estado != "IMP" && (
-          <div className="container pt-4 pb-4 text-center">
-            <h2 className="title">Vecinxs</h2>
-            <p>
-              <b>
-                Estamos prepadando la próxima entrega, se informará de la misma
-                a través de los canales habituales.
-              </b>
-            </p>
+          <div>
+            <div className="hero">
+              <h2 className="title">Carga tu pedido</h2>
+            </div>
+            <div className="container">
+              <h2 className="title">Vecinxs</h2>
+              <div className="text">
+                <p>
+                  La carga de pedidos no esta habilitada en este momento, la
+                  misma será habilitada y notificada por las canales habituales
+                  de comunicación.
+                </p>
+                <p>Dede ya, muchas gracias.</p>
+              </div>
+            </div>
           </div>
         )}
         {estado == "IMP" && (
