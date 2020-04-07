@@ -7,12 +7,13 @@ class Navbar extends React.Component {
   state = { collapse: false };
   changeSelection = () => {
     this.setState({ collapse: !this.state.collapse });
+    this.props.onGlobalError("");
   };
 
   render() {
     const { user } = this.props;
     return (
-      <nav className="navbar fixed-top navbar-expand-md navbar-dark bg-dark box-shadow mb-3">
+      <nav className="navbar fixed-top navbar-expand-lg navbar-dark bg-dark box-shadow mb-3">
         <div className="container">
           <Link className="navbar-brand" to="/" onClick={this.changeSelection}>
             <FontAwesomeIcon icon={faHome} />
@@ -96,7 +97,17 @@ class Navbar extends React.Component {
                       </div>
                     </li>
                   )}
-
+                  {user.isSysAdmin && (
+                    <li className="nav-item">
+                      <NavLink
+                        className="nav-link"
+                        onClick={this.changeSelection}
+                        to="/contactos"
+                      >
+                        Contactos
+                      </NavLink>
+                    </li>
+                  )}
                   <li>
                     <NavLink
                       className="nav-link"

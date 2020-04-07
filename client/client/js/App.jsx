@@ -15,6 +15,7 @@ import ProductosList from "./components/productosList";
 import ProductoDetail from "./components/productoDetail";
 import EntregasConfig from "./components/entregasConfig";
 import Entregas from "./components/entregas";
+import Contactos from "./components/contactos";
 import Inicio from "./components/Home";
 import LoginForm from "./components/loginForm";
 import Logout from "./components/logout";
@@ -30,14 +31,13 @@ class App extends Component {
     filterPedidosSinEntrega: false,
     filterProductos: "",
     filterProductosPedidos: false,
-    hasError: false,
+    hasError: "",
     isLoading: true,
   };
   componentDidMount() {
     const user = auth.getCurrentUser();
-    this.setState({ ...this.state, user, isLoading: false });
+    this.setState({ ...this.state, user, isLoading: false, hasError: "" });
   }
-
   ChangeFilterPedidos = (filter) => {
     if (filter == "filter-pendientes") {
       this.setState({
@@ -75,8 +75,8 @@ class App extends Component {
     }
   };
 
-  SetGlobalError = () => {
-    this.setState({ ...this.state, hasError: true });
+  SetGlobalError = (status) => {
+    this.setState({ ...this.state, hasError: status });
   };
 
   render() {
@@ -88,25 +88,36 @@ class App extends Component {
         </div>
       );
     }
-    if (this.state.hasError) {
+    if (this.state.hasError != "") {
       return (
-        <div id="overlay">
-          <div class="alert alert-danger alert-dismissible fade show">
-            <h2>Sistema de Pedidos</h2>
-            <div>
-              No se pudo conectar con el servidor, verifique si tiene conexión a
-              Internet y vuelva a intentar.
+        <React.Fragment>
+          <NavBar user={user} onGlobalError={this.SetGlobalError}></NavBar>
+          <div className="container">
+            <div className="main-container">
+              <div class="alert alert-danger alert-dismissible fade show">
+                <h2>Atención</h2>
+                {this.state.hasError == "403" && (
+                  <div>No tiene acceso para ver esta página.</div>
+                )}
+                {this.state.hasError != "403" && (
+                  <div>
+                    No se pudo conectar con el servidor, verifique si tiene
+                    conexión a Internet y vuelva a intentar.
+                  </div>
+                )}
+
+                <a href="/" class="alert-link">
+                  Haga click aqui para reintentar
+                </a>
+              </div>
             </div>
-            <a href="/" class="alert-link">
-              Haga click aqui para reintentar
-            </a>
           </div>
-        </div>
+        </React.Fragment>
       );
     }
     return (
       <React.Fragment>
-        <NavBar user={user}></NavBar>
+        <NavBar user={user} onGlobalError={this.SetGlobalError}></NavBar>
         <div className="container">
           <ToastContainer
             position="top-center"
@@ -226,6 +237,20 @@ class App extends Component {
                       onGlobalError={this.SetGlobalError}
                       {...props}
                     ></EntregasConfig>
+                  );
+                }}
+              />
+              <Route
+                path="/contactos"
+                render={(props) => {
+                  if (!user) return <Redirect to="/login"></Redirect>;
+                  if (!user.isAdmin && !user.isAdminPed)
+                    return <Redirect to="/404"></Redirect>;
+                  return (
+                    <Contactos
+                      onGlobalError={this.SetGlobalError}
+                      {...props}
+                    ></Contactos>
                   );
                 }}
               />

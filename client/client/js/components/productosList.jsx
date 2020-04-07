@@ -8,22 +8,22 @@ import { faEdit } from "@fortawesome/free-solid-svg-icons";
 class ProductosList extends Component {
   state = {
     isLoading: true,
-    productos: []
+    productos: [],
   };
 
   componentDidMount() {
     producto_getAll()
-      .then(res => {
+      .then((res) => {
         if (res.status === 200) {
           this.setState({ productos: res.data, isLoading: false });
         }
       })
-      .catch(ex => {
+      .catch((ex) => {
         if (ex.response && ex.response.status === 401) {
           auth.logout();
           window.location = "/login";
         } else {
-          this.props.onGlobalError();
+          this.props.onGlobalError(ex.response.status);
         }
       });
   }
@@ -32,7 +32,7 @@ class ProductosList extends Component {
     const { productos, isLoading } = this.state;
 
     const resultado = productos.filter(
-      f =>
+      (f) =>
         f.nombre.toLowerCase().includes(this.props.filter.text.toLowerCase()) &&
         (!this.props.filter.soloPedidos || f.cantidad > 0)
     );
@@ -52,7 +52,7 @@ class ProductosList extends Component {
             class="form-control form-control-lg"
             placeholder="Ingresar texto para buscar..."
             value={this.props.filter.text}
-            onChange={e => this.props.onChangeFilter(e.target.value)}
+            onChange={(e) => this.props.onChangeFilter(e.target.value)}
           />
         </div>
         <div class="input-group mb-2 mt-2">
@@ -62,7 +62,7 @@ class ProductosList extends Component {
               type="checkbox"
               checked={this.props.filter.soloPedidos}
               id="soloPedidos"
-              onChange={e => this.props.onChangeFilter(e.target.checked)}
+              onChange={(e) => this.props.onChangeFilter(e.target.checked)}
             ></input>
             <label class="form-check-label" for="soloPedidos">
               Solo productos pedidos
@@ -82,7 +82,7 @@ class ProductosList extends Component {
             </tr>
           </thead>
           <tbody>
-            {resultado.map(p => (
+            {resultado.map((p) => (
               <tr key={p._id} className={p.anulado ? "bg-danger" : ""}>
                 <td>{p.nombre}</td>
                 <td className="d-none d-sm-table-cell">{p.cantidad}</td>

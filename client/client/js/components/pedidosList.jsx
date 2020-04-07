@@ -32,7 +32,7 @@ class PedidosList extends Component {
           auth.logout();
           window.location = "/login";
         } else {
-          this.props.onGlobalError();
+          this.props.onGlobalError(ex.response.status);
         }
       });
   }

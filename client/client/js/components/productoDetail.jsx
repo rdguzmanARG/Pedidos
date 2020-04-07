@@ -13,44 +13,44 @@ class ProductoDetail extends Component {
     isLoading: true,
     producto: {},
     pedidos: [],
-    entregaEstado: ""
+    entregaEstado: "",
   };
 
   componentDidMount() {
     const id = this.props.match.params.id;
     producto_get(id)
-      .then(resProducto => {
+      .then((resProducto) => {
         if (resProducto.status === 200) {
           entrega_getCurrent()
-            .then(resEntrega => {
+            .then((resEntrega) => {
               this.setState({
                 producto: resProducto.data.producto,
                 pedidos: resProducto.data.pedidos,
                 isLoading: false,
-                entregaEstado: resEntrega.data ? resEntrega.data.estado : ""
+                entregaEstado: resEntrega.data ? resEntrega.data.estado : "",
               });
             })
-            .catch(ex => {
+            .catch((ex) => {
               if (ex.response && ex.response.status === 401) {
                 auth.logout();
                 window.location = "/login";
               } else {
-                this.props.onGlobalError();
+                this.props.onGlobalError(ex.response.status);
               }
             });
         }
       })
-      .catch(ex => {
+      .catch((ex) => {
         if (ex.response && ex.response.status === 401) {
           auth.logout();
           window.location = "/login";
         } else {
-          this.props.onGlobalError();
+          this.props.onGlobalError(ex.response.status);
         }
       });
   }
 
-  onFieldChange = e => {
+  onFieldChange = (e) => {
     const prod = { ...this.state.producto };
     if (e.target.type === "checkbox") {
       prod[e.target.name] = e.target.checked;
@@ -61,10 +61,10 @@ class ProductoDetail extends Component {
     this.setState({ ...this.state, producto: prod });
   };
 
-  submitForm = e => {
+  submitForm = (e) => {
     const { producto } = this.state;
     e.preventDefault();
-    producto_update(producto._id, producto).then(res => {
+    producto_update(producto._id, producto).then((res) => {
       if (res.status === 200) {
         this.props.history.push("/productos");
       }
