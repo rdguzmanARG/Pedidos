@@ -490,7 +490,7 @@ class PedidoDetail extends Component {
                   this.setState({ ...this.state, showConfirmAceptado: true })
                 }
                 disabled={entregaEstado !== "INI"}
-                class="btn btn-success ml-2"
+                class="btn btn-success mt-2 mr-2"
               >
                 Confirmar retiro
               </button>
@@ -501,7 +501,7 @@ class PedidoDetail extends Component {
                   this.setState({ ...this.state, showConfirmAnulado: true })
                 }
                 disabled={entregaEstado !== "INI"}
-                class="btn btn-danger ml-2"
+                class="btn btn-danger mt-2 mr-2"
               >
                 Anular retiro
               </button>
@@ -512,9 +512,9 @@ class PedidoDetail extends Component {
         <button
           title="Volver"
           onClick={() => this.props.history.push("/pedidos")}
-          class="btn btn-primary ml-2"
+          class="btn btn-primary mt-2 mr-2"
         >
-          <FontAwesomeIcon icon={faUndo} />
+          <FontAwesomeIcon icon={faUndo} /> Volver
         </button>
       </div>
     );

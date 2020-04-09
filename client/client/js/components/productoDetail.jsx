@@ -139,7 +139,7 @@ class ProductoDetail extends Component {
                 onClick={() => this.props.history.push("/productos")}
                 class="btn btn-primary ml-2"
               >
-                <FontAwesomeIcon icon={faUndo} />
+                <FontAwesomeIcon icon={faUndo} /> Volver
               </button>
             </form>
           </div>
