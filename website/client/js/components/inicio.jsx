@@ -32,35 +32,36 @@ class Form extends Component {
     const AutoplaySlider = withAutoplay(AwesomeSlider);
     return (
       <div className="inicio">
-        <Carousel
-          interval={3500}
-          indicators={false}
-          slide={false}
-          fade={true}
-          touch={false}
-          controls={false}
-        >
-          {slides.map((slide, index) => {
-            return (
-              <Carousel.Item
-                key={index}
-                style={{ backgroundImage: "url(" + slide.src + ")" }}
-              >
-                {/* <img
+        <div className="container pl-0 pr-0">
+          <Carousel
+            interval={3500}
+            indicators={false}
+            slide={false}
+            fade={true}
+            touch={false}
+            controls={false}
+          >
+            {slides.map((slide, index) => {
+              return (
+                <Carousel.Item
+                  key={index}
+                  style={{ backgroundImage: "url(" + slide.src + ")" }}
+                >
+                  {/* <img
                   className="d-block w-100"
                   src={slide.src}
                   alt={slide.title}
                 /> */}
-                {slide.title && (
-                  <Carousel.Caption>
-                    <h5>{slide.title}</h5>
-                  </Carousel.Caption>
-                )}
-              </Carousel.Item>
-            );
-          })}
-        </Carousel>
-
+                  {slide.title && (
+                    <Carousel.Caption>
+                      <h5>{slide.title}</h5>
+                    </Carousel.Caption>
+                  )}
+                </Carousel.Item>
+              );
+            })}
+          </Carousel>
+        </div>
         <div className="container pt-4 pb-4">
           <h2 className="title">Nuestros productos</h2>
           <div className="pt-4 pb-4">

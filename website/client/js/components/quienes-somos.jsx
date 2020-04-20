@@ -5,13 +5,15 @@ export default function QuienesSomos(props) {
   ReactGA.pageview(window.location.pathname + window.location.search);
   return (
     <div className="quienes-somos">
-      <div className="hero">
-        <h2 className="title">
-          <div>¡CONTRA LA ESPECULACIÓN,</div>
-          <div>ORGANIZACIÓN!</div>
-        </h2>
+      <div className="container pl-0 pr-0">
+        <div className="hero">
+          <h2 className="title">
+            <div>¡CONTRA LA ESPECULACIÓN,</div>
+            <div>ORGANIZACIÓN!</div>
+          </h2>
+        </div>
       </div>
-      <div class="container">
+      <div className="container">
         <h2 className="title">¿Que es el Nodo Temperley?</h2>
         <div className="text">
           <p>

@@ -38,10 +38,11 @@ class Contact extends Component {
     const { enviado } = this.state;
     return (
       <div className="contactos">
-        <div className="hero">
-          <h2 className="title">Contactenos</h2>
+        <div class="container pl-0 pr-0">
+          <div className="hero">
+            <h2 className="title">Contactenos</h2>
+          </div>
         </div>
-
         <div class="container">
           <h2 className="title">
             Ayuda al espacio y hace conocer tu emprendimiento
