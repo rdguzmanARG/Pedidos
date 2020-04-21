@@ -35,16 +35,21 @@ class Header extends React.Component {
               <div className="carousel-caption">
                 <h6>Estudio contable</h6>
                 <h5>Romina Monzón</h5>
-                <div>
+                <div className="carousel-caption-row">
                   <span className="d-none d-sm-inline">
                     Consultas sin cargo:{" "}
                   </span>
                   <a
+                    target="_blank"
                     onClick={() => this.clickBanner("romina-monzon")}
                     href="https://api.whatsapp.com/send?phone=1163999959&text=Necesito asesoramiento contable"
                   >
                     116399-9959
                   </a>
+                  <img
+                    className="whatsapp-icon"
+                    src="/images/Icons/whatsapp.png"
+                  ></img>
                 </div>
               </div>
             </div>
@@ -59,11 +64,18 @@ class Header extends React.Component {
               <div className="carousel-caption">
                 <h6>Estudio contable</h6>
                 <h5>Romina Monzón</h5>
-                <div>
+                <div className="carousel-caption-row">
                   <span>Consultas sin cargo:</span>
-                  <a href="https://api.whatsapp.com/send?phone=1163999959&text=Necesito asesoramiento contable">
+                  <a
+                    target="_blank"
+                    href="https://api.whatsapp.com/send?phone=1163999959&text=Necesito asesoramiento contable"
+                  >
                     116399-9959
                   </a>
+                  <img
+                    className="whatsapp-icon"
+                    src="/images/Icons/whatsapp.png"
+                  ></img>
                 </div>
               </div>
             </div>
