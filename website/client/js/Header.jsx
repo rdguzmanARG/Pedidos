@@ -42,7 +42,7 @@ class Header extends React.Component {
                   <a
                     target="_blank"
                     onClick={() => this.clickBanner("romina-monzon")}
-                    href="https://api.whatsapp.com/send?phone=1163999959&text=Necesito asesoramiento contable"
+                    href="https://api.whatsapp.com/send?phone=+5491163999959&text=Necesito asesoramiento contable"
                   >
                     116399-9959
                   </a>
@@ -68,7 +68,7 @@ class Header extends React.Component {
                   <span>Consultas sin cargo:</span>
                   <a
                     target="_blank"
-                    href="https://api.whatsapp.com/send?phone=1163999959&text=Necesito asesoramiento contable"
+                    href="https://api.whatsapp.com/send?phone=+5491163999959&text=Necesito asesoramiento contable"
                   >
                     116399-9959
                   </a>
