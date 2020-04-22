@@ -140,8 +140,7 @@ class Header extends React.Component {
               <div className="carousel-caption">
                 <h5>Ayudanos a crecer!!!!</h5>
                 <p className="d-none d-sm-block">
-                  Te ayudamos a conseguir mas trabajos! Pone tu publicidad
-                  aqui!.
+                  Te ayudamos a conseguir mas trabajos!
                 </p>
                 <Link
                   onClick={() => this.clickBanner("banner-1")}
