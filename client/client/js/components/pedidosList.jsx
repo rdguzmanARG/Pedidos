@@ -231,6 +231,7 @@ class PedidosList extends Component {
               <th className="d-none d-md-table-cell">Entregado por</th>
               <th className="cell-icon"></th>
               <th className="cell-icon"></th>
+              <th className="cell-icon"></th>
             </tr>
           </thead>
           <tbody>
@@ -248,6 +249,28 @@ class PedidosList extends Component {
                 // names must be equal
                 return 0;
               })
+              .map((p) => {
+                let celularFormat = p.celular.replace(/[^\d]/g, "");
+                if (celularFormat.length < 8) {
+                  celularFormat = "";
+                }
+
+                if (celularFormat.startsWith("0")) {
+                  celularFormat = celularFormat.substr(1);
+                }
+
+                if (celularFormat.startsWith("15")) {
+                  celularFormat = "11" + celularFormat.substr(2);
+                }
+                if (
+                  !celularFormat.startsWith("11") &&
+                  celularFormat.length > 2
+                ) {
+                  celularFormat = "11" + celularFormat;
+                }
+
+                return { ...p, celFormat: celularFormat };
+              })
               .map((p) => (
                 <tr key={p._id} className={p.entregado ? "bg-entregado" : ""}>
                   <td>
@@ -258,6 +281,28 @@ class PedidosList extends Component {
                   </td>
                   <td className="d-none d-md-table-cell">
                     {p.entregado ? p.usuarioMod.toUpperCase() : ""}
+                  </td>
+                  <td className="cell-icon">
+                    {p.entregado && p.celFormat != "" && (
+                      <a
+                        href={
+                          "https://api.whatsapp.com/send?phone=+549" +
+                          p.celFormat +
+                          "&text=Código de pedido=" +
+                          p._id.substr(p._id.length - 5).toUpperCase()
+                        }
+                      >
+                        <img
+                          className="whatsapp"
+                          src="/images/whatsapp.png"
+                        ></img>
+                      </a>
+                    )}
+                    {p.entregado && p.celFormat == "" && (
+                      <span>
+                        {p._id.substr(p._id.length - 5).toUpperCase()}
+                      </span>
+                    )}
                   </td>
                   <td className="cell-icon">
                     {!p.conEntrega && <FontAwesomeIcon icon={faWalking} />}

@@ -5,6 +5,7 @@ import Inicio from "./components/inicio";
 import Form from "./components/form";
 import Contact from "./components/contact";
 import QuienesSomos from "./components/quienes-somos";
+import MiPedido from "./components/mi-pedido";
 import Footer from "./Footer";
 import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 
@@ -26,6 +27,12 @@ class App extends Component {
             path="/pedido"
             render={(props) => {
               return <Form></Form>;
+            }}
+          />
+          <Route
+            path="/mi-pedido"
+            render={(props) => {
+              return <MiPedido></MiPedido>;
             }}
           />
           <Route

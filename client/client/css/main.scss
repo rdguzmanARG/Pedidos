@@ -123,6 +123,10 @@ footer {
 
 // Listado de Pedidos
 .pedidos-list {
+  .whatsapp {
+    width: 21px;
+    margin-bottom: 3px;
+  }
   .pedidos-list--header {
     display: flex;
     justify-content: space-between;

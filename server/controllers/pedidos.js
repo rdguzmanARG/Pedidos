@@ -53,6 +53,43 @@ exports.pedidos_get_pedido = (req, res) => {
     .catch((err) => res.status(500).json({ error: err }));
 };
 
+exports.pedidos_get_pedidoByCode = (req, res) => {
+  const email = req.body.email;
+  const code = req.body.code;
+  Pedido.find({ email: email })
+    .then((pedidos) => {
+      const ids = pedidos.find(
+        (f) =>
+          f._id
+            .toString()
+            .substr(f._id.toString().length - 5)
+            .toUpperCase() == code
+      );
+      if (ids === undefined) {
+        return res.status(404).json({ message: "Los datos no son válidos." });
+      }
+      Pedido.findById(ids._doc._id)
+        .populate("items.producto")
+        .exec()
+        .then((pedido) => {
+          // Si el pedido no fue entregado, debe completar los valores de precio y pago.
+          if (pedido == null) {
+            res.status(404).json({ message: "Los datos no son válidos." });
+          } else {
+            if (!pedido.entregado) {
+              pedido.items.forEach((item) => {
+                item.precio = item.producto.precio;
+                item.pago = item.producto.precio * item.cantidad;
+              });
+            }
+            res.status(200).json(pedido);
+          }
+        })
+        .catch((err) => res.status(500).json({ error: err }));
+    })
+    .catch((err) => res.status(500).json({ error: err }));
+};
+
 exports.pedidos_update_pedido = (req, res) => {
   Pedido.findByIdAndUpdate(req.params.idPedido, req.body, { new: true })
     .populate("items.producto")

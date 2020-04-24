@@ -237,6 +237,15 @@ class Header extends React.Component {
                 </li>
                 <li class="nav-item">
                   <NavLink
+                    to="/mi-pedido"
+                    onClick={() => this.setState({ collapse: true })}
+                    className="nav-link"
+                  >
+                    Mis pedidos
+                  </NavLink>
+                </li>
+                <li class="nav-item">
+                  <NavLink
                     to="/quienes-somos"
                     onClick={() => this.setState({ collapse: true })}
                     className="nav-link"
