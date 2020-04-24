@@ -8,7 +8,7 @@ const scroller = Scroll.scroller;
 
 class MiPedido extends Component {
   state = {
-    search: { email: "adrianadc57@gmail.com", code: "" },
+    search: { email: "", code: "" },
     pedido: null,
     errorMessage: null,
     enviado: false,
@@ -31,7 +31,7 @@ class MiPedido extends Component {
       action: "Consultar",
     });
     e.preventDefault();
-    pedido_get(search.email, search.code)
+    pedido_get(search.email, search.code.toUpperCase())
       .then((res) => {
         this.setState({ ...this.state, pedido: res.data, errorMessage: null });
         scroller.scrollTo("myScrollToElement", {
@@ -62,13 +62,16 @@ class MiPedido extends Component {
     const { errorMessage, pedido, search } = this.state;
     if (search == null) return null;
 
-    const total = !pedido
+    const totalPedido = !pedido
       ? 0
       : pedido.entregado
       ? pedido.totalPedido
       : this.arrSum(
           pedido.items.filter((f) => !f.producto.anulado).map((m) => m.pago)
         );
+
+    const total =
+      totalPedido + (pedido && pedido.totalAlmacen ? pedido.totalAlmacen : 0);
 
     return (
       <div className="mi-pedido">
@@ -256,7 +259,10 @@ class MiPedido extends Component {
                                     ${producto.precio.toFixed(2)}
                                   </td>
                                   <td className="text-right">
-                                    ${pago.toFixed(2)}
+                                    $
+                                    {!producto.anulado && pago
+                                      ? pago.toFixed(2)
+                                      : "0.00"}
                                   </td>
                                 </tr>
                               </tbody>
@@ -275,7 +281,10 @@ class MiPedido extends Component {
                               : precio.toFixed(2)}
                           </td>
                           <td className="d-none d-md-table-cell text-right">
-                            ${pago.toFixed(2)}
+                            $
+                            {!producto.anulado && pago
+                              ? pago.toFixed(2)
+                              : "0.00"}
                           </td>
                         </tr>
                       );
@@ -288,7 +297,10 @@ class MiPedido extends Component {
                     >
                       Total almacén:
                       <span className="ml-2">
-                        ${pedido.totalAlmacen.toFixed(2)}
+                        $
+                        {pedido.totalAlmacen
+                          ? pedido.totalAlmacen.toFixed(2)
+                          : "0.00"}
                       </span>
                     </td>
                     <td
@@ -297,7 +309,10 @@ class MiPedido extends Component {
                     >
                       Total almacén:
                       <span className="ml-2">
-                        ${pedido.totalAlmacen.toFixed(2)}
+                        $
+                        {pedido.totalAlmacen
+                          ? pedido.totalAlmacen.toFixed(2)
+                          : "0.00"}
                       </span>
                     </td>
                   </tr>

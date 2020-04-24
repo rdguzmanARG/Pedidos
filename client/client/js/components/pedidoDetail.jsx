@@ -204,7 +204,8 @@ class PedidoDetail extends Component {
             <div class="d-flex">
               <div>
                 <b>
-                  {pedido.nombre}, {pedido.apellido}
+                  {pedido.nombre}, {pedido.apellido} (Código:{" "}
+                  {pedido._id.substr(pedido._id.length - 5).toUpperCase()})
                 </b>
               </div>
             </div>
