@@ -288,8 +288,9 @@ class PedidosList extends Component {
                         href={
                           "https://api.whatsapp.com/send?phone=+549" +
                           p.celFormat +
-                          "&text=Código de pedido=" +
-                          p._id.substr(p._id.length - 5).toUpperCase()
+                          "&text=Código de pedido= " +
+                          p._id.substr(p._id.length - 5).toUpperCase() +
+                          " https://https://nodo-temperley.azurewebsites.net/mi-pedido"
                         }
                       >
                         <img
