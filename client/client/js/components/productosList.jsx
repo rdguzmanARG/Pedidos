@@ -82,20 +82,33 @@ class ProductosList extends Component {
             </tr>
           </thead>
           <tbody>
-            {resultado.map((p) => (
-              <tr key={p._id} className={p.anulado ? "bg-danger" : ""}>
-                <td>{p.nombre}</td>
-                <td className="d-none d-sm-table-cell">{p.cantidad}</td>
-                <td className="cell-right">${p.precio.toFixed(2)}</td>
-                <td className="cell-icon">
-                  <Link to={`/productos/ver/${p._id}`} title="Modificar">
-                    <button type="button" class="btn btn-primary btn-sm">
-                      <FontAwesomeIcon icon={faEdit} />
-                    </button>
-                  </Link>
-                </td>
-              </tr>
-            ))}
+            {resultado
+              .sort((a, b) => {
+                var nameA = a.nombre.toLowerCase(); // ignore upper and lowercase
+                var nameB = b.nombre.toLowerCase(); // ignore upper and lowercase
+                if (nameA < nameB) {
+                  return -1;
+                }
+                if (nameA > nameB) {
+                  return 1;
+                }
+                // names must be equal
+                return 0;
+              })
+              .map((p) => (
+                <tr key={p._id} className={p.anulado ? "bg-danger" : ""}>
+                  <td>{p.nombre}</td>
+                  <td className="d-none d-sm-table-cell">{p.cantidad}</td>
+                  <td className="cell-right">${p.precio.toFixed(2)}</td>
+                  <td className="cell-icon">
+                    <Link to={`/productos/ver/${p._id}`} title="Modificar">
+                      <button type="button" class="btn btn-primary btn-sm">
+                        <FontAwesomeIcon icon={faEdit} />
+                      </button>
+                    </Link>
+                  </td>
+                </tr>
+              ))}
           </tbody>
         </table>
       </div>
