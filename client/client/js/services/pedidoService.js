@@ -6,6 +6,14 @@ export function pedido_getAll() {
   return http.get(apiUrl + "/pedidos");
 }
 
+export function pedido_getPendingEmails() {
+  return http.get(apiUrl + "/pedidos/pending-emails");
+}
+
+export function pedido_sendPendingEmails() {
+  return http.post(apiUrl + "/pedidos/pending-emails");
+}
+
 export function pedido_getLast(lastCheck) {
   return http.get(apiUrl + "/pedidos/last/" + lastCheck);
 }

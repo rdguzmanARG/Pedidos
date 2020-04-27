@@ -5,16 +5,16 @@ exports.entregas_get_all = (req, res, next) => {
   Entrega.find()
     .sort({ fechaImportacion: -1 })
     //    .select("_id nombre apellido celular entregado usuarioMod")
-    .then(entregas => {
-      const entrega = entregas.filter(f => f.estado == "INI");
+    .then((entregas) => {
+      const entrega = entregas.filter((f) => f.estado == "INI");
 
       if (entrega && entrega.length > 0) {
         Pedido.find()
-          .then(pedidos => {
+          .then((pedidos) => {
             let totalEntrega = 0;
             let totalAlmacen = 0;
             pedidos.map(
-              p => (
+              (p) => (
                 (totalEntrega +=
                   p.totalPedido === undefined ? 0 : p.totalPedido),
                 (totalAlmacen +=
@@ -26,26 +26,26 @@ exports.entregas_get_all = (req, res, next) => {
             currentEntrega.totalAlmacen = totalAlmacen;
             const entregasResult = [
               currentEntrega,
-              ...entregas.filter(f => f.estado != "INI")
+              ...entregas.filter((f) => f.estado != "INI"),
             ];
             res.status(200).json(entregasResult);
           })
-          .catch(err => res.status(500).json("Error: " + err));
+          .catch((err) => res.status(500).json("Error: " + err));
       } else {
         res.status(200).json(entregas);
       }
     })
-    .catch(err => res.status(500).json({ error: err }));
+    .catch((err) => res.status(500).json({ error: err }));
 };
 
 exports.entregas_get_current = (req, res, next) => {
   // Valida si existe una entrega y se puede importar
   Entrega.findOne()
     .sort({ fechaImportacion: -1 })
-    .then(entrega => {
+    .then((entrega) => {
       return res.json(entrega);
     })
-    .catch(err => {
+    .catch((err) => {
       console.log(err);
       res.status(500).json({ error: err });
     });
@@ -55,11 +55,11 @@ exports.entregas_update_entrega = (req, res) => {
   const entrega = req.body;
   if (entrega.estado === "CER") {
     Pedido.find()
-      .then(pedidos => {
+      .then((pedidos) => {
         let totalEntrega = 0;
         let totalAlmacen = 0;
         pedidos.map(
-          p => (
+          (p) => (
             (totalEntrega +=
               (p.totalPedido === undefined ? 0 : p.totalPedido) +
               (p.ajuste === undefined ? 0 : p.ajuste)),
@@ -69,13 +69,18 @@ exports.entregas_update_entrega = (req, res) => {
         entrega.totalEntrega = totalEntrega;
         entrega.totalAlmacen = totalAlmacen;
         Entrega.findByIdAndUpdate(req.params.idEntrega, entrega, { new: true })
-          .then(entrega => res.json(entrega))
-          .catch(err => res.status(500).json("Error: " + err));
+          .then((entrega) => res.json(entrega))
+          .catch((err) => res.status(500).json("Error: " + err));
       })
-      .catch(err => res.status(500).json("Error: " + err));
+      .catch((err) => res.status(500).json("Error: " + err));
   } else {
     Entrega.findByIdAndUpdate(req.params.idEntrega, entrega, { new: true })
-      .then(entrega => res.json(entrega))
-      .catch(err => res.status(500).json("Error: " + err));
+      .then((entrega) => {
+        // Al iniciar la entrega se reenvian los emails.
+        if (entrega.estado === "INI") {
+          return res.json(entrega);
+        }
+      })
+      .catch((err) => res.status(500).json("Error: " + err));
   }
 };

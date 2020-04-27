@@ -52,7 +52,9 @@ class PedidoDetail extends Component {
                 auth.logout();
                 window.location = "/login";
               } else {
-                this.props.onGlobalError(ex.response.status);
+                this.props.onGlobalError(
+                  "No se pudo conectar con el Servidor."
+                );
               }
             });
         }
@@ -62,7 +64,7 @@ class PedidoDetail extends Component {
           auth.logout();
           window.location = "/login";
         } else {
-          this.props.onGlobalError(ex.response.status);
+          this.props.onGlobalError("No se pudo conectar con el Servidor.");
         }
       });
   }
@@ -177,7 +179,9 @@ class PedidoDetail extends Component {
                   }
                 })
                 .catch((ex) => {
-                  this.props.onGlobalError(ex.response.status);
+                  this.props.onGlobalError(
+                    "No se pudo conectar con el Servidor."
+                  );
                 });
             }}
             onCancel={() => {
@@ -242,6 +246,16 @@ class PedidoDetail extends Component {
                     Comentarios: <b>{pedido.comentarios}</b>{" "}
                   </div>
                 )}
+                <div>
+                  Email Enviado:{" "}
+                  <b>
+                    {pedido.emailEnviado == 0
+                      ? "No"
+                      : pedido.emailEnviado == 1
+                      ? "Si"
+                      : "No se pudo enviar el Email."}
+                  </b>{" "}
+                </div>
               </div>
               <div className="col-md-6 map-position">
                 {pedido.conEntrega && pedido.direccion && (

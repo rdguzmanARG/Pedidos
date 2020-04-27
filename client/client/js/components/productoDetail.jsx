@@ -35,7 +35,9 @@ class ProductoDetail extends Component {
                 auth.logout();
                 window.location = "/login";
               } else {
-                this.props.onGlobalError(ex.response.status);
+                this.props.onGlobalError(
+                  "No se pudo conectar con el Servidor."
+                );
               }
             });
         }
@@ -45,7 +47,7 @@ class ProductoDetail extends Component {
           auth.logout();
           window.location = "/login";
         } else {
-          this.props.onGlobalError(ex.response.status);
+          this.props.onGlobalError("No se pudo conectar con el Servidor.");
         }
       });
   }

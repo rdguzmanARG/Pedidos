@@ -4,6 +4,17 @@ const admin = require("../middleware/admin");
 const controller = require("../controllers/pedidos");
 
 router.get("/", checkAuth, controller.pedidos_get_all);
+router.post(
+  "/pending-emails",
+  [checkAuth, admin],
+  controller.pedido_sendPendingEmails
+);
+router.get(
+  "/pending-emails",
+  [checkAuth, admin],
+  controller.pedido_getPendingEmails
+);
+
 router.post("/", controller.pedidos_get_pedidoByCode);
 router.get("/last/:date", checkAuth, controller.pedidos_get_last);
 router.get("/import", [checkAuth, admin], controller.pedidos_import);

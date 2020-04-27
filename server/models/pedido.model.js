@@ -5,55 +5,61 @@ const schema = mongoose.Schema(
     _id: mongoose.Schema.Types.ObjectId,
     nombre: {
       type: String,
-      required: true
+      required: true,
     },
     apellido: {
       type: String,
-      required: true
+      required: true,
     },
     date: {
-      type: Date
+      type: Date,
     },
     email: {
-      type: String
+      type: String,
     },
     celular: {
-      type: String
+      type: String,
     },
     direccion: {
-      type: String
+      type: String,
+    },
+    direccionDetalle: {
+      type: String,
     },
     conEntrega: {
-      type: Boolean
+      type: Boolean,
     },
     items: [
       {
         producto: { type: mongoose.Schema.Types.ObjectId, ref: "Producto" },
         cantidad: Number,
         precio: Number,
-        pago: Number
-      }
+        pago: Number,
+      },
     ],
     entregado: {
       type: Boolean,
-      default: false
+      default: false,
     },
     comentarios: { type: String },
     ajuste: {
-      type: Number
+      type: Number,
     },
     totalPedido: {
-      type: Number
+      type: Number,
     },
     totalAlmacen: {
-      type: Number
+      type: Number,
+    },
+    emailEnviado: {
+      type: Number,
     },
     usuarioMod: {
-      type: String
-    }
+      type: String,
+    },
   },
   {
-    timestamps: true
+    timestamps: true,
   }
 );
 

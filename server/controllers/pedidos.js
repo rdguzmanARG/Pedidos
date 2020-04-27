@@ -4,6 +4,7 @@ const moment = require("moment");
 let Producto = require("../models/producto.model");
 let Pedido = require("../models/pedido.model");
 let Entrega = require("../models/entrega.model");
+const EmailSender = require("../helpers/email-sender");
 
 exports.pedidos_get_all = (req, res) => {
   Pedido.find()
@@ -17,6 +18,32 @@ exports.pedidos_get_all = (req, res) => {
           res.status(200).json({ pedidos, last: new Date(), entrega: entrega });
         })
         .catch((err) => res.status(500).json({ error: err }));
+    })
+    .catch((err) => res.status(500).json({ error: err }));
+};
+
+exports.pedido_getPendingEmails = (req, res) => {
+  Pedido.count({ emailEnviado: 0 }).then((count) => {
+    return res.json({ count });
+  });
+};
+
+exports.pedido_sendPendingEmails = (req, res) => {
+  Pedido.find({ emailEnviado: 0 })
+    .limit(5)
+    .select(
+      "_id nombre apellido celular entregado comentarios conEntrega direccion usuarioMod"
+    )
+    .then((pedidos) => {
+      EmailSender.sendEmails(pedidos)
+        .then((data) => {
+          Pedido.count({ emailEnviado: 0 }).then((count) => {
+            return res.json({ restantes: count, procesado: data });
+          });
+        })
+        .catch((err) => {
+          return res.status(500).json("Error: " + err);
+        });
     })
     .catch((err) => res.status(500).json({ error: err }));
 };
@@ -149,7 +176,8 @@ function ImportarDatos(response, entrega) {
   const colMarcaTemporal = "Marca temporal";
   const colEmail = "Dirección de correo electrónico";
   const colComentarios = "Comentarios";
-  const colDireccion = "Dirección";
+  const colDomicilio = "Domicilio";
+  const colDetalleDomicilio = "Detalle domicilio";
   const colConEntrega = "¿Pedido con entrega a domicilio?";
   const excludeCols = [
     "2",
@@ -159,7 +187,8 @@ function ImportarDatos(response, entrega) {
     colMarcaTemporal,
     colEmail,
     colComentarios,
-    colDireccion,
+    colDomicilio,
+    colDetalleDomicilio,
     colConEntrega,
   ];
   console.log("Imp - Inicio");
@@ -248,11 +277,13 @@ function ImportarDatos(response, entrega) {
                       celular: d[colCelular],
                       email: d[colEmail],
                       comentarios: d[colComentarios],
-                      direccion: d[colDireccion],
+                      direccion: d[colDomicilio],
+                      direccionDetalle: d[colDomicilio],
                       conEntrega: d[colConEntrega] == "Si",
                       totalAlmacen: 0,
                       totalPedido: 0,
                       ajuste: 0,
+                      emailEnviado: 0,
                       items: productos
                         .filter(
                           (p) =>

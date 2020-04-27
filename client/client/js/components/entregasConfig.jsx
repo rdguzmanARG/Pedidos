@@ -10,6 +10,10 @@ import {
   entrega_setStatus,
 } from "../services/entregaService";
 import auth from "../services/authService";
+import {
+  pedido_sendPendingEmails,
+  pedido_getPendingEmails,
+} from "../services/pedidoService";
 const Element = Scroll.Element;
 const scroller = Scroll.scroller;
 
@@ -19,6 +23,9 @@ class Inicio extends Component {
     error: null,
     isLoading: true,
     action: "",
+    intervalId: null,
+    count: null,
+    errorMessage: null,
   };
 
   scrollTo = () => {
@@ -33,8 +40,13 @@ class Inicio extends Component {
     entrega_getCurrent()
       .then((res) => {
         if (res.status === 200) {
-          this.setState({ entrega: res.data, isLoading: false });
-          //this.scrollTo();
+          pedido_getPendingEmails().then((resCount) => {
+            this.setState({
+              entrega: res.data,
+              isLoading: false,
+              count: resCount.data.count,
+            });
+          });
         }
       })
       .catch((ex) => {
@@ -42,22 +54,38 @@ class Inicio extends Component {
           auth.logout();
           window.location = "/login";
         } else {
-          this.props.onGlobalError(ex.response.status);
+          this.props.onGlobalError("No se pudo conectar con el Servidor.");
         }
       });
   }
+
+  componentWillUnmount() {
+    if (this.state.intervalId != null) {
+      clearInterval(this.state.intervalId);
+    }
+  }
+
   ImportData = (next) => {
     this.setState({ isLoading: true, action: "" });
     pedido_import()
       .then((res) => {
         console.log("Datos importados");
         if (res.status === 200) {
-          this.setState({ entrega: res.data, isLoading: false });
+          this.setState({
+            entrega: res.data,
+            errorMessage: null,
+            isLoading: false,
+          });
           if (next != null) {
             next();
             return;
           }
-          this.scrollTo();
+          pedido_getPendingEmails().then((resCount) => {
+            this.setState({
+              count: resCount.data.count,
+            });
+            this.scrollTo();
+          });
         }
       })
       .catch((ex) => {
@@ -73,8 +101,15 @@ class Inicio extends Component {
     })
       .then((res) => {
         if (res.status === 200) {
-          this.setState({ entrega: res.data, isLoading: false });
-          this.scrollTo();
+          pedido_getPendingEmails().then((resCount) => {
+            this.setState({
+              entrega: res.data,
+              isLoading: false,
+              errorMessage: null,
+              count: resCount.data.count,
+            });
+            this.scrollTo();
+          });
         }
       })
       .catch((ex) => {
@@ -82,12 +117,52 @@ class Inicio extends Component {
           auth.logout();
           window.location = "/login";
         } else {
-          this.props.onGlobalError(ex.response.status);
+          this.props.onGlobalError("No se pudo conectar con el Servidor.");
         }
       });
   };
+
+  sendEmails = () => {
+    pedido_sendPendingEmails()
+      .then((restan) => {
+        //console.log(restan.data.procesado);
+        if (restan.data.count == 0) {
+          if (this.state.intervalId != null) {
+            clearInterval(this.state.intervalId);
+          }
+          this.setState({
+            ...this.state,
+            errorMessage: null,
+            intervalId: null,
+            count: 0,
+          });
+        } else {
+          this.setState({
+            ...this.state,
+            count: restan.data.restantes,
+            errorMessage: null,
+          });
+        }
+      })
+      .catch((ex) => {
+        if (ex.response && ex.response.status === 401) {
+          auth.logout();
+          window.location = "/login";
+        } else {
+          if (this.state.intervalId != null) {
+            clearInterval(this.state.intervalId);
+          }
+          this.setState({
+            ...this.state,
+            errorMessage: ex,
+            intervalId: null,
+          });
+        }
+      });
+  };
+
   render() {
-    const { entrega, isLoading, action } = this.state;
+    const { entrega, isLoading, action, count, errorMessage } = this.state;
     const { user } = this.props;
     if (isLoading) {
       return (
@@ -341,15 +416,87 @@ class Inicio extends Component {
                     que lleguen nuevos pedidos.
                   </p>
                   {user.isAdmin && (
-                    <button
-                      disabled={entrega === null || entrega.estado != "IMP"}
-                      onClick={() =>
-                        this.setState({ ...this.state, action: "INI" })
-                      }
-                      class="btn btn-success btn-pasos"
-                    >
-                      Iniciar
-                    </button>
+                    <React.Fragment>
+                      <button
+                        disabled={entrega === null || entrega.estado != "IMP"}
+                        onClick={() =>
+                          this.setState({ ...this.state, action: "INI" })
+                        }
+                        class="btn btn-success btn-pasos"
+                      >
+                        Iniciar
+                      </button>
+                      {count > 0 && (
+                        <p class="card-text mt-4">
+                          Debe iniciar el proceso de envio de EMails, este
+                          proceso enviara Emails a las direcciones de cada uno
+                          de los pedidos realizados.
+                        </p>
+                      )}
+                      {count === 0 && (
+                        <p class="card-text mt-4">
+                          Todos los Emails fueron enviados.
+                        </p>
+                      )}
+                      {count > 0 && (
+                        <button
+                          disabled={
+                            entrega.estado != "INI" ||
+                            this.state.intervalId != null
+                          }
+                          onClick={() => {
+                            this.sendEmails();
+                            const intervalId = setInterval(
+                              this.sendEmails,
+                              1000 * 6
+                            );
+                            this.setState({
+                              ...this.state,
+                              errorMessage: null,
+                              intervalId: intervalId,
+                            });
+                          }}
+                          class="btn btn-danger btn-pasos"
+                        >
+                          {this.state.intervalId == null
+                            ? "Enviar Emails, restan (" + this.state.count + ")"
+                            : "Enviando Emails, restan (" +
+                              this.state.count +
+                              ")"}
+                        </button>
+                      )}
+                      {this.state.intervalId && (
+                        <button
+                          disabled={
+                            entrega.estado != "INI" ||
+                            this.state.intervalId == null
+                          }
+                          onClick={() => {
+                            if (this.state.intervalId != null) {
+                              clearInterval(this.state.intervalId);
+                            }
+
+                            this.setState({
+                              ...this.state,
+                              intervalId: null,
+                            });
+                          }}
+                          class="btn btn-danger btn-pasos"
+                        >
+                          Cancelar envio
+                        </button>
+                      )}
+                      {errorMessage && (
+                        <div
+                          class="alert alert-danger text-center mt-4"
+                          role="alert"
+                        >
+                          <h4 class="alert-heading">
+                            Hubo un error al Enviar los Emails.
+                          </h4>
+                        </div>
+                      )}
+                    </React.Fragment>
                   )}
                 </div>
               </div>
