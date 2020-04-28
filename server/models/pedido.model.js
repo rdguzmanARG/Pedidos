@@ -42,13 +42,13 @@ const schema = mongoose.Schema(
       default: false,
     },
     comentarios: { type: String },
-    ajuste: {
-      type: Number,
-    },
     totalPedido: {
       type: Number,
     },
     totalAlmacen: {
+      type: Number,
+    },
+    varios: {
       type: Number,
     },
     emailEnviado: {

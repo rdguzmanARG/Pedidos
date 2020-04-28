@@ -239,6 +239,7 @@ function ImportarDatos(response, entrega) {
               cols.map((c) => {
                 return new Producto({
                   _id: new mongoose.Types.ObjectId(),
+                  almacen: c.startsWith("Almacén"),
                   nombre: c,
                   precio: isNaN(
                     Number(
@@ -280,11 +281,11 @@ function ImportarDatos(response, entrega) {
                       email: d[colEmail],
                       comentarios: d[colComentarios],
                       direccion: d[colDomicilio],
-                      direccionDetalle: d[colDomicilio],
+                      direccionDetalle: d[colDetalleDomicilio],
                       conEntrega: d[colConEntrega] == "Si",
                       totalAlmacen: 0,
                       totalPedido: 0,
-                      ajuste: 0,
+                      varios: 0,
                       emailEnviado: 0,
                       items: productos
                         .filter(

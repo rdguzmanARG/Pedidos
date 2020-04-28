@@ -13,17 +13,20 @@ exports.entregas_get_all = (req, res, next) => {
           .then((pedidos) => {
             let totalEntrega = 0;
             let totalAlmacen = 0;
+            let varios = 0;
             pedidos.map(
               (p) => (
                 (totalEntrega +=
                   p.totalPedido === undefined ? 0 : p.totalPedido),
                 (totalAlmacen +=
-                  p.totalAlmacen === undefined ? 0 : p.totalAlmacen)
+                  p.totalAlmacen === undefined ? 0 : p.totalAlmacen),
+                (varios += p.varios === undefined ? 0 : p.varios)
               )
             );
             const currentEntrega = entrega[0]._doc;
             currentEntrega.totalEntrega = totalEntrega;
             currentEntrega.totalAlmacen = totalAlmacen;
+            currentEntrega.varios = varios;
             const entregasResult = [
               currentEntrega,
               ...entregas.filter((f) => f.estado != "INI"),
@@ -58,16 +61,17 @@ exports.entregas_update_entrega = (req, res) => {
       .then((pedidos) => {
         let totalEntrega = 0;
         let totalAlmacen = 0;
+        let varios = 0;
         pedidos.map(
           (p) => (
-            (totalEntrega +=
-              (p.totalPedido === undefined ? 0 : p.totalPedido) +
-              (p.ajuste === undefined ? 0 : p.ajuste)),
+            (totalEntrega += p.totalPedido === undefined ? 0 : p.totalPedido),
+            (varios += p.varios === undefined ? 0 : p.varios),
             (totalAlmacen += p.totalAlmacen === undefined ? 0 : p.totalAlmacen)
           )
         );
         entrega.totalEntrega = totalEntrega;
         entrega.totalAlmacen = totalAlmacen;
+        entrega.varios = varios;
         Entrega.findByIdAndUpdate(req.params.idEntrega, entrega, { new: true })
           .then((entrega) => res.json(entrega))
           .catch((err) => res.status(500).json("Error: " + err));

@@ -195,6 +195,7 @@ footer {
   .form-group {
     input.form-control {
       width: unset;
+      max-width: 80px;
       display: inline-block;
       margin-left: 10px;
     }
@@ -215,6 +216,9 @@ table {
       background-color: teal;
       padding: 10px 0;
       color: white;
+      &.almacen {
+        background-color: #9e2c04cf;
+      }
     }
   }
 }
@@ -223,6 +227,9 @@ table {
   tr {
     font-weight: bold;
     th {
+      &.col-unitario {
+        width: 102px;
+      }
       vertical-align: middle;
     }
     td {
@@ -261,12 +268,20 @@ table {
     font-weight: bold;
   }
   .secondary-header {
-    background-color: #d4edda;
+    background-color: #e9ecef;
     color: black;
     font-weight: bold;
   }
+  .secondary-header th {
+    padding: 0 12px;
+  }
   .totales {
     background-color: black;
+    color: white;
+    font-weight: bold;
+  }
+  .subtotales {
+    background-color: gray;
     color: white;
     font-weight: bold;
   }
@@ -299,12 +314,16 @@ table {
 
 // Forms styles
 .form-group {
+  margin-bottom: 0;
   .form-check {
     display: inline-block;
     margin-right: 10px;
   }
 }
-
+.form-control-mobile {
+  display: inline-block;
+  width: 40%;
+}
 ol.breadcrumb {
   background-color: teal;
   a {

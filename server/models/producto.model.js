@@ -5,22 +5,25 @@ const schema = mongoose.Schema(
     _id: mongoose.Schema.Types.ObjectId,
     nombre: {
       type: String,
-      required: true
+      required: true,
     },
     cantidad: {
       type: Number,
-      default: 0
+      default: 0,
     },
     anulado: {
       type: Boolean,
-      default: false
+      default: false,
     },
     precio: {
-      type: Number
-    }
+      type: Number,
+    },
+    almacen: {
+      type: Boolean,
+    },
   },
   {
-    timestamps: true
+    timestamps: true,
   }
 );
 

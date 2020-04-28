@@ -18,7 +18,8 @@ class PedidoDetail extends Component {
     },
     entregaEstado: "",
     totalPedidos: 0,
-    totalAlmacen: null,
+    totalAlmacen: 0,
+    varios: null,
     showConfirmAceptado: false,
     showConfirmAnulado: false,
   };
@@ -35,14 +36,21 @@ class PedidoDetail extends Component {
                 ? pedido.totalPedido
                 : this.arrSum(
                     pedido.items
-                      .filter((f) => !f.producto.anulado)
+                      .filter((f) => !f.producto.anulado && !f.producto.almacen)
+                      .map((m) => m.pago)
+                  );
+              const totalAlmacen = pedido.entregado
+                ? pedido.totalAlmacen
+                : this.arrSum(
+                    pedido.items
+                      .filter((f) => !f.producto.anulado && f.producto.almacen)
                       .map((m) => m.pago)
                   );
               this.setState({
                 pedido,
                 totalPedidos,
-                totalAlmacen:
-                  pedido.totalAlmacen == 0 ? null : pedido.totalAlmacen,
+                varios: pedido.varios,
+                totalAlmacen,
                 isLoading: false,
                 entregaEstado: resEntrega.data ? resEntrega.data.estado : "",
               });
@@ -70,16 +78,16 @@ class PedidoDetail extends Component {
   }
   arrSum = (arr) => arr.reduce((a, b) => a + b, 0);
 
-  onAlmacenChange = (e) => {
+  onVariosChange = (e) => {
     let valor = e.target.value;
-    let totalAlmacen = Number(valor.replace("$", ""));
-    if (totalAlmacen == 0) {
-      totalAlmacen = null;
+    let varios = Number(valor.replace("$", ""));
+    if (varios == 0) {
+      varios = null;
     }
 
     this.setState({
       ...this.state,
-      totalAlmacen,
+      varios,
     });
   };
 
@@ -94,9 +102,22 @@ class PedidoDetail extends Component {
     }
 
     const totalPedidos = this.arrSum(
-      ped.items.filter((f) => !f.producto.anulado).map((m) => m.pago)
+      ped.items
+        .filter((f) => !f.producto.anulado && !f.producto.almacen)
+        .map((m) => m.pago)
     );
-    this.setState({ ...this.state, totalPedidos, pedido: { ...ped } });
+    const totalAlmacen = this.arrSum(
+      ped.items
+        .filter((f) => !f.producto.anulado && f.producto.almacen)
+        .map((m) => m.pago)
+    );
+
+    this.setState({
+      ...this.state,
+      totalPedidos,
+      totalAlmacen,
+      pedido: { ...ped },
+    });
   };
 
   onPagoReset = (id) => {
@@ -105,9 +126,21 @@ class PedidoDetail extends Component {
     const item = ped.items.filter((f) => f._id === id)[0];
     item.pago = item.cantidad * item.precio;
     const totalPedidos = this.arrSum(
-      ped.items.filter((f) => !f.producto.anulado).map((m) => m.pago)
+      ped.items
+        .filter((f) => !f.producto.anulado && !f.producto.almacen)
+        .map((m) => m.pago)
     );
-    this.setState({ ...this.state, totalPedidos, pedido: { ...ped } });
+    const totalAlmacen = this.arrSum(
+      ped.items
+        .filter((f) => !f.producto.anulado && f.producto.almacen)
+        .map((m) => m.pago)
+    );
+    this.setState({
+      ...this.state,
+      totalPedidos,
+      totalAlmacen,
+      pedido: { ...ped },
+    });
   };
 
   onPagoCero = (id) => {
@@ -116,9 +149,22 @@ class PedidoDetail extends Component {
     const item = ped.items.filter((f) => f._id === id)[0];
     item.pago = null;
     const totalPedidos = this.arrSum(
-      ped.items.filter((f) => !f.producto.anulado).map((m) => m.pago)
+      ped.items
+        .filter((f) => !f.producto.anulado && !f.producto.almacen)
+        .map((m) => m.pago)
     );
-    this.setState({ ...this.state, totalPedidos, pedido: { ...ped } });
+    const totalAlmacen = this.arrSum(
+      ped.items
+        .filter((f) => !f.producto.anulado && f.producto.almacen)
+        .map((m) => m.pago)
+    );
+
+    this.setState({
+      ...this.state,
+      totalPedidos,
+      totalAlmacen,
+      pedido: { ...ped },
+    });
   };
 
   render() {
@@ -128,9 +174,12 @@ class PedidoDetail extends Component {
       entregaEstado,
       totalPedidos,
       totalAlmacen,
+      varios,
       showConfirmAceptado,
       showConfirmAnulado,
     } = this.state;
+    const itemsPedido = pedido.items.filter((p) => !p.producto.almacen);
+    const itemsAlmacen = pedido.items.filter((p) => p.producto.almacen);
 
     if (isLoading) {
       return (
@@ -140,9 +189,8 @@ class PedidoDetail extends Component {
       );
     }
 
-    const total = totalPedidos + totalAlmacen;
+    const total = totalPedidos + totalAlmacen + varios;
     const { user } = this.props;
-
     return (
       <div className="pedido-detail">
         {(showConfirmAceptado || showConfirmAnulado) && (
@@ -155,11 +203,12 @@ class PedidoDetail extends Component {
             cancelBtnBsStyle="primary"
             title="¿Desea continuar?"
             onConfirm={() => {
-              const { pedido, totalPedidos, totalAlmacen } = this.state;
+              const { pedido, totalPedidos, totalAlmacen, varios } = this.state;
               const { user } = this.props;
               const newPedido = {
                 ...pedido,
                 entregado: showConfirmAceptado,
+                varios: showConfirmAceptado ? varios : 0,
                 totalPedido: showConfirmAceptado ? totalPedidos : 0,
                 totalAlmacen: showConfirmAceptado ? totalAlmacen : 0,
                 usuarioMod: user.username,
@@ -280,14 +329,24 @@ class PedidoDetail extends Component {
               <tr className="main-header">
                 <th>Detalle del pedido</th>
                 <th className="d-none d-md-table-cell">Cantidad</th>
-                <th className="d-none d-md-table-cell cell-right">
+                <th className="d-none d-md-table-cell cell-right col-unitario">
                   P. Unitario
                 </th>
                 <th className="d-none d-md-table-cell cell-right">Total</th>
               </tr>
             </thead>
             <tbody>
-              {pedido.items.map(
+              {itemsPedido && (
+                <tr className="subtotales">
+                  <td colSpan="4" className="d-none d-md-table-cell">
+                    Pedido Mercado Territorial y Productores Locales
+                  </td>
+                  <td colSpan="4" className="d-md-none">
+                    Pedido M.T. y Productores Locales
+                  </td>
+                </tr>
+              )}
+              {itemsPedido.map(
                 (
                   {
                     producto,
@@ -452,33 +511,284 @@ class PedidoDetail extends Component {
                   );
                 }
               )}
+              {itemsPedido && (
+                <React.Fragment>
+                  <tr>
+                    <td
+                      colSpan="4"
+                      className="cell-right d-none d-md-table-cell  "
+                    >
+                      <div className="form-group">
+                        <label>Subtotal M.T. y P.L.:</label>
+                        <NumberFormat
+                          disabled={true}
+                          thousandSeparator={false}
+                          value={totalPedidos}
+                          prefix={"$"}
+                          className="form-control"
+                        />
+                      </div>
+                    </td>
+                    <td
+                      colSpan="3"
+                      className="cell-right d-table-cell d-md-none "
+                    >
+                      <div className="form-group">
+                        <label>Subtotal M.T. y P.L.:</label>
+                        <NumberFormat
+                          disabled={true}
+                          thousandSeparator={false}
+                          value={totalPedidos}
+                          prefix={"$"}
+                          className="form-control"
+                        />
+                      </div>
+                    </td>
+                  </tr>
+                </React.Fragment>
+              )}
               <tr>
-                <td colSpan="4" className="cell-right d-none d-md-table-cell  ">
+                <td></td>
+              </tr>
+              {itemsAlmacen && (
+                <tr className="subtotales">
+                  <td colSpan="4">Pedido de Almacén</td>
+                </tr>
+              )}
+              {itemsAlmacen.map(
+                (
+                  {
+                    producto,
+                    cantidad,
+                    precio: currentPrecio,
+                    pago: currentPago,
+                    _id,
+                  },
+                  index
+                ) => {
+                  const precio =
+                    currentPrecio == undefined
+                      ? producto.precio
+                      : currentPrecio;
+                  const pago =
+                    currentPrecio == undefined
+                      ? precio * cantidad
+                      : currentPago;
+
+                  return (
+                    <tr
+                      key={index}
+                      className={
+                        pedido.entregado
+                          ? producto.anulado
+                            ? pago > 0
+                              ? "bg-danger"
+                              : ""
+                            : pago != null
+                            ? pago != precio * cantidad
+                              ? "bg-primary"
+                              : ""
+                            : "bg-warning"
+                          : producto.anulado
+                          ? "bg-danger"
+                          : pago == null
+                          ? "bg-warning"
+                          : pago != precio * cantidad
+                          ? "bg-primary"
+                          : ""
+                      }
+                    >
+                      <td className="pedido-detail-mobile d-table-cell d-md-none">
+                        <div class="row2">
+                          <div class="pedido-detail-item-title col pb-3 almacen">
+                            <b>{producto.nombre}</b>
+                          </div>
+                        </div>
+                        <table className="table m-0">
+                          <thead>
+                            <tr className="secondary-header">
+                              <th>Cant.</th>
+                              <th className="cell-right">P. Unit.</th>
+                              <th className="cell-right">Total</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr className={producto.anulado ? "bg-danger" : ""}>
+                              <td>{cantidad}</td>
+                              <td className="cell-right">
+                                ${producto.precio.toFixed(2)}
+                              </td>
+                              <td className="cell-right">
+                                <NumberFormat
+                                  name={_id}
+                                  disabled={
+                                    entregaEstado !== "INI" ||
+                                    pedido.entregado ||
+                                    producto.anulado
+                                  }
+                                  onChange={this.onPagoChange}
+                                  thousandSeparator={false}
+                                  value={producto.anulado ? null : pago}
+                                  allowNegative={false}
+                                  prefix={"$"}
+                                  className="form-control field-pago"
+                                  placeholder="$0.00"
+                                />
+                                {entregaEstado == "INI" && !pedido.entregado && (
+                                  <React.Fragment>
+                                    {pago == precio * cantidad && (
+                                      <button
+                                        disabled={producto.anulado}
+                                        title="Volver al valor inicial"
+                                        onClick={() => this.onPagoCero(_id)}
+                                        class="btn btn-danger btn-reset-pago"
+                                      >
+                                        <FontAwesomeIcon icon={faWindowClose} />
+                                      </button>
+                                    )}
+                                    {pago != precio * cantidad && (
+                                      <button
+                                        disabled={producto.anulado}
+                                        title="Volver al valor inicial"
+                                        onClick={() => this.onPagoReset(_id)}
+                                        class="btn btn-primary btn-reset-pago"
+                                      >
+                                        <FontAwesomeIcon icon={faUndo} />
+                                      </button>
+                                    )}
+                                  </React.Fragment>
+                                )}
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                        <div className="space"></div>
+                      </td>
+
+                      <td className="d-none d-md-table-cell">
+                        {producto.nombre}
+                      </td>
+                      <td className="d-none d-md-table-cell">{cantidad}</td>
+                      <td className="d-none d-md-table-cell cell-right">
+                        $
+                        {precio == undefined
+                          ? producto.precio.toFixed(2)
+                          : precio.toFixed(2)}
+                      </td>
+                      <td className="d-none d-md-table-cell cell-right">
+                        <NumberFormat
+                          name={_id}
+                          disabled={
+                            entregaEstado !== "INI" ||
+                            pedido.entregado ||
+                            producto.anulado
+                          }
+                          onChange={this.onPagoChange}
+                          thousandSeparator={false}
+                          allowNegative={false}
+                          value={producto.anulado ? null : pago}
+                          prefix={"$"}
+                          className="form-control field-pago"
+                          placeholder="$0.00"
+                        />
+                        {entregaEstado == "INI" && !pedido.entregado && (
+                          <React.Fragment>
+                            {pago == precio * cantidad && (
+                              <button
+                                disabled={producto.anulado}
+                                title="Volver al valor inicial"
+                                onClick={() => this.onPagoCero(_id)}
+                                class="btn btn-danger btn-reset-pago"
+                              >
+                                <FontAwesomeIcon icon={faWindowClose} />
+                              </button>
+                            )}
+                            {pago != precio * cantidad && (
+                              <button
+                                disabled={producto.anulado}
+                                title="Volver al valor inicial"
+                                onClick={() => this.onPagoReset(_id)}
+                                class="btn btn-primary btn-reset-pago"
+                              >
+                                <FontAwesomeIcon icon={faUndo} />
+                              </button>
+                            )}
+                          </React.Fragment>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                }
+              )}
+              {itemsAlmacen && (
+                <React.Fragment>
+                  <tr>
+                    <td
+                      colSpan="4"
+                      className="cell-right d-none d-md-table-cell  "
+                    >
+                      <div className="form-group">
+                        <label>Subtotal almacén:</label>
+                        <NumberFormat
+                          disabled={true}
+                          thousandSeparator={false}
+                          value={totalAlmacen}
+                          prefix={"$"}
+                          className="form-control"
+                        />
+                      </div>
+                    </td>
+                    <td
+                      colSpan="3"
+                      className="cell-right d-table-cell d-md-none "
+                    >
+                      <div className="form-group">
+                        <label>Subtotal almacén:</label>
+                        <NumberFormat
+                          disabled={true}
+                          thousandSeparator={false}
+                          value={totalAlmacen}
+                          prefix={"$"}
+                          className="form-control"
+                        />
+                      </div>
+                    </td>
+                  </tr>
+                </React.Fragment>
+              )}
+              <tr>
+                <td
+                  colSpan="4"
+                  className="cell-right d-none d-md-table-cell subtotales "
+                >
                   <div className="form-group">
-                    <label for="almacenD">Total almacén:</label>
+                    <label for="almacenD">Varios:</label>
                     <NumberFormat
                       id="almacenD"
                       disabled={entregaEstado !== "INI" || pedido.entregado}
-                      onChange={this.onAlmacenChange}
+                      onChange={this.onVariosChange}
                       thousandSeparator={false}
                       allowNegative={false}
-                      value={totalAlmacen}
+                      value={varios}
                       prefix={"$"}
                       className="form-control"
                       placeholder="$0.00"
                     />
                   </div>
                 </td>
-                <td colSpan="3" className="cell-right d-table-cell d-md-none ">
+                <td
+                  colSpan="3"
+                  className="cell-right d-table-cell d-md-none subtotales "
+                >
                   <div className="form-group">
-                    <label for="almacenM">Total almacén:</label>
+                    <label for="almacenM">Varios:</label>
                     <NumberFormat
                       id="almacenM"
                       disabled={entregaEstado !== "INI" || pedido.entregado}
-                      onChange={this.onAlmacenChange}
+                      onChange={this.onVariosChange}
                       thousandSeparator={false}
                       allowNegative={false}
-                      value={totalAlmacen}
+                      value={varios}
                       prefix={"$"}
                       className="form-control"
                       placeholder="$0.00"

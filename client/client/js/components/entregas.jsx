@@ -114,12 +114,16 @@ class Entregas extends Component {
                       <b>${entregaActual.totalEntrega.toFixed(2)}</b>
                     </div>
                     <div>
+                      Varios: <b>${entregaActual.varios.toFixed(2)}</b>
+                    </div>
+                    <div>
                       Total:{" "}
                       <b>
                         $
                         {(
                           entregaActual.totalAlmacen +
-                          entregaActual.totalEntrega
+                          entregaActual.totalEntrega +
+                          entregaActual.varios
                         ).toFixed(2)}
                       </b>
                     </div>
