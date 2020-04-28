@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { pedido_get } from "../services/pedidoService";
+import { pedido_get, pedido_getByCode } from "../services/pedidoService";
 import Scroll from "react-scroll";
 import ReactGA from "react-ga";
 import moment from "moment";
@@ -16,12 +16,37 @@ class MiPedido extends Component {
 
   componentDidMount() {
     ReactGA.pageview(window.location.pathname + window.location.search);
+
+    let code = this.props.match.params.code;
+    if (code != undefined && code.length > 5) {
+      pedido_get(code)
+        .then(({ data }) => {
+          code = code.substr(code.length - 5).toUpperCase();
+          this.setState({
+            ...this.state,
+            pedido: data,
+            search: { code, email: data.email },
+          });
+          scroller.scrollTo("myScrollToElement", {
+            duration: 1000,
+            delay: 100,
+            smooth: true,
+            offset: -65, // Scrolls to element + 50 pixels down the page
+          });
+        })
+        .catch((ex) => {
+          this.setState({
+            errorMessage: ex.response.data.message,
+            pedido: null,
+          });
+        });
+    }
   }
 
   onFieldChange = (e) => {
     const search = { ...this.state.search };
     search[e.target.name] = e.target.value;
-    this.setState({ ...this.state, search });
+    this.setState({ ...this.state, search, errorMessage: "" });
   };
 
   submitForm = (e) => {
@@ -31,7 +56,7 @@ class MiPedido extends Component {
       action: "Consultar",
     });
     e.preventDefault();
-    pedido_get(search.email, search.code.toUpperCase())
+    pedido_getByCode(search.email, search.code.toUpperCase())
       .then((res) => {
         this.setState({ ...this.state, pedido: res.data, errorMessage: null });
         scroller.scrollTo("myScrollToElement", {
@@ -120,8 +145,8 @@ class MiPedido extends Component {
               </div>
             </form>
             {errorMessage && (
-              <div class="alert alert-danger text-center" role="alert">
-                <p>{errorMessage}</p>
+              <div class="alert alert-danger text-center m-4" role="alert">
+                {errorMessage}
               </div>
             )}
           </div>

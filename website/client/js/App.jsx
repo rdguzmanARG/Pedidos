@@ -30,9 +30,9 @@ class App extends Component {
             }}
           />
           <Route
-            path="/mi-pedido"
+            path="/mi-pedido/:code?"
             render={(props) => {
-              return <MiPedido></MiPedido>;
+              return <MiPedido {...props}></MiPedido>;
             }}
           />
           <Route

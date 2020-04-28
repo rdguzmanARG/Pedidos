@@ -46,18 +46,24 @@ exports.sendEmails = (pedidos) => {
 
 SendAllEmails = function (transporter, pedidos) {
   var promises = pedidos.map(function (pe) {
+    const code = pe.idPedido.toString();
+
     var mailOptions = {
       from: process.env.EMAIL_SENDER,
       to: pe.email,
       subject: "Nodo Temperley - Pedido",
-      html:
-        "<h1>Hola " +
-        pe.nombre +
-        ", " +
-        pe.apellido +
-        " se esta procesando su pedido realizado al NODO Temperley</h1><h2>Puede ingresar a ver el estado del pedido en el siguiente link:</h2><a href='http://nodo-temperley.azurewebsites.net/mi-pedido/" +
-        pe.idPedido.toString() +
-        "'>Ver pedido</a><p>Muchas Gracias!!</p>",
+      html: `
+      <div>
+        <p>Hola ${pe.nombre} ${
+        pe.apellido
+      }, tu pedido al NODO Temperley, se esta procesado.</p>
+        <p>Podes ingresar al sitio y con este CODIGO: ${code
+          .substr(code.length - 5)
+          .toUpperCase()} y tu E-mail podes ver su estado, las veces que lo desees..</p>
+        <a href="http://nodo-temperley.azurewebsites.net/mi-pedido/${pe.idPedido.toString()}">ver pedido</a>
+        <p>Muchas Gracias</p>
+        <p>Nodo Temperley</p>
+      </div>`,
     };
 
     const prom = transporter
