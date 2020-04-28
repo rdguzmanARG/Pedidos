@@ -243,7 +243,7 @@ SendAllEmails = function (transporter, pedidos) {
                         <tr>
                           <td align="center">
                             <p>
-                              <a href="http://nodo-temperley.azurewebsites.net/mi-pedido/${pe.idPedido.toString()}" class="button text-green">VER PEDIDO</a>
+                              <a href="http://nodo-temperley.azurewebsites.net/mi-pedido/${pe.idPedido.toString()}" class="button text-white">VER PEDIDO</a>
                             </p>
                           </td>
                         </tr>
@@ -252,7 +252,7 @@ SendAllEmails = function (transporter, pedidos) {
                       <p>
                         Si queres ver mas información 
                         de LA CHAPANAY - Nodo Temperley hace click
-                        <a class="text-white" href="https://nodo-temperley.azurewebsites.net"> AQUI...</a>.
+                        <a class="text-green" href="https://nodo-temperley.azurewebsites.net"> AQUI...</a>.
                       </p>
       
                       <p><em>– Gracias!!</em></p>
