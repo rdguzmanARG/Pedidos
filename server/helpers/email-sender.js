@@ -171,7 +171,12 @@ SendAllEmails = function (transporter, pedidos) {
               width: 100% !important;
               border-collapse: collapse;
             }
-      
+            .text-green {
+              color: #71bc37 !important;
+            }
+            .text-white {
+              color: white !important;
+            }
             .container .masthead {
               padding: 80px 0;
               background: #71bc37;
@@ -238,7 +243,7 @@ SendAllEmails = function (transporter, pedidos) {
                         <tr>
                           <td align="center">
                             <p>
-                              <a href="http://nodo-temperley.azurewebsites.net/mi-pedido/${pe.idPedido.toString()}" class="button">VER PEDIDO</a>
+                              <a href="http://nodo-temperley.azurewebsites.net/mi-pedido/${pe.idPedido.toString()}" class="button text-green">VER PEDIDO</a>
                             </p>
                           </td>
                         </tr>
@@ -247,7 +252,7 @@ SendAllEmails = function (transporter, pedidos) {
                       <p>
                         Si queres ver mas información 
                         de LA CHAPANAY - Nodo Temperley hace click
-                        <a href="https://nodo-temperley.azurewebsites.net"> AQUI...</a>.
+                        <a class="text-white" href="https://nodo-temperley.azurewebsites.net"> AQUI...</a>.
                       </p>
       
                       <p><em>– Gracias!!</em></p>
