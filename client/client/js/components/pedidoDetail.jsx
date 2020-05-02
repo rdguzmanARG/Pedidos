@@ -424,6 +424,14 @@ class PedidoDetail extends Component {
                     // Pago NO procesado
                     if (producto.anulado) {
                       cssName = "bg-danger";
+                    } else {
+                      if (pago === 0) {
+                        cssName = "bg-warning";
+                      } else {
+                        if (pago != precio * cantidad) {
+                          cssName = "bg-primary";
+                        }
+                      }
                     }
                   }
 
@@ -656,6 +664,14 @@ class PedidoDetail extends Component {
                     // Pago NO procesado
                     if (producto.anulado) {
                       cssName = "bg-danger";
+                    } else {
+                      if (pago === 0) {
+                        cssName = "bg-warning";
+                      } else {
+                        if (pago != precio * cantidad) {
+                          cssName = "bg-primary";
+                        }
+                      }
                     }
                   }
 
