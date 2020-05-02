@@ -415,7 +415,9 @@ class PedidoDetail extends Component {
                         }
                       }
                     } else {
-                      // Pago sin datos
+                      if (producto.anulado) {
+                        cssName = "bg-danger";
+                      }
                     }
                   } else {
                     // Pago NO procesado
@@ -656,6 +658,9 @@ class PedidoDetail extends Component {
                       }
                     } else {
                       // Pago sin datos
+                      if (producto.anulado) {
+                        cssName = "bg-danger";
+                      }
                     }
                   } else {
                     // Pago NO procesado
