@@ -122,7 +122,6 @@ SendAllEmails = function (transporter, pedidos) {
             h3,
             h4,
             h5, 
-            h7,
             h6 {
               margin-bottom: 20px;
               line-height: 1.25;
@@ -147,11 +146,7 @@ SendAllEmails = function (transporter, pedidos) {
             h5 {
               font-size: 16px;
             }
-            h7 {
-              font-size: 16px;
-              font-weight: bold;
-            }
-      
+                  
             p,
             ul,
             ol {
@@ -232,11 +227,11 @@ SendAllEmails = function (transporter, pedidos) {
                       <h2>Hola, ${pe.nombre} ${pe.apellido}</h2>
       
                       <p>
-                        Podes ingresar al sitio y 
-                        con este <h7>CODIGO: ${code
+                        Ingresá al sitio 
+                        con este <b>CODIGO: ${code
                           .substr(code.length - 5)
-                          .toUpperCase()}</h7> y 
-                        tu <h7>E-mail</h7> así podras ver el estado de tu pedido las veces que lo desees, o haciendo click en el boton aquí abajo...            
+                          .toUpperCase()}</b> y 
+                        tu <b>E-mail</b> para verificar el estado de tu pedido las veces que lo desees, o haciendo click en el siguiente botón...            
                       </p>
                                      
                       <table>
