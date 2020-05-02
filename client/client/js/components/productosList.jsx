@@ -102,7 +102,7 @@ class ProductosList extends Component {
                   <td className="cell-right">${p.precio.toFixed(2)}</td>
                   <td className="cell-icon">
                     <Link to={`/productos/ver/${p._id}`} title="Modificar">
-                      <button type="button" class="btn btn-primary btn-sm">
+                      <button type="button" class="btn btn-primary">
                         <FontAwesomeIcon icon={faEdit} />
                       </button>
                     </Link>

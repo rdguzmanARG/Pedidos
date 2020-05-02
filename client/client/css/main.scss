@@ -228,9 +228,11 @@ footer {
       font-weight: bold;
       border-radius: 10px;
       padding: 4px 10px;
+      text-align: center;
     }
     .text-0 {
       color: white;
+      border: 1px solid white;
     }
     .text-1 {
       background-color: #ffc107;
@@ -283,9 +285,9 @@ table {
     }
     .pedido-detail-item-title {
       text-align: center;
-      background-color: teal;
+      background-color: lightgray;
       padding: 10px 0;
-      color: white;
+      color: #000000ab;
       &.almacen {
         background-color: #9e2c04cf;
       }
@@ -295,11 +297,15 @@ table {
 // Other pages
 table {
   tr {
-    font-weight: bold;
+    //font-weight: bold;
     th {
       &.col-unitario {
         width: 102px;
       }
+      &.col-total {
+        width: 137px;
+      }
+
       vertical-align: middle;
     }
     td {
@@ -366,6 +372,9 @@ table {
     background-color: black;
     color: white;
     font-weight: bold;
+    @media (max-width: 575px) {
+      font-size: 20px;
+    }
   }
   .secondary-header {
     background-color: #e9ecef;
@@ -414,7 +423,6 @@ table {
 
 // Forms styles
 .form-group {
-  margin-bottom: 0;
   .form-check {
     display: inline-block;
     margin-right: 10px;

@@ -382,7 +382,9 @@ class PedidoDetail extends Component {
                 <th className="d-none d-md-table-cell cell-right col-unitario">
                   P. Unitario
                 </th>
-                <th className="d-none d-md-table-cell cell-right">Total</th>
+                <th className="d-none d-md-table-cell cell-right col-total">
+                  Total
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -441,7 +443,7 @@ class PedidoDetail extends Component {
                     >
                       <td className="pedido-detail-mobile d-table-cell d-md-none">
                         <div class="row2">
-                          <div class="pedido-detail-item-title col pb-3">
+                          <div class="pedido-detail-item-title col">
                             <b>{producto.nombre}</b>
                           </div>
                         </div>
@@ -597,9 +599,6 @@ class PedidoDetail extends Component {
                   </tr>
                 </React.Fragment>
               )}
-              <tr>
-                <td></td>
-              </tr>
               {itemsAlmacen && (
                 <tr className="subtotales">
                   <td colSpan="4">Pedido de Almacén</td>
@@ -650,7 +649,7 @@ class PedidoDetail extends Component {
                     >
                       <td className="pedido-detail-mobile d-table-cell d-md-none">
                         <div class="row2">
-                          <div class="pedido-detail-item-title col pb-3 almacen">
+                          <div class="pedido-detail-item-title col almacen">
                             <b>{producto.nombre}</b>
                           </div>
                         </div>
@@ -867,7 +866,7 @@ class PedidoDetail extends Component {
                       })
                     }
                     disabled={pedido.estado === 3}
-                    class="btn btn-success"
+                    class="btn btn-lg btn-success"
                     title="El pedido fue entregado."
                   >
                     <FontAwesomeIcon icon={faCheckSquare} /> Entregado
@@ -880,7 +879,7 @@ class PedidoDetail extends Component {
                       })
                     }
                     disabled={pedido.estado > 1}
-                    class="btn btn-info"
+                    class="btn btn-lg btn-info"
                   >
                     <FontAwesomeIcon icon={faDolly} /> Preparado
                   </button>
@@ -892,7 +891,7 @@ class PedidoDetail extends Component {
                       })
                     }
                     disabled={pedido.estado > 1}
-                    class="btn btn-warning"
+                    class="btn btn-lg btn-warning"
                   >
                     <FontAwesomeIcon icon={faSave} /> Guardado
                   </button>
@@ -906,14 +905,14 @@ class PedidoDetail extends Component {
                       })
                     }
                     disabled={pedido.estado === 0}
-                    class="btn btn-danger mr-1"
+                    class="btn btn-lg btn-danger mr-1"
                   >
                     <FontAwesomeIcon icon={faTimes} /> Anular
                   </button>
                   <button
                     title="Volver"
                     onClick={() => this.props.history.push("/pedidos")}
-                    class="btn btn-primary ml-1"
+                    class="btn btn-lg btn-primary ml-1"
                   >
                     <FontAwesomeIcon icon={faUndo} /> Volver
                   </button>
@@ -927,7 +926,7 @@ class PedidoDetail extends Component {
             <button
               title="Volver"
               onClick={() => this.props.history.push("/pedidos")}
-              class="btn btn-primary mt-2 mr-2"
+              class="btn btn-lg btn-primary mt-2 mr-2"
             >
               <FontAwesomeIcon icon={faUndo} /> Volver
             </button>

@@ -287,7 +287,9 @@ class PedidosList extends Component {
                   }
                 >
                   <td>
-                    {p.nombre}, {p.apellido} {p.comentarios ? "(*)" : ""}
+                    <b>
+                      {p.nombre}, {p.apellido} {p.comentarios ? "(*)" : ""}
+                    </b>
                   </td>
                   <td className="d-none d-sm-table-cell">
                     <a href={"tel:+" + p.celular}>{p.celular}</a>{" "}
@@ -335,7 +337,7 @@ class PedidosList extends Component {
                       <button
                         title="Pedido sin entrega"
                         type="button"
-                        class="btn btn-sm btn-success"
+                        class="btn btn-success"
                       >
                         <FontAwesomeIcon icon={faEdit} />
                       </button>
