@@ -72,7 +72,9 @@ exports.pedidos_get_pedido = (req, res) => {
       if (pedido.estado === 0) {
         pedido.items.forEach((item) => {
           item.precio = item.producto.precio;
-          item.pago = item.producto.precio * item.cantidad;
+          item.pago = item.producto.anulado
+            ? null
+            : item.producto.precio * item.cantidad;
         });
       }
       res.status(200).json(pedido);
@@ -108,7 +110,9 @@ exports.pedidos_get_pedidoByCode = (req, res) => {
             if (pedido.estado === 0) {
               pedido.items.forEach((item) => {
                 item.precio = item.producto.precio;
-                item.pago = item.producto.precio * item.cantidad;
+                item.pago = item.producto.anulado
+                  ? null
+                  : item.producto.precio * item.cantidad;
               });
             }
             res.status(200).json(pedido);
@@ -127,7 +131,9 @@ exports.pedidos_update_pedido = (req, res) => {
       if (pedido.estado === 0) {
         pedido.items.forEach((item) => {
           item.precio = item.producto.precio;
-          item.pago = item.producto.precio * item.cantidad;
+          item.pago = item.producto.anulado
+            ? null
+            : item.producto.precio * item.cantidad;
         });
       }
       res.json(pedido);
@@ -300,8 +306,8 @@ function ImportarDatos(response, entrega) {
                           return {
                             producto: pr._id,
                             cantidad: d[pr.nombre],
-                            precio: null,
-                            pago: null,
+                            precio: pr.precio,
+                            pago: d[pr.nombre] * pr.precio,
                           };
                         }),
                     });

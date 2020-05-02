@@ -13,15 +13,17 @@ exports.entregas_get_all = (req, res, next) => {
             let totalEntrega = 0;
             let totalAlmacen = 0;
             let varios = 0;
-            pedidos.map(
-              (p) => (
-                (totalEntrega +=
-                  p.totalPedido === undefined ? 0 : p.totalPedido),
-                (totalAlmacen +=
-                  p.totalAlmacen === undefined ? 0 : p.totalAlmacen),
-                (varios += p.varios === undefined ? 0 : p.varios)
-              )
-            );
+            pedidos
+              .filter((p) => p.estado === 3)
+              .map(
+                (p) => (
+                  (totalEntrega +=
+                    p.totalPedido === undefined ? 0 : p.totalPedido),
+                  (totalAlmacen +=
+                    p.totalAlmacen === undefined ? 0 : p.totalAlmacen),
+                  (varios += p.varios === undefined ? 0 : p.varios)
+                )
+              );
             const currentEntrega = entrega[0]._doc;
             currentEntrega.totalEntrega = totalEntrega;
             currentEntrega.totalAlmacen = totalAlmacen;
@@ -61,13 +63,16 @@ exports.entregas_update_entrega = (req, res) => {
         let totalEntrega = 0;
         let totalAlmacen = 0;
         let varios = 0;
-        pedidos.map(
-          (p) => (
-            (totalEntrega += p.totalPedido === undefined ? 0 : p.totalPedido),
-            (varios += p.varios === undefined ? 0 : p.varios),
-            (totalAlmacen += p.totalAlmacen === undefined ? 0 : p.totalAlmacen)
-          )
-        );
+        pedidos
+          .filter((p) => p.estado === 3)
+          .map(
+            (p) => (
+              (totalEntrega += p.totalPedido === undefined ? 0 : p.totalPedido),
+              (varios += p.varios === undefined ? 0 : p.varios),
+              (totalAlmacen +=
+                p.totalAlmacen === undefined ? 0 : p.totalAlmacen)
+            )
+          );
         entrega.totalEntrega = totalEntrega;
         entrega.totalAlmacen = totalAlmacen;
         entrega.varios = varios;

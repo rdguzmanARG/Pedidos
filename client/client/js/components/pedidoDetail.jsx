@@ -45,9 +45,7 @@ class PedidoDetail extends Component {
                   ? pedido.totalPedido
                   : this.arrSum(
                       pedido.items
-                        .filter(
-                          (f) => !f.producto.anulado && !f.producto.almacen
-                        )
+                        .filter((f) => !f.producto.almacen)
                         .map((m) => m.pago)
                     );
               const totalAlmacen =
@@ -55,9 +53,7 @@ class PedidoDetail extends Component {
                   ? pedido.totalAlmacen
                   : this.arrSum(
                       pedido.items
-                        .filter(
-                          (f) => !f.producto.anulado && f.producto.almacen
-                        )
+                        .filter((f) => f.producto.almacen)
                         .map((m) => m.pago)
                     );
               this.setState({
@@ -117,14 +113,10 @@ class PedidoDetail extends Component {
     }
 
     const totalPedidos = this.arrSum(
-      ped.items
-        .filter((f) => !f.producto.anulado && !f.producto.almacen)
-        .map((m) => m.pago)
+      ped.items.filter((f) => !f.producto.almacen).map((m) => m.pago)
     );
     const totalAlmacen = this.arrSum(
-      ped.items
-        .filter((f) => !f.producto.anulado && f.producto.almacen)
-        .map((m) => m.pago)
+      ped.items.filter((f) => f.producto.almacen).map((m) => m.pago)
     );
 
     this.setState({
@@ -141,14 +133,10 @@ class PedidoDetail extends Component {
     const item = ped.items.filter((f) => f._id === id)[0];
     item.pago = item.cantidad * item.precio;
     const totalPedidos = this.arrSum(
-      ped.items
-        .filter((f) => !f.producto.anulado && !f.producto.almacen)
-        .map((m) => m.pago)
+      ped.items.filter((f) => !f.producto.almacen).map((m) => m.pago)
     );
     const totalAlmacen = this.arrSum(
-      ped.items
-        .filter((f) => !f.producto.anulado && f.producto.almacen)
-        .map((m) => m.pago)
+      ped.items.filter((f) => f.producto.almacen).map((m) => m.pago)
     );
     this.setState({
       ...this.state,
@@ -162,15 +150,15 @@ class PedidoDetail extends Component {
     const ped = { ...this.state.pedido };
     // Es el item a modificar
     const item = ped.items.filter((f) => f._id === id)[0];
-    item.pago = null;
+    item.pago = 0;
     const totalPedidos = this.arrSum(
       ped.items
-        .filter((f) => !f.producto.anulado && !f.producto.almacen)
+        .filter((f) => !f.pago != null && !f.producto.almacen)
         .map((m) => m.pago)
     );
     const totalAlmacen = this.arrSum(
       ped.items
-        .filter((f) => !f.producto.anulado && f.producto.almacen)
+        .filter((f) => !f.pago != null && f.producto.almacen)
         .map((m) => m.pago)
     );
 
@@ -417,30 +405,48 @@ class PedidoDetail extends Component {
                     currentPrecio == undefined
                       ? precio * cantidad
                       : currentPago;
+                  let cssName = "";
+                  if (pedido.estado > 0) {
+                    // Pago procesado
+                    if (pago != null) {
+                      // Pago con datos
+                      if (pago === 0) {
+                        cssName = "bg-warning";
+                      } else {
+                        if (pago != precio * cantidad) {
+                          cssName = "bg-primary";
+                        }
+                      }
+                    } else {
+                      // Pago sin datos
+                    }
+                  } else {
+                    // Pago NO procesado
+                    if (producto.anulado) {
+                      cssName = "bg-danger";
+                    }
+                  }
+
+                  // pedido.estado > 0
+                  //   ? producto.anulado
+                  //     ? pago == null
+                  //       ? "bg-danger"
+                  //       : ""
+                  //     : pago != null
+                  //     ? pago != precio * cantidad
+                  //       ? "bg-primary"
+                  //       : ""
+                  //     : "bg-warning"
+                  //   : producto.anulado
+                  //   ? "bg-danger"
+                  //   : pago == 0
+                  //   ? "bg-warning"
+                  //   : pago != precio * cantidad
+                  //   ? "bg-primary"
+                  //   : "";
 
                   return (
-                    <tr
-                      key={index}
-                      className={
-                        pedido.estado > 0
-                          ? producto.anulado
-                            ? pago > 0
-                              ? "bg-danger"
-                              : ""
-                            : pago != null
-                            ? pago != precio * cantidad
-                              ? "bg-primary"
-                              : ""
-                            : "bg-warning"
-                          : producto.anulado
-                          ? "bg-danger"
-                          : pago == null
-                          ? "bg-warning"
-                          : pago != precio * cantidad
-                          ? "bg-primary"
-                          : ""
-                      }
-                    >
+                    <tr key={index} className={cssName}>
                       <td className="pedido-detail-mobile d-table-cell d-md-none">
                         <div class="row2">
                           <div class="pedido-detail-item-title col">
@@ -456,7 +462,7 @@ class PedidoDetail extends Component {
                             </tr>
                           </thead>
                           <tbody>
-                            <tr className={producto.anulado ? "bg-danger" : ""}>
+                            <tr className={cssName}>
                               <td>{cantidad}</td>
                               <td className="cell-right">
                                 ${producto.precio.toFixed(2)}
@@ -467,11 +473,15 @@ class PedidoDetail extends Component {
                                   disabled={
                                     entregaEstado !== "INI" ||
                                     pedido.estado > 1 ||
-                                    producto.anulado
+                                    (producto.anulado && pago == null)
                                   }
                                   onChange={this.onPagoChange}
                                   thousandSeparator={false}
-                                  value={producto.anulado ? null : pago}
+                                  value={
+                                    producto.anulado && pago == null
+                                      ? null
+                                      : pago
+                                  }
                                   allowNegative={false}
                                   prefix={"$"}
                                   className="form-control field-pago"
@@ -479,9 +489,12 @@ class PedidoDetail extends Component {
                                 />
                                 {entregaEstado == "INI" && pedido.estado <= 1 && (
                                   <React.Fragment>
-                                    {pago == precio * cantidad && (
+                                    {(pago == precio * cantidad ||
+                                      pago == null) && (
                                       <button
-                                        disabled={producto.anulado}
+                                        disabled={
+                                          producto.anulado && pago == null
+                                        }
                                         title="Volver al valor inicial"
                                         onClick={() => this.onPagoCero(_id)}
                                         class="btn btn-danger btn-reset-pago"
@@ -489,9 +502,11 @@ class PedidoDetail extends Component {
                                         <FontAwesomeIcon icon={faWindowClose} />
                                       </button>
                                     )}
-                                    {pago != precio * cantidad && (
+                                    {pago != precio * cantidad && pago != null && (
                                       <button
-                                        disabled={producto.anulado}
+                                        disabled={
+                                          producto.anulado && pago == null
+                                        }
                                         title="Volver al valor inicial"
                                         onClick={() => this.onPagoReset(_id)}
                                         class="btn btn-primary btn-reset-pago"
@@ -505,7 +520,6 @@ class PedidoDetail extends Component {
                             </tr>
                           </tbody>
                         </table>
-                        {/* <div className="space"></div> */}
                       </td>
 
                       <td className="d-none d-md-table-cell">
@@ -524,21 +538,21 @@ class PedidoDetail extends Component {
                           disabled={
                             entregaEstado !== "INI" ||
                             pedido.estado > 1 ||
-                            producto.anulado
+                            (producto.anulado && pago == null)
                           }
                           onChange={this.onPagoChange}
                           thousandSeparator={false}
                           allowNegative={false}
-                          value={producto.anulado ? null : pago}
+                          value={producto.anulado && pago == null ? null : pago}
                           prefix={"$"}
                           className="form-control field-pago"
                           placeholder="$0.00"
                         />
                         {entregaEstado == "INI" && pedido.estado <= 1 && (
                           <React.Fragment>
-                            {pago == precio * cantidad && (
+                            {(pago == precio * cantidad || pago == null) && (
                               <button
-                                disabled={producto.anulado}
+                                disabled={producto.anulado && pago == null}
                                 title="Volver al valor inicial"
                                 onClick={() => this.onPagoCero(_id)}
                                 class="btn btn-danger btn-reset-pago"
@@ -546,9 +560,9 @@ class PedidoDetail extends Component {
                                 <FontAwesomeIcon icon={faWindowClose} />
                               </button>
                             )}
-                            {pago != precio * cantidad && (
+                            {pago != precio * cantidad && pago != null && (
                               <button
-                                disabled={producto.anulado}
+                                disabled={producto.anulado && pago == null}
                                 title="Volver al valor inicial"
                                 onClick={() => this.onPagoReset(_id)}
                                 class="btn btn-primary btn-reset-pago"
@@ -623,30 +637,30 @@ class PedidoDetail extends Component {
                     currentPrecio == undefined
                       ? precio * cantidad
                       : currentPago;
+                  let cssName = "";
+                  if (pedido.estado > 0) {
+                    // Pago procesado
+                    if (pago != null) {
+                      // Pago con datos
+                      if (pago === 0) {
+                        cssName = "bg-warning";
+                      } else {
+                        if (pago != precio * cantidad) {
+                          cssName = "bg-primary";
+                        }
+                      }
+                    } else {
+                      // Pago sin datos
+                    }
+                  } else {
+                    // Pago NO procesado
+                    if (producto.anulado) {
+                      cssName = "bg-danger";
+                    }
+                  }
 
                   return (
-                    <tr
-                      key={index}
-                      className={
-                        pedido.estado > 1
-                          ? producto.anulado
-                            ? pago > 0
-                              ? "bg-danger"
-                              : ""
-                            : pago != null
-                            ? pago != precio * cantidad
-                              ? "bg-primary"
-                              : ""
-                            : "bg-warning"
-                          : producto.anulado
-                          ? "bg-danger"
-                          : pago == null
-                          ? "bg-warning"
-                          : pago != precio * cantidad
-                          ? "bg-primary"
-                          : ""
-                      }
-                    >
+                    <tr key={index} className={cssName}>
                       <td className="pedido-detail-mobile d-table-cell d-md-none">
                         <div class="row2">
                           <div class="pedido-detail-item-title col almacen">
@@ -662,7 +676,7 @@ class PedidoDetail extends Component {
                             </tr>
                           </thead>
                           <tbody>
-                            <tr className={producto.anulado ? "bg-danger" : ""}>
+                            <tr className={cssName}>
                               <td>{cantidad}</td>
                               <td className="cell-right">
                                 ${producto.precio.toFixed(2)}
@@ -673,11 +687,15 @@ class PedidoDetail extends Component {
                                   disabled={
                                     entregaEstado !== "INI" ||
                                     pedido.estado > 1 ||
-                                    producto.anulado
+                                    (producto.anulado && pago == null)
                                   }
                                   onChange={this.onPagoChange}
                                   thousandSeparator={false}
-                                  value={producto.anulado ? null : pago}
+                                  value={
+                                    producto.anulado && pago == null
+                                      ? null
+                                      : pago
+                                  }
                                   allowNegative={false}
                                   prefix={"$"}
                                   className="form-control field-pago"
@@ -685,9 +703,12 @@ class PedidoDetail extends Component {
                                 />
                                 {entregaEstado == "INI" && pedido.estado <= 1 && (
                                   <React.Fragment>
-                                    {pago == precio * cantidad && (
+                                    {(pago == precio * cantidad ||
+                                      pago == null) && (
                                       <button
-                                        disabled={producto.anulado}
+                                        disabled={
+                                          producto.anulado && pago == null
+                                        }
                                         title="Volver al valor inicial"
                                         onClick={() => this.onPagoCero(_id)}
                                         class="btn btn-danger btn-reset-pago"
@@ -695,7 +716,7 @@ class PedidoDetail extends Component {
                                         <FontAwesomeIcon icon={faWindowClose} />
                                       </button>
                                     )}
-                                    {pago != precio * cantidad && (
+                                    {pago != precio * cantidad && pago != null && (
                                       <button
                                         disabled={producto.anulado}
                                         title="Volver al valor inicial"
@@ -730,21 +751,21 @@ class PedidoDetail extends Component {
                           disabled={
                             entregaEstado !== "INI" ||
                             pedido.estado > 1 ||
-                            producto.anulado
+                            (producto.anulado && pago == null)
                           }
                           onChange={this.onPagoChange}
                           thousandSeparator={false}
                           allowNegative={false}
-                          value={producto.anulado ? null : pago}
+                          value={producto.anulado && pago == null ? null : pago}
                           prefix={"$"}
                           className="form-control field-pago"
                           placeholder="$0.00"
                         />
                         {entregaEstado == "INI" && pedido.estado <= 1 && (
                           <React.Fragment>
-                            {pago == precio * cantidad && (
+                            {(pago == precio * cantidad || pago == null) && (
                               <button
-                                disabled={producto.anulado}
+                                disabled={producto.anulado && pago == null}
                                 title="Volver al valor inicial"
                                 onClick={() => this.onPagoCero(_id)}
                                 class="btn btn-danger btn-reset-pago"
@@ -752,9 +773,9 @@ class PedidoDetail extends Component {
                                 <FontAwesomeIcon icon={faWindowClose} />
                               </button>
                             )}
-                            {pago != precio * cantidad && (
+                            {pago != precio * cantidad && pago != null && (
                               <button
-                                disabled={producto.anulado}
+                                disabled={producto.anulado && pago == null}
                                 title="Volver al valor inicial"
                                 onClick={() => this.onPagoReset(_id)}
                                 class="btn btn-primary btn-reset-pago"
