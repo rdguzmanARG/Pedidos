@@ -108,9 +108,6 @@ class PedidoDetail extends Component {
     // Es el item a modificar
     const item = ped.items.filter((f) => f._id === e.target.name)[0];
     item.pago = Number(valor.replace("$", ""));
-    if (item.pago == 0) {
-      item.pago = null;
-    }
 
     const totalPedidos = this.arrSum(
       ped.items.filter((f) => !f.producto.almacen).map((m) => m.pago)

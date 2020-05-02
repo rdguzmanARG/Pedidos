@@ -159,13 +159,14 @@ class ProductoDetail extends Component {
               Pedidos realizados
             </div>
             <div class="card-body">
+              <span>
+                <b>(Unidades: {producto.cantidad})</b>
+              </span>
               <table className="table table-striped table-sm table-pedidos">
                 <thead className="thead-dark">
                   <tr>
                     <th>Nombre y Apellido</th>
-                    <th className="cell-right">
-                      (Unidades: {producto.cantidad})
-                    </th>
+                    <th className="cell-right"></th>
                   </tr>
                 </thead>
                 <tbody>
