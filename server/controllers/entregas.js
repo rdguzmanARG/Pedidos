@@ -4,7 +4,6 @@ const Pedido = require("../models/pedido.model");
 exports.entregas_get_all = (req, res, next) => {
   Entrega.find()
     .sort({ fechaImportacion: -1 })
-    //    .select("_id nombre apellido celular entregado usuarioMod")
     .then((entregas) => {
       const entrega = entregas.filter((f) => f.estado == "INI");
 

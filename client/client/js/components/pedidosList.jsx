@@ -64,8 +64,10 @@ class PedidosList extends Component {
                 });
                 const restantes =
                   this.state.pedidos.length -
-                  this.state.pedidos.filter((f) => f.entregado).length;
-                const entregados = newPedidos.filter((p) => p.entregado).length;
+                  this.state.pedidos.filter((f) => f.estado === 3).length;
+                const entregados = newPedidos.filter((p) => p.estado === 3)
+                  .length;
+
                 if (entregados > 0) {
                   toast.info(
                     <div>
@@ -129,7 +131,7 @@ class PedidosList extends Component {
           f.apellido.toLowerCase().includes(text.toLowerCase()) ||
           (text === "*" && f.comentarios)
       )
-      .filter((f) => !pendientes || !f.entregado)
+      .filter((f) => !pendientes || f.estado !== 3)
       .filter((f) => !conEntrega || f.conEntrega)
       .filter((f) => !sinEntrega || !f.conEntrega);
 
@@ -142,7 +144,7 @@ class PedidosList extends Component {
     }
     const cantidad = pedidosFilteres.length;
     const restantes =
-      cantidad - pedidosFilteres.filter((f) => f.entregado).length;
+      cantidad - pedidosFilteres.filter((f) => f.estado === 3).length;
     return (
       <div className="pedidos-list">
         <div class="input-group mb-2 mt-2">
@@ -228,7 +230,7 @@ class PedidosList extends Component {
             <tr>
               <th>Nombre y Apellido</th>
               <th className="d-none d-sm-table-cell">Teléfono</th>
-              <th className="d-none d-md-table-cell">Entregado por</th>
+              <th className="d-none d-md-table-cell">Procesado por</th>
               <th className="cell-icon"></th>
               <th className="cell-icon"></th>
               <th className="cell-icon"></th>
@@ -272,7 +274,18 @@ class PedidosList extends Component {
                 return { ...p, celFormat: celularFormat };
               })
               .map((p) => (
-                <tr key={p._id} className={p.entregado ? "bg-entregado" : ""}>
+                <tr
+                  key={p._id}
+                  className={
+                    p.estado === 3
+                      ? "bg-entregado"
+                      : p.estado === 2
+                      ? "bg-listo"
+                      : p.estado === 1
+                      ? "bg-guardado"
+                      : ""
+                  }
+                >
                   <td>
                     {p.nombre}, {p.apellido} {p.comentarios ? "(*)" : ""}
                   </td>
@@ -280,10 +293,10 @@ class PedidosList extends Component {
                     <a href={"tel:+" + p.celular}>{p.celular}</a>{" "}
                   </td>
                   <td className="d-none d-md-table-cell">
-                    {p.entregado ? p.usuarioMod.toUpperCase() : ""}
+                    {p.estado > 0 ? p.usuarioMod.toUpperCase() : ""}
                   </td>
                   <td className="cell-icon">
-                    {p.entregado && p.celFormat != "" && (
+                    {p.celFormat != "" && (
                       <a
                         href={
                           "https://api.whatsapp.com/send?phone=+549" +
@@ -299,7 +312,7 @@ class PedidosList extends Component {
                         ></img>
                       </a>
                     )}
-                    {p.entregado && p.celFormat == "" && (
+                    {p.celFormat == "" && (
                       <span>
                         {p._id.substr(p._id.length - 5).toUpperCase()}
                       </span>

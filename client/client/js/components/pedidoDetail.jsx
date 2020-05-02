@@ -3,8 +3,14 @@ import Loader from "react-loader-spinner";
 import moment from "moment";
 import SweetAlert from "react-bootstrap-sweetalert";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUndo } from "@fortawesome/free-solid-svg-icons";
-import { faWindowClose } from "@fortawesome/free-solid-svg-icons";
+import {
+  faUndo,
+  faWindowClose,
+  faSave,
+  faCheckSquare,
+  faDolly,
+  faTimes,
+} from "@fortawesome/free-solid-svg-icons";
 import { pedido_get, pedido_update } from "../services/pedidoService";
 import { entrega_getCurrent } from "../services/entregaService";
 import NumberFormat from "react-number-format";
@@ -20,8 +26,10 @@ class PedidoDetail extends Component {
     totalPedidos: 0,
     totalAlmacen: 0,
     varios: null,
-    showConfirmAceptado: false,
-    showConfirmAnulado: false,
+    pressEntregado: false,
+    pressPreparado: false,
+    pressGuardado: false,
+    pressAnulado: false,
   };
 
   componentDidMount() {
@@ -32,20 +40,26 @@ class PedidoDetail extends Component {
           entrega_getCurrent()
             .then((resEntrega) => {
               const pedido = resPedido.data;
-              const totalPedidos = pedido.entregado
-                ? pedido.totalPedido
-                : this.arrSum(
-                    pedido.items
-                      .filter((f) => !f.producto.anulado && !f.producto.almacen)
-                      .map((m) => m.pago)
-                  );
-              const totalAlmacen = pedido.entregado
-                ? pedido.totalAlmacen
-                : this.arrSum(
-                    pedido.items
-                      .filter((f) => !f.producto.anulado && f.producto.almacen)
-                      .map((m) => m.pago)
-                  );
+              const totalPedidos =
+                pedido.estado > 0
+                  ? pedido.totalPedido
+                  : this.arrSum(
+                      pedido.items
+                        .filter(
+                          (f) => !f.producto.anulado && !f.producto.almacen
+                        )
+                        .map((m) => m.pago)
+                    );
+              const totalAlmacen =
+                pedido.estado > 0
+                  ? pedido.totalAlmacen
+                  : this.arrSum(
+                      pedido.items
+                        .filter(
+                          (f) => !f.producto.anulado && f.producto.almacen
+                        )
+                        .map((m) => m.pago)
+                    );
               this.setState({
                 pedido,
                 totalPedidos,
@@ -54,6 +68,7 @@ class PedidoDetail extends Component {
                 isLoading: false,
                 entregaEstado: resEntrega.data ? resEntrega.data.estado : "",
               });
+              console.log(pedido);
             })
             .catch((ex) => {
               if (ex.response && ex.response.status === 401) {
@@ -175,11 +190,21 @@ class PedidoDetail extends Component {
       totalPedidos,
       totalAlmacen,
       varios,
-      showConfirmAceptado,
-      showConfirmAnulado,
+      pressEntregado,
+      pressPreparado,
+      pressGuardado,
+      pressAnulado,
     } = this.state;
     const itemsPedido = pedido.items.filter((p) => !p.producto.almacen);
     const itemsAlmacen = pedido.items.filter((p) => p.producto.almacen);
+
+    const newEstado = pressEntregado
+      ? 3
+      : pressPreparado
+      ? 2
+      : pressGuardado
+      ? 1
+      : 0;
 
     if (isLoading) {
       return (
@@ -193,7 +218,10 @@ class PedidoDetail extends Component {
     const { user } = this.props;
     return (
       <div className="pedido-detail">
-        {(showConfirmAceptado || showConfirmAnulado) && (
+        {(pressEntregado ||
+          pressPreparado ||
+          pressAnulado ||
+          pressGuardado) && (
           <SweetAlert
             showCancel
             reverseButtons
@@ -207,22 +235,26 @@ class PedidoDetail extends Component {
               const { user } = this.props;
               const newPedido = {
                 ...pedido,
-                entregado: showConfirmAceptado,
-                varios: showConfirmAceptado ? varios : 0,
-                totalPedido: showConfirmAceptado ? totalPedidos : 0,
-                totalAlmacen: showConfirmAceptado ? totalAlmacen : 0,
+                estado: newEstado,
+                varios: newEstado > 0 ? varios : 0,
+                totalPedido: newEstado > 0 ? totalPedidos : 0,
+                totalAlmacen: newEstado > 0 ? totalAlmacen : 0,
                 usuarioMod: user.username,
               };
               pedido_update(pedido._id, newPedido)
                 .then((res) => {
                   if (res.status === 200) {
-                    if (showConfirmAceptado) {
+                    if (newEstado >= 1) {
                       this.props.history.push("/pedidos");
                     } else {
                       this.setState({
                         ...this.state,
                         pedido: res.data,
-                        showConfirmAnulado: false,
+                        varios: res.data.varios,
+                        pressEntregado: false,
+                        pressPreparado: false,
+                        pressGuardado: false,
+                        pressAnulado: false,
                       });
                     }
                   }
@@ -236,8 +268,10 @@ class PedidoDetail extends Component {
             onCancel={() => {
               this.setState({
                 ...this.state,
-                showConfirmAceptado: false,
-                showConfirmAnulado: false,
+                pressEntregado: false,
+                pressPreparado: false,
+                pressGuardado: false,
+                pressAnulado: false,
               });
             }}
             focusCancelBtn
@@ -247,25 +281,41 @@ class PedidoDetail extends Component {
               <b>
                 {pedido.nombre}, {pedido.apellido}
               </b>{" "}
-              será {!pedido.entregado && <span>confirmado</span>}
-              {pedido.entregado && <span>anulado</span>}.
+              {newEstado === 1 && <span> será guardado.</span>}
+              {newEstado === 2 && <span> esta listo para entregar.</span>}
+              {newEstado === 3 && <span> fue entregado.</span>}
+              {newEstado === 0 && <span> será anulado.</span>}
             </div>
           </SweetAlert>
         )}
         <div className="card mt-2 mb-2">
           <div className="card-header">
-            <div class="d-flex">
-              <div>
-                <b>
-                  {pedido.nombre}, {pedido.apellido} (Código:{" "}
-                  {pedido._id.substr(pedido._id.length - 5).toUpperCase()})
-                </b>
-              </div>
+            <div className="title">
+              <b>
+                {pedido.nombre}, {pedido.apellido}
+              </b>
             </div>
+            {pedido.estado === 0 && (
+              <span className="text text-0"> Pedido sin procesar</span>
+            )}
+            {pedido.estado === 1 && (
+              <span className="text text-1">
+                {" "}
+                Pedido modificado {moment(pedido.updatedAt).format("HH:mm")}
+              </span>
+            )}
+            {pedido.estado === 2 && (
+              <span className="text text-2"> Pedido listo para entregar</span>
+            )}
+            {pedido.estado === 3 && (
+              <span className="text text-3"> Pedido entregado</span>
+            )}
           </div>
           <div className="card-body m-1">
             <div className="row">
               <div className="col-md-6 mb-2">
+                Código:{" "}
+                <b>{pedido._id.substr(pedido._id.length - 5).toUpperCase()}</b>
                 {pedido.celular && (
                   <div>
                     Teléfono: <b>{pedido.celular}</b>
@@ -370,7 +420,7 @@ class PedidoDetail extends Component {
                     <tr
                       key={index}
                       className={
-                        pedido.entregado
+                        pedido.estado > 0
                           ? producto.anulado
                             ? pago > 0
                               ? "bg-danger"
@@ -414,7 +464,7 @@ class PedidoDetail extends Component {
                                   name={_id}
                                   disabled={
                                     entregaEstado !== "INI" ||
-                                    pedido.entregado ||
+                                    pedido.estado > 1 ||
                                     producto.anulado
                                   }
                                   onChange={this.onPagoChange}
@@ -425,7 +475,7 @@ class PedidoDetail extends Component {
                                   className="form-control field-pago"
                                   placeholder="$0.00"
                                 />
-                                {entregaEstado == "INI" && !pedido.entregado && (
+                                {entregaEstado == "INI" && pedido.estado <= 1 && (
                                   <React.Fragment>
                                     {pago == precio * cantidad && (
                                       <button
@@ -453,7 +503,7 @@ class PedidoDetail extends Component {
                             </tr>
                           </tbody>
                         </table>
-                        <div className="space"></div>
+                        {/* <div className="space"></div> */}
                       </td>
 
                       <td className="d-none d-md-table-cell">
@@ -471,7 +521,7 @@ class PedidoDetail extends Component {
                           name={_id}
                           disabled={
                             entregaEstado !== "INI" ||
-                            pedido.entregado ||
+                            pedido.estado > 1 ||
                             producto.anulado
                           }
                           onChange={this.onPagoChange}
@@ -482,7 +532,7 @@ class PedidoDetail extends Component {
                           className="form-control field-pago"
                           placeholder="$0.00"
                         />
-                        {entregaEstado == "INI" && !pedido.entregado && (
+                        {entregaEstado == "INI" && pedido.estado <= 1 && (
                           <React.Fragment>
                             {pago == precio * cantidad && (
                               <button
@@ -579,7 +629,7 @@ class PedidoDetail extends Component {
                     <tr
                       key={index}
                       className={
-                        pedido.entregado
+                        pedido.estado > 1
                           ? producto.anulado
                             ? pago > 0
                               ? "bg-danger"
@@ -623,7 +673,7 @@ class PedidoDetail extends Component {
                                   name={_id}
                                   disabled={
                                     entregaEstado !== "INI" ||
-                                    pedido.entregado ||
+                                    pedido.estado > 1 ||
                                     producto.anulado
                                   }
                                   onChange={this.onPagoChange}
@@ -634,7 +684,7 @@ class PedidoDetail extends Component {
                                   className="form-control field-pago"
                                   placeholder="$0.00"
                                 />
-                                {entregaEstado == "INI" && !pedido.entregado && (
+                                {entregaEstado == "INI" && pedido.estado <= 1 && (
                                   <React.Fragment>
                                     {pago == precio * cantidad && (
                                       <button
@@ -662,7 +712,7 @@ class PedidoDetail extends Component {
                             </tr>
                           </tbody>
                         </table>
-                        <div className="space"></div>
+                        {/* <div className="space"></div> */}
                       </td>
 
                       <td className="d-none d-md-table-cell">
@@ -680,7 +730,7 @@ class PedidoDetail extends Component {
                           name={_id}
                           disabled={
                             entregaEstado !== "INI" ||
-                            pedido.entregado ||
+                            pedido.estado > 1 ||
                             producto.anulado
                           }
                           onChange={this.onPagoChange}
@@ -691,7 +741,7 @@ class PedidoDetail extends Component {
                           className="form-control field-pago"
                           placeholder="$0.00"
                         />
-                        {entregaEstado == "INI" && !pedido.entregado && (
+                        {entregaEstado == "INI" && pedido.estado <= 1 && (
                           <React.Fragment>
                             {pago == precio * cantidad && (
                               <button
@@ -756,16 +806,16 @@ class PedidoDetail extends Component {
                   </tr>
                 </React.Fragment>
               )}
+              <tr className="subtotales">
+                <td colSpan="4">Varios</td>
+              </tr>
               <tr>
-                <td
-                  colSpan="4"
-                  className="cell-right d-none d-md-table-cell subtotales "
-                >
+                <td colSpan="4" className="cell-right d-none d-md-table-cell">
                   <div className="form-group">
-                    <label for="almacenD">Varios:</label>
+                    <label for="almacenD">Total varios:</label>
                     <NumberFormat
                       id="almacenD"
-                      disabled={entregaEstado !== "INI" || pedido.entregado}
+                      disabled={entregaEstado !== "INI" || pedido.estado > 1}
                       onChange={this.onVariosChange}
                       thousandSeparator={false}
                       allowNegative={false}
@@ -776,15 +826,12 @@ class PedidoDetail extends Component {
                     />
                   </div>
                 </td>
-                <td
-                  colSpan="3"
-                  className="cell-right d-table-cell d-md-none subtotales "
-                >
+                <td colSpan="3" className="cell-right d-table-cell d-md-none">
                   <div className="form-group">
-                    <label for="almacenM">Varios:</label>
+                    <label for="almacenM">Total varios:</label>
                     <NumberFormat
                       id="almacenM"
-                      disabled={entregaEstado !== "INI" || pedido.entregado}
+                      disabled={entregaEstado !== "INI" || pedido.estado > 1}
                       onChange={this.onVariosChange}
                       thousandSeparator={false}
                       allowNegative={false}
@@ -809,38 +856,83 @@ class PedidoDetail extends Component {
         )}
         {(user.isAdmin || user.isAdminPed) && (
           <React.Fragment>
-            {entregaEstado === "INI" && pedido.entregado === false && (
-              <button
-                onClick={() =>
-                  this.setState({ ...this.state, showConfirmAceptado: true })
-                }
-                disabled={entregaEstado !== "INI"}
-                class="btn btn-success mt-2 mr-2"
-              >
-                Confirmar retiro
-              </button>
-            )}
-            {entregaEstado === "INI" && pedido.entregado === true && (
-              <button
-                onClick={() =>
-                  this.setState({ ...this.state, showConfirmAnulado: true })
-                }
-                disabled={entregaEstado !== "INI"}
-                class="btn btn-danger mt-2 mr-2"
-              >
-                Anular retiro
-              </button>
+            {entregaEstado === "INI" && (
+              <div className="pedido-detalle-botones">
+                <div className="pedido-detalle-botones--left">
+                  <button
+                    onClick={() =>
+                      this.setState({
+                        ...this.state,
+                        pressEntregado: true,
+                      })
+                    }
+                    disabled={pedido.estado === 3}
+                    class="btn btn-success"
+                    title="El pedido fue entregado."
+                  >
+                    <FontAwesomeIcon icon={faCheckSquare} /> Entregado
+                  </button>
+                  <button
+                    onClick={() =>
+                      this.setState({
+                        ...this.state,
+                        pressPreparado: true,
+                      })
+                    }
+                    disabled={pedido.estado > 1}
+                    class="btn btn-info"
+                  >
+                    <FontAwesomeIcon icon={faDolly} /> Preparado
+                  </button>
+                  <button
+                    onClick={() =>
+                      this.setState({
+                        ...this.state,
+                        pressGuardado: true,
+                      })
+                    }
+                    disabled={pedido.estado > 1}
+                    class="btn btn-warning"
+                  >
+                    <FontAwesomeIcon icon={faSave} /> Guardado
+                  </button>
+                </div>
+                <div className="pedido-detalle-botones--right">
+                  <button
+                    onClick={() =>
+                      this.setState({
+                        ...this.state,
+                        pressAnulado: true,
+                      })
+                    }
+                    disabled={pedido.estado === 0}
+                    class="btn btn-danger mr-1"
+                  >
+                    <FontAwesomeIcon icon={faTimes} /> Anular
+                  </button>
+                  <button
+                    title="Volver"
+                    onClick={() => this.props.history.push("/pedidos")}
+                    class="btn btn-primary ml-1"
+                  >
+                    <FontAwesomeIcon icon={faUndo} /> Volver
+                  </button>
+                </div>
+              </div>
             )}
           </React.Fragment>
         )}
-
-        <button
-          title="Volver"
-          onClick={() => this.props.history.push("/pedidos")}
-          class="btn btn-primary mt-2 mr-2"
-        >
-          <FontAwesomeIcon icon={faUndo} /> Volver
-        </button>
+        {(!(user.isAdmin || user.isAdminPed) || entregaEstado !== "INI") && (
+          <div className="pedido-detalle-botones">
+            <button
+              title="Volver"
+              onClick={() => this.props.history.push("/pedidos")}
+              class="btn btn-primary mt-2 mr-2"
+            >
+              <FontAwesomeIcon icon={faUndo} /> Volver
+            </button>
+          </div>
+        )}
       </div>
     );
   }

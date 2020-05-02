@@ -167,6 +167,45 @@ footer {
 }
 // Detalle del pedido
 .pedido-detail {
+  .pedido-detalle-botones {
+    display: flex;
+    justify-content: space-between;
+    margin: 10px 0;
+    @media (max-width: 620px) {
+      flex-direction: column;
+    }
+  }
+  .pedido-detalle-botones--left {
+    display: flex;
+    button {
+      margin-right: 10px;
+    }
+    @media (max-width: 620px) {
+      flex-direction: column;
+      button {
+        margin-right: 0;
+        margin-top: 10px;
+      }
+    }
+  }
+  .pedido-detalle-botones--right {
+    // button {
+    //   margin-left: 10px;
+    // }
+    @media (max-width: 620px) {
+      margin-top: 10px;
+      display: flex;
+
+      button {
+        flex: 1;
+      }
+    }
+
+    @media (min-width: 575px) {
+      display: flex;
+      justify-content: flex-end;
+    }
+  }
   .map-position {
     text-align: right;
 
@@ -177,6 +216,37 @@ footer {
   .card-header {
     background-color: teal;
     color: white;
+    display: flex;
+    justify-content: space-between;
+    @media (max-width: 769px) {
+      flex-direction: column;
+    }
+    .title {
+      margin-bottom: 10px;
+    }
+    .text {
+      font-weight: bold;
+      border-radius: 10px;
+      padding: 4px 10px;
+    }
+    .text-0 {
+      color: white;
+    }
+    .text-1 {
+      background-color: #ffc107;
+      border: 1px solid white;
+      color: white;
+    }
+    .text-2 {
+      background-color: #17a2b8;
+      border: 1px solid white;
+      color: white;
+    }
+    .text-3 {
+      background-color: #28a745;
+      border: 1px solid white;
+      color: white;
+    }
   }
   .field-pago {
     display: inline-block;
@@ -241,7 +311,37 @@ table {
       a {
         color: white;
       }
+      svg {
+        &.text-primary {
+          color: white !important;
+        }
+      }
     }
+    &.bg-listo {
+      background-color: #17a2b8 !important;
+      color: white;
+      a {
+        color: white;
+      }
+      svg {
+        &.text-primary {
+          color: white !important;
+        }
+      }
+    }
+    &.bg-guardado {
+      background-color: #ffc107 !important;
+      color: white;
+      a {
+        color: white;
+      }
+      svg {
+        &.text-primary {
+          color: white !important;
+        }
+      }
+    }
+
     &.bg-danger {
       color: white;
       a {

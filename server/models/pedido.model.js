@@ -37,9 +37,8 @@ const schema = mongoose.Schema(
         pago: Number,
       },
     ],
-    entregado: {
-      type: Boolean,
-      default: false,
+    estado: {
+      type: Number,
     },
     comentarios: { type: String },
     totalPedido: {

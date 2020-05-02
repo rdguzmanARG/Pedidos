@@ -9,7 +9,7 @@ const EmailSender = require("../helpers/email-sender");
 exports.pedidos_get_all = (req, res) => {
   Pedido.find()
     .select(
-      "_id nombre apellido celular entregado comentarios conEntrega direccion usuarioMod"
+      "_id nombre apellido celular estado comentarios conEntrega direccion usuarioMod"
     )
     .then((pedidos) => {
       Entrega.findOne()
@@ -32,7 +32,7 @@ exports.pedido_sendPendingEmails = (req, res) => {
   Pedido.find({ emailEnviado: 0 })
     .limit(5)
     .select(
-      "_id nombre apellido celular entregado comentarios conEntrega direccion usuarioMod"
+      "_id nombre apellido celular estado comentarios conEntrega direccion usuarioMod"
     )
     .then((pedidos) => {
       EmailSender.sendEmails(pedidos)
@@ -51,7 +51,7 @@ exports.pedido_sendPendingEmails = (req, res) => {
 exports.pedidos_get_last = (req, res) => {
   Pedido.find({ updatedAt: { $gt: req.params.date } })
     .select(
-      "_id nombre apellido celular entregado comentarios conEntrega direccion usuarioMod"
+      "_id nombre apellido celular estado comentarios conEntrega direccion usuarioMod"
     )
     .then((pedidos) => {
       Entrega.findOne()
@@ -69,7 +69,7 @@ exports.pedidos_get_pedido = (req, res) => {
     .populate("items.producto")
     .then((pedido) => {
       // Si el pedido no fue entregado, debe completar los valores de precio y pago.
-      if (!pedido.entregado) {
+      if (pedido.estado === 0) {
         pedido.items.forEach((item) => {
           item.precio = item.producto.precio;
           item.pago = item.producto.precio * item.cantidad;
@@ -105,7 +105,7 @@ exports.pedidos_get_pedidoByCode = (req, res) => {
           if (pedido == null) {
             res.status(404).json({ message });
           } else {
-            if (!pedido.entregado) {
+            if (pedido.estado === 0) {
               pedido.items.forEach((item) => {
                 item.precio = item.producto.precio;
                 item.pago = item.producto.precio * item.cantidad;
@@ -124,9 +124,10 @@ exports.pedidos_update_pedido = (req, res) => {
     .populate("items.producto")
     .exec()
     .then((pedido) => {
-      if (!pedido.entregado) {
+      if (pedido.estado === 0) {
         pedido.items.forEach((item) => {
           item.precio = item.producto.precio;
+          item.pago = item.producto.precio * item.cantidad;
         });
       }
       res.json(pedido);
@@ -286,6 +287,7 @@ function ImportarDatos(response, entrega) {
                       totalAlmacen: 0,
                       totalPedido: 0,
                       varios: 0,
+                      estado: 0,
                       emailEnviado: 0,
                       items: productos
                         .filter(
