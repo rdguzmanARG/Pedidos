@@ -322,7 +322,12 @@ class PedidoDetail extends Component {
                 </div>
                 {pedido.direccion && (
                   <div>
-                    Dirección: <b>{pedido.direccion}</b>{" "}
+                    Domicilio: <b>{pedido.direccion}</b>{" "}
+                  </div>
+                )}
+                {pedido.direccionDetalle && (
+                  <div>
+                    Detalle domicilio: <b>{pedido.direccionDetalle}</b>{" "}
                   </div>
                 )}
                 {pedido.comentarios && (
