@@ -4,6 +4,7 @@ const moment = require("moment");
 let Producto = require("../models/producto.model");
 let Pedido = require("../models/pedido.model");
 let Entrega = require("../models/entrega.model");
+let Turno = require("../models/turno.model");
 const EmailSender = require("../helpers/email-sender");
 
 exports.pedidos_get_all = (req, res) => {
@@ -203,229 +204,237 @@ function ImportarDatos(response, entrega) {
   console.log("Imp - Inicio");
   Pedido.deleteMany({}).then(() => {
     console.log("Imp - Borra pedidos");
-    Producto.deleteMany({}).then(() => {
-      console.log("Imp - Borra productos");
-      fetch(
-        "https://sheet.best/api/sheets/2c84077a-9587-4180-898d-56b0ad076f16"
-      )
-        .then((xldRes) => xldRes.json())
-        .then((data) => {
-          // Verify if there is data to import.
-          if (data.length === 0) {
-            ///////////////////////////////
-            // La importacion no tiene datos.
-            ///////////////////////////////
-            Entrega.findByIdAndUpdate(
-              entrega._id,
-              {
-                $set: {
-                  fechaImportacion: Date(),
+    Turno.deleteMany({}).then(() => {
+      console.log("Imp - Borra turnos");
+      Producto.deleteMany({}).then(() => {
+        console.log("Imp - Borra productos");
+        fetch(
+          "https://sheet.best/api/sheets/2c84077a-9587-4180-898d-56b0ad076f16"
+        )
+          .then((xldRes) => xldRes.json())
+          .then((data) => {
+            // Verify if there is data to import.
+            if (data.length === 0) {
+              ///////////////////////////////
+              // La importacion no tiene datos.
+              ///////////////////////////////
+              Entrega.findByIdAndUpdate(
+                entrega._id,
+                {
+                  $set: {
+                    fechaImportacion: Date(),
+                  },
                 },
-              },
-              { new: true }
-            )
-              .then((finalEnt) => {
-                return response.json({
-                  ...finalEnt._doc,
+                { new: true }
+              )
+                .then((finalEnt) => {
+                  return response.json({
+                    ...finalEnt._doc,
+                  });
+                })
+                .catch((err) => {
+                  console.log(err);
+                  response.status(500).json({ error: err });
                 });
-              })
-              .catch((err) => {
-                console.log(err);
-                response.status(500).json({ error: err });
-              });
-          } else {
-            ///////////////////////////////
-            // La importacion tiene datos
-            ///////////////////////////////
-            const cols = Object.keys(data[0]).filter(
-              (c) => excludeCols.indexOf(c) < 0
-            );
+            } else {
+              ///////////////////////////////
+              // La importacion tiene datos
+              ///////////////////////////////
+              const cols = Object.keys(data[0]).filter(
+                (c) => excludeCols.indexOf(c) < 0
+              );
 
-            // INSERT ALL PRODUCTS
-            Producto.insertMany(
-              cols.map((c) => {
-                return new Producto({
-                  _id: new mongoose.Types.ObjectId(),
-                  almacen: c.startsWith("Almacén"),
-                  nombre: c,
-                  precio: isNaN(
-                    Number(
-                      c
-                        .substring(c.lastIndexOf("$") + 1)
-                        .replace("]", "")
-                        .trim()
-                    )
-                  )
-                    ? 0
-                    : Number(
+              // INSERT ALL PRODUCTS
+              Producto.insertMany(
+                cols.map((c) => {
+                  return new Producto({
+                    _id: new mongoose.Types.ObjectId(),
+                    almacen: c.startsWith("Almacén"),
+                    nombre: c,
+                    precio: isNaN(
+                      Number(
                         c
                           .substring(c.lastIndexOf("$") + 1)
                           .replace("]", "")
                           .trim()
-                      ),
-                });
-              })
-            )
-              .then((resProductos) => {
-                //Inserto los productos
-                console.log("Imp - Inserto productos - " + resProductos.length);
-                const productos = resProductos.map((r) => r._doc);
-                const pedidos = data
-                  .filter(
-                    (d) =>
-                      d.Nombre !== null &&
-                      d.Nombre !== "" &&
-                      d.Apellido !== null &&
-                      d.Apellido !== ""
-                  )
-                  .map((d) => {
-                    return new Pedido({
-                      _id: new mongoose.Types.ObjectId(),
-                      date: moment(d[colMarcaTemporal], "DD/MM/YYYY HH:mm:ss"),
-                      nombre: d[colNombre].trim(),
-                      apellido: d[colApellido].trim(),
-                      celular: d[colCelular],
-                      email: d[colEmail],
-                      comentarios: d[colComentarios],
-                      direccion: d[colDomicilio],
-                      direccionDetalle: d[colDetalleDomicilio],
-                      conEntrega: d[colConEntrega] == "Si",
-                      totalAlmacen: 0,
-                      totalPedido: 0,
-                      varios: 0,
-                      estado: 0,
-                      emailEnviado: 0,
-                      items: productos
-                        .filter(
-                          (p) =>
-                            d[p.nombre] !== null &&
-                            d[p.nombre] !== "" &&
-                            d[p.nombre] > 0
-                        )
-                        .map((pr) => {
-                          return {
-                            producto: pr._id,
-                            cantidad: d[pr.nombre],
-                            precio: pr.precio,
-                            pago: d[pr.nombre] * pr.precio,
-                          };
-                        }),
-                    });
+                      )
+                    )
+                      ? 0
+                      : Number(
+                          c
+                            .substring(c.lastIndexOf("$") + 1)
+                            .replace("]", "")
+                            .trim()
+                        ),
                   });
-                ///////////////////////////////////////////
-                //Verifica si tiene pedidos por insertar
-                ///////////////////////////////////////////
-                if (pedidos.length === 0) {
-                  Entrega.findByIdAndUpdate(
-                    entrega._id,
-                    {
-                      ...entrega,
-                      fechaImportacion: Date(),
-                      cantPedidos: pedidos.length,
-                      cantProductos: productos.length,
-                    },
-                    { new: true }
-                  )
-                    .exec()
-                    .then((finalEnt) => {
-                      return response.json({
-                        ...finalEnt._doc,
+                })
+              )
+                .then((resProductos) => {
+                  //Inserto los productos
+                  console.log(
+                    "Imp - Inserto productos - " + resProductos.length
+                  );
+                  const productos = resProductos.map((r) => r._doc);
+                  const pedidos = data
+                    .filter(
+                      (d) =>
+                        d.Nombre !== null &&
+                        d.Nombre !== "" &&
+                        d.Apellido !== null &&
+                        d.Apellido !== ""
+                    )
+                    .map((d) => {
+                      return new Pedido({
+                        _id: new mongoose.Types.ObjectId(),
+                        date: moment(
+                          d[colMarcaTemporal],
+                          "DD/MM/YYYY HH:mm:ss"
+                        ),
+                        nombre: d[colNombre].trim(),
+                        apellido: d[colApellido].trim(),
+                        celular: d[colCelular],
+                        email: d[colEmail],
+                        comentarios: d[colComentarios],
+                        direccion: d[colDomicilio],
+                        direccionDetalle: d[colDetalleDomicilio],
+                        conEntrega: d[colConEntrega] == "Si",
+                        totalAlmacen: 0,
+                        totalPedido: 0,
+                        varios: 0,
+                        estado: 0,
+                        emailEnviado: 0,
+                        items: productos
+                          .filter(
+                            (p) =>
+                              d[p.nombre] !== null &&
+                              d[p.nombre] !== "" &&
+                              d[p.nombre] > 0
+                          )
+                          .map((pr) => {
+                            return {
+                              producto: pr._id,
+                              cantidad: d[pr.nombre],
+                              precio: pr.precio,
+                              pago: d[pr.nombre] * pr.precio,
+                            };
+                          }),
                       });
-                    })
-                    .catch((err) => {
-                      console.log(err);
-                      response.status(500).json({ error: err });
                     });
-                } else {
-                  ///////////////////////////////
-                  // Tiene pedidos para insertar
-                  ///////////////////////////////
-                  Pedido.insertMany(pedidos)
-                    .then((resPedidos) => {
-                      console.log(
-                        "Imp - Inserto pedidos - " + resPedidos.length
-                      );
-                      // Calcular cantidades por pedido.
+                  ///////////////////////////////////////////
+                  //Verifica si tiene pedidos por insertar
+                  ///////////////////////////////////////////
+                  if (pedidos.length === 0) {
+                    Entrega.findByIdAndUpdate(
+                      entrega._id,
+                      {
+                        ...entrega,
+                        fechaImportacion: Date(),
+                        cantPedidos: pedidos.length,
+                        cantProductos: productos.length,
+                      },
+                      { new: true }
+                    )
+                      .exec()
+                      .then((finalEnt) => {
+                        return response.json({
+                          ...finalEnt._doc,
+                        });
+                      })
+                      .catch((err) => {
+                        console.log(err);
+                        response.status(500).json({ error: err });
+                      });
+                  } else {
+                    ///////////////////////////////
+                    // Tiene pedidos para insertar
+                    ///////////////////////////////
+                    Pedido.insertMany(pedidos)
+                      .then((resPedidos) => {
+                        console.log(
+                          "Imp - Inserto pedidos - " + resPedidos.length
+                        );
+                        // Calcular cantidades por pedido.
 
-                      productos.map((prod) => {
-                        pedidos.map((ped) => {
-                          ped.items.map((item) => {
-                            if (
-                              item &&
-                              item.producto &&
-                              item.producto._id.toString() ===
-                                prod._id.toString()
-                            ) {
-                              prod.cantidad += item.cantidad;
-                            }
+                        productos.map((prod) => {
+                          pedidos.map((ped) => {
+                            ped.items.map((item) => {
+                              if (
+                                item &&
+                                item.producto &&
+                                item.producto._id.toString() ===
+                                  prod._id.toString()
+                              ) {
+                                prod.cantidad += item.cantidad;
+                              }
+                            });
                           });
                         });
-                      });
 
-                      let checkADCompletions = function (prods) {
-                        var promises = prods.map(function (pr) {
-                          return Producto.findByIdAndUpdate(
-                            pr._id.toString(),
-                            pr,
-                            {
-                              new: true,
-                            }
-                          );
-                        });
-                        return Promise.all(promises);
-                      };
+                        let checkADCompletions = function (prods) {
+                          var promises = prods.map(function (pr) {
+                            return Producto.findByIdAndUpdate(
+                              pr._id.toString(),
+                              pr,
+                              {
+                                new: true,
+                              }
+                            );
+                          });
+                          return Promise.all(promises);
+                        };
 
-                      checkADCompletions(productos)
-                        .then(function (responses) {
-                          ////////////////////////////////
-                          // Actualizo las cantidades
-                          ///////////////////////////////
-                          console.log("Imp - Actualizo cantidades");
-                          Entrega.findByIdAndUpdate(
-                            entrega._id.toString(),
-                            {
-                              $set: {
-                                fechaImportacion: Date(),
-                                cantPedidos: pedidos.length,
-                                cantProductos: productos.length,
+                        checkADCompletions(productos)
+                          .then(function (responses) {
+                            ////////////////////////////////
+                            // Actualizo las cantidades
+                            ///////////////////////////////
+                            console.log("Imp - Actualizo cantidades");
+                            Entrega.findByIdAndUpdate(
+                              entrega._id.toString(),
+                              {
+                                $set: {
+                                  fechaImportacion: Date(),
+                                  cantPedidos: pedidos.length,
+                                  cantProductos: productos.length,
+                                },
                               },
-                            },
-                            { new: true }
-                          )
-                            .then((finalEnt) => {
-                              ////////////////////////////////
-                              // Actualizo las cantidades
-                              ///////////////////////////////
-                              console.log(
-                                "Imp - Actualizo la Entrega " + finalEnt
-                              );
-                              response.json({ ...finalEnt._doc });
-                            })
-                            .catch((err) => {
-                              console.log(err);
-                              response.status(500).json({ error: err });
-                            });
-                        })
-                        .catch(function (err) {
-                          console.log(err);
-                        });
-                    })
-                    .catch((err) => {
-                      console.log(err);
-                      response.status(500).json({ error: err });
-                    });
-                }
-              })
-              .catch((err) => {
-                console.log(err);
-                response.status(500).json({ error: err });
-              });
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-          response.status(500).json({ error: err });
-        });
+                              { new: true }
+                            )
+                              .then((finalEnt) => {
+                                ////////////////////////////////
+                                // Actualizo las cantidades
+                                ///////////////////////////////
+                                console.log(
+                                  "Imp - Actualizo la Entrega " + finalEnt
+                                );
+                                response.json({ ...finalEnt._doc });
+                              })
+                              .catch((err) => {
+                                console.log(err);
+                                response.status(500).json({ error: err });
+                              });
+                          })
+                          .catch(function (err) {
+                            console.log(err);
+                          });
+                      })
+                      .catch((err) => {
+                        console.log(err);
+                        response.status(500).json({ error: err });
+                      });
+                  }
+                })
+                .catch((err) => {
+                  console.log(err);
+                  response.status(500).json({ error: err });
+                });
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+            response.status(500).json({ error: err });
+          });
+      });
     });
   });
 }
