@@ -4,16 +4,20 @@ var ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 var APP_DIR = path.resolve(__dirname, "client");
 var BUILD_DIR = path.resolve(__dirname, "wwwroot");
-var isDevServer = process.argv.find(v => v.includes("webpack-dev-server"));
+var isDevServer = process.argv.find((v) => v.includes("webpack-dev-server"));
 
-module.exports = env => {
+module.exports = (env) => {
   const pluginArray = [
     new ExtractTextPlugin({ filename: "css/style.css" }),
     new webpack.DefinePlugin({
       "process.env.API_URL": JSON.stringify(
         env.API_URL ? env.API_URL : "http://localhost:5000/api"
-      )
-    })
+      ),
+    }),
+    new webpack.ContextReplacementPlugin(
+      /moment[\\\/]locale$/,
+      /^\.\/(en|de|cz|eu)$/
+    ),
   ];
 
   // hot module replacement, for dev in local folder (webpack dev server)
@@ -24,11 +28,11 @@ module.exports = env => {
 
   return {
     entry: {
-      index: APP_DIR + "/js/IndexMain.jsx"
+      index: APP_DIR + "/js/IndexMain.jsx",
     },
     output: {
       path: BUILD_DIR,
-      filename: "js/bundle.js"
+      filename: "js/bundle.js",
     },
     devtool: "source-map",
     module: {
@@ -36,11 +40,11 @@ module.exports = env => {
         {
           test: /\.jsx?/,
           include: APP_DIR,
-          loader: "babel-loader"
+          loader: "babel-loader",
         },
         {
           test: /\.(png|jpg)$/,
-          loader: "url-loader"
+          loader: "url-loader",
         },
         {
           test: /\.s?css$/,
@@ -48,19 +52,19 @@ module.exports = env => {
             fallback: "style-loader",
             use: [
               {
-                loader: "css-loader"
+                loader: "css-loader",
               },
               {
                 loader: "sass-loader",
-                options: "sourceMap"
-              }
-            ]
-          })
-        }
-      ]
+                options: "sourceMap",
+              },
+            ],
+          }),
+        },
+      ],
     },
     resolve: {
-      extensions: [".js", ".jsx"]
+      extensions: [".js", ".jsx"],
     },
     plugins: pluginArray,
 
@@ -68,10 +72,10 @@ module.exports = env => {
       contentBase: "wwwroot",
       headers: { "Access-Control-Allow-Origin": "*" },
       historyApiFallback: {
-        index: "index.html"
+        index: "index.html",
       },
       hot: true,
-      inline: true
-    }
+      inline: true,
+    },
   };
 };

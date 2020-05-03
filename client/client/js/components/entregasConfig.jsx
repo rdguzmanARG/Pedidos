@@ -14,6 +14,9 @@ import {
   pedido_sendPendingEmails,
   pedido_getPendingEmails,
 } from "../services/pedidoService";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
 const Element = Scroll.Element;
 const scroller = Scroll.scroller;
 
@@ -26,6 +29,12 @@ class Inicio extends Component {
     intervalId: null,
     count: null,
     errorMessage: null,
+    dia1: null,
+    dia1Desde: null,
+    dia1Hasta: null,
+    dia2: null,
+    dia2Desde: null,
+    dia2Hasta: null,
   };
 
   scrollTo = () => {
@@ -161,8 +170,57 @@ class Inicio extends Component {
       });
   };
 
+  setDia1 = (current) => {
+    current.setHours(9, 0, 0, 0);
+    this.setState({
+      ...this.state,
+      dia1: current,
+      dia1Desde: current,
+      dia1Hasta: null,
+    });
+  };
+  setDia1Desde = (date) => {
+    let date2 = new Date(date.getTime());
+    date2.setHours(date2.getHours() + 4);
+    this.setState({ ...this.state, dia1Desde: date, dia1Hasta: date2 });
+  };
+  setDia1Hasta = (date) => {
+    this.setState({ ...this.state, dia1Hasta: date });
+  };
+
+  setDia2 = (current) => {
+    current.setHours(9, 0, 0, 0);
+    this.setState({
+      ...this.state,
+      dia2: current,
+      dia2Desde: current,
+      dia2Hasta: null,
+    });
+  };
+  setDia2Desde = (date) => {
+    let date2 = new Date(date.getTime());
+    date2.setHours(date2.getHours() + 4);
+    this.setState({ ...this.state, dia2Desde: date, dia2Hasta: date2 });
+  };
+  setDia2Hasta = (date) => {
+    this.setState({ ...this.state, dia2Hasta: date });
+  };
+
   render() {
-    const { entrega, isLoading, action, count, errorMessage } = this.state;
+    const {
+      entrega,
+      isLoading,
+      action,
+      count,
+      errorMessage,
+      dia1,
+      dia1Desde,
+      dia1Hasta,
+      dia2,
+      dia2Desde,
+      dia2Hasta,
+    } = this.state;
+    console.log(dia1);
     const { user } = this.props;
     if (isLoading) {
       return (
@@ -183,6 +241,7 @@ class Inicio extends Component {
         : entrega.estado === "INI"
         ? " 2 - ENTREGA DE PEDIDOS"
         : " 3 - ENTREGA FINALIZADA";
+
     return (
       <div className="entregas-config">
         {action != "" && (
@@ -426,6 +485,71 @@ class Inicio extends Component {
                       >
                         Iniciar
                       </button>
+                      <div className="horarios-box">
+                        <div className="horarios-box--title">
+                          Seleccion de horarios para la entrega
+                        </div>
+                        <div className="horarios-box--dia">
+                          <span>Día 1: </span>
+                          <DatePicker
+                            selected={dia1}
+                            dateFormat="dd/MM/yyyy"
+                            onChange={(date) => this.setDia1(date)}
+                          />
+                          <span>Hora desde: </span>
+                          <DatePicker
+                            selected={dia1Desde}
+                            disabled={!dia1}
+                            onChange={(date) => this.setDia1Desde(date)}
+                            showTimeSelect
+                            showTimeSelectOnly
+                            timeIntervals={15}
+                            timeCaption="Hora"
+                            dateFormat="h:mm aa"
+                          />
+                          <span>Hora hasta: </span>
+                          <DatePicker
+                            selected={dia1Hasta}
+                            disabled={!dia1}
+                            onChange={(date) => this.setDia1Hasta(date)}
+                            showTimeSelect
+                            showTimeSelectOnly
+                            timeIntervals={15}
+                            timeCaption="Hora"
+                            dateFormat="h:mm aa"
+                          />
+                        </div>
+                        <div className="horarios-box--dia">
+                          <span>Día 2: </span>
+                          <DatePicker
+                            selected={dia2}
+                            dateFormat="dd/MM/yyyy"
+                            onChange={(date) => this.setDia2(date)}
+                          />
+                          <span>Hora desde: </span>
+                          <DatePicker
+                            selected={dia2Desde}
+                            disabled={!dia2}
+                            onChange={(date) => this.setDia2Desde(date)}
+                            showTimeSelect
+                            showTimeSelectOnly
+                            timeIntervals={15}
+                            timeCaption="Hora"
+                            dateFormat="h:mm aa"
+                          />
+                          <span>Hora hasta: </span>
+                          <DatePicker
+                            selected={dia2Hasta}
+                            disabled={!dia2}
+                            onChange={(date) => this.setDia2Hasta(date)}
+                            showTimeSelect
+                            showTimeSelectOnly
+                            timeIntervals={15}
+                            timeCaption="Hora"
+                            dateFormat="h:mm aa"
+                          />
+                        </div>
+                      </div>
                       {count > 0 && (
                         <p class="card-text mt-4">
                           Debe iniciar el proceso de envio de EMails, este
