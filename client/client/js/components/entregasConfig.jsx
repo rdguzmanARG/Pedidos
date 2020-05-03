@@ -239,8 +239,8 @@ class Inicio extends Component {
     };
     turno_procesar(config)
       .then((res) => {
-        entrega.dia1Horarios = res.data.dia1Str;
-        entrega.dia2Horarios = res.data.dia2Str;
+        entrega.dia1Horarios = res.data.dia1str;
+        entrega.dia2Horarios = res.data.dia2str;
         this.setState({
           ...this.state,
           entrega,
@@ -552,21 +552,7 @@ class Inicio extends Component {
                           <div className="horarios-box--title">
                             Días y horarios de entrega
                           </div>
-                          <div className="horarios-box--subtitle">
-                            {!entrega.dia1Horarios && (
-                              <div>
-                                No hay horarios selecciondos por el momento,
-                                debe seleccionar los días y hoararios antes de
-                                enviar los emails.
-                              </div>
-                            )}
-                            {entrega.dia1Horarios && (
-                              <div>Día 1: {entrega.dia1Horarios} </div>
-                            )}
-                            {entrega.dia2Horarios && (
-                              <div>Día 2: {entrega.dia2Horarios} </div>
-                            )}
-                          </div>
+
                           <div className="horarios-box--dia">
                             <span>Día 1: </span>
                             <DatePicker
@@ -627,6 +613,7 @@ class Inicio extends Component {
                               dateFormat="h:mm aa"
                             />
                           </div>
+
                           <div className="horarios-box--dia">
                             <span>
                               Se van a permitir 3 personas cada 15 minutos en
@@ -641,6 +628,21 @@ class Inicio extends Component {
                             >
                               Aceptar
                             </button>
+                          </div>
+                          <div className="horarios-box--subtitle">
+                            {!entrega.dia1Horarios && (
+                              <div>
+                                No hay horarios seleccionados por el momento,
+                                debe indicar los días y el rango horario antes
+                                de enviar los emails.
+                              </div>
+                            )}
+                            {entrega.dia1Horarios && (
+                              <div>Día 1: {entrega.dia1Horarios} </div>
+                            )}
+                            {entrega.dia2Horarios && (
+                              <div>Día 2: {entrega.dia2Horarios} </div>
+                            )}
                           </div>
                         </div>
                       )}
