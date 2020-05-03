@@ -376,6 +376,9 @@ class Inicio extends Component {
                 <p class="card-text">
                   Cantidad de pedidos: <b>{entrega.cantPedidos}</b>
                 </p>
+                {count === 0 && (
+                  <p class="card-text">Todos los Emails fueron enviados.</p>
+                )}
               </React.Fragment>
             )}
             {!entrega && <p class="card-text">No hay Entrega disponible</p>}
@@ -597,7 +600,7 @@ class Inicio extends Component {
                               onChange={(date) => this.setDia2Desde(date)}
                               showTimeSelect
                               showTimeSelectOnly
-                              timeIntervals={15}
+                              timeIntervals={60}
                               timeCaption="Hora"
                               dateFormat="h:mm aa"
                             />
@@ -608,7 +611,7 @@ class Inicio extends Component {
                               onChange={(date) => this.setDia2Hasta(date)}
                               showTimeSelect
                               showTimeSelectOnly
-                              timeIntervals={15}
+                              timeIntervals={60}
                               timeCaption="Hora"
                               dateFormat="h:mm aa"
                             />
@@ -662,11 +665,7 @@ class Inicio extends Component {
                           de los pedidos realizados.
                         </p>
                       )}
-                      {count === 0 && (
-                        <p class="card-text mt-4">
-                          Todos los Emails fueron enviados.
-                        </p>
-                      )}
+
                       {count > 0 && (
                         <button
                           disabled={
