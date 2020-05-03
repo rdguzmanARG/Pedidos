@@ -183,7 +183,7 @@ class MiPedido extends Component {
                   realizado tu pedido te enviaremos por correo electrónico los
                   datos para que puedas consultarlo.
                 </p>
-                <p>Dede ya, muchas gracias.</p>
+                <p>Desde ya, muchas gracias.</p>
               </div>
             </div>
           </div>

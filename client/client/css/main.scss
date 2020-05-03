@@ -108,20 +108,41 @@ footer {
   .btn:focus {
     box-shadow: none;
   }
-
+  .horarios-error {
+    color: red;
+  }
   .horarios-box {
     background-color: #e9ecef;
     padding: 20px;
     margin: 20px;
+    span {
+      margin: 5px;
+    }
     .horarios-box--title {
       text-align: center;
       font-weight: bold;
+      font-size: 20px;
     }
+    .horarios-box--subtitle {
+      display: flex;
+      justify-content: center;
+      border: 1px solid green;
+      background-color: #00800066;
+      font-weight: bold;
+      margin: 10px;
+      @media (max-width: 720px) {
+        flex-direction: column;
+      }
+      div {
+        margin: 10px;
+      }
+    }
+
     .horarios-box--dia {
       display: flex;
       align-items: center;
       padding: 5px;
-      @media (max-width: 570px) {
+      @media (max-width: 720px) {
         flex-direction: column;
       }
     }

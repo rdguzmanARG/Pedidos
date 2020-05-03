@@ -28,6 +28,12 @@ const schema = mongoose.Schema(
     estado: {
       type: String,
     },
+    dia1Horarios: {
+      type: String,
+    },
+    dia2Horarios: {
+      type: String,
+    },
     usuarioMod: {
       type: String,
     },

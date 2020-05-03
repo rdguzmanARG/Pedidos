@@ -8,6 +8,7 @@ const productosRoutes = require("./routes/productos");
 const usersRoutes = require("./routes/users");
 const entregasRoutes = require("./routes/entregas");
 const contactosRoutes = require("./routes/contactos");
+const turnosRoutes = require("./routes/turnos");
 
 require("dotenv").config();
 const app = express();
@@ -23,7 +24,7 @@ mongoose
     useNewUrlParser: true,
     useCreateIndex: true,
     useUnifiedTopology: false,
-    useFindAndModify: false
+    useFindAndModify: false,
   })
   .then(() => {
     console.log("MongoDB database connection established successfully.");
@@ -32,6 +33,7 @@ mongoose
     app.use("/api/users", usersRoutes);
     app.use("/api/entregas", entregasRoutes);
     app.use("/api/contactos", contactosRoutes);
+    app.use("/api/turnos", turnosRoutes);
     app.use((req, res, next) => {
       const error = new Error("Resource does not exists.");
       error.status = 404;
@@ -42,12 +44,12 @@ mongoose
       res.status(error.status || 500);
       res.json({
         error: {
-          message: error.message
-        }
+          message: error.message,
+        },
       });
     });
     app.listen(port, () => {
       console.log("Server is running on port " + port);
     });
   })
-  .catch(error => console.log(error));
+  .catch((error) => console.log(error));

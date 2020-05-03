@@ -37,7 +37,7 @@ class Form extends Component {
                   misma será habilitada y notificada por las canales habituales
                   de comunicación.
                 </p>
-                <p>Dede ya, muchas gracias.</p>
+                <p>Desde ya, muchas gracias.</p>
               </div>
             </div>
           </div>

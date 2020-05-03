@@ -5,6 +5,7 @@ import SweetAlert from "react-bootstrap-sweetalert";
 import Moment from "react-moment";
 import { Link } from "react-router-dom";
 import { pedido_import } from "../services/pedidoService";
+import { turno_procesar } from "../services/turnoService";
 import {
   entrega_getCurrent,
   entrega_setStatus,
@@ -35,6 +36,7 @@ class Inicio extends Component {
     dia2: null,
     dia2Desde: null,
     dia2Hasta: null,
+    message: null,
   };
 
   scrollTo = () => {
@@ -163,7 +165,7 @@ class Inicio extends Component {
           }
           this.setState({
             ...this.state,
-            errorMessage: ex,
+            errorMessage: "Hubo un error al enviar los Emails.",
             intervalId: null,
           });
         }
@@ -204,6 +206,66 @@ class Inicio extends Component {
   };
   setDia2Hasta = (date) => {
     this.setState({ ...this.state, dia2Hasta: date });
+  };
+
+  setTurnos = () => {
+    const {
+      dia1,
+      dia1Desde,
+      dia1Hasta,
+      dia2,
+      dia2Desde,
+      dia2Hasta,
+      entrega,
+    } = this.state;
+    if (dia1 == null || dia1Desde == null || dia1Hasta == null) {
+      this.setState({
+        ...this.state,
+        errorMessage: "Debe seleccionar al menos un dia de entrega.",
+      });
+      return;
+    }
+    const config = {
+      dia1,
+      dia1DesdeH: dia1Desde.getHours(),
+      dia1DesdeM: dia1Desde.getMinutes(),
+      dia1HastaH: dia1Hasta.getHours(),
+      dia1HastaM: dia1Hasta.getMinutes(),
+      dia2,
+      dia2DesdeH: dia2Desde ? dia2Desde.getHours() : null,
+      dia2DesdeM: dia2Desde ? dia2Desde.getMinutes() : null,
+      dia2HastaH: dia2Hasta ? dia2Hasta.getHours() : null,
+      dia2HastaM: dia2Hasta ? dia2Hasta.getMinutes() : null,
+    };
+    turno_procesar(config)
+      .then((res) => {
+        entrega.dia1Horarios = res.data.dia1Str;
+        entrega.dia2Horarios = res.data.dia2Str;
+        this.setState({
+          ...this.state,
+          entrega,
+          errorMessage: null,
+        });
+      })
+      .catch((ex) => {
+        if (ex.response && ex.response.status === 401) {
+          auth.logout();
+          window.location = "/login";
+        } else {
+          if (this.state.intervalId != null) {
+            clearInterval(this.state.intervalId);
+          }
+          const msg = ex.response.data.message
+            ? ex.response.data.message
+            : "Hubo un error al intentar grabar los datos.";
+
+          this.setState({
+            ...this.state,
+            errorMessage: msg,
+            intervalId: null,
+          });
+        }
+      });
   };
 
   render() {
@@ -485,71 +547,112 @@ class Inicio extends Component {
                       >
                         Iniciar
                       </button>
-                      <div className="horarios-box">
-                        <div className="horarios-box--title">
-                          Seleccion de horarios para la entrega
+                      {entrega.estado === "INI" && (
+                        <div className="horarios-box">
+                          <div className="horarios-box--title">
+                            Días y horarios de entrega
+                          </div>
+                          <div className="horarios-box--subtitle">
+                            {!entrega.dia1Horarios && (
+                              <div>
+                                No hay horarios selecciondos por el momento,
+                                debe seleccionar los días y hoararios antes de
+                                enviar los emails.
+                              </div>
+                            )}
+                            {entrega.dia1Horarios && (
+                              <div>Día 1: {entrega.dia1Horarios} </div>
+                            )}
+                            {entrega.dia2Horarios && (
+                              <div>Día 2: {entrega.dia2Horarios} </div>
+                            )}
+                          </div>
+                          <div className="horarios-box--dia">
+                            <span>Día 1: </span>
+                            <DatePicker
+                              selected={dia1}
+                              dateFormat="dd/MM/yyyy"
+                              onChange={(date) => this.setDia1(date)}
+                            />
+                            <span>Hora desde: </span>
+                            <DatePicker
+                              selected={dia1Desde}
+                              disabled={!dia1}
+                              onChange={(date) => this.setDia1Desde(date)}
+                              showTimeSelect
+                              showTimeSelectOnly
+                              timeIntervals={60}
+                              timeCaption="Hora"
+                              dateFormat="h:mm aa"
+                            />
+                            <span>Hora hasta: </span>
+                            <DatePicker
+                              selected={dia1Hasta}
+                              disabled={!dia1}
+                              onChange={(date) => this.setDia1Hasta(date)}
+                              showTimeSelect
+                              showTimeSelectOnly
+                              timeIntervals={60}
+                              timeCaption="Hora"
+                              dateFormat="h:mm aa"
+                            />
+                          </div>
+                          <div className="horarios-box--dia">
+                            <span>Día 2: </span>
+                            <DatePicker
+                              selected={dia2}
+                              dateFormat="dd/MM/yyyy"
+                              onChange={(date) => this.setDia2(date)}
+                            />
+                            <span>Hora desde: </span>
+                            <DatePicker
+                              selected={dia2Desde}
+                              disabled={!dia2}
+                              onChange={(date) => this.setDia2Desde(date)}
+                              showTimeSelect
+                              showTimeSelectOnly
+                              timeIntervals={15}
+                              timeCaption="Hora"
+                              dateFormat="h:mm aa"
+                            />
+                            <span>Hora hasta: </span>
+                            <DatePicker
+                              selected={dia2Hasta}
+                              disabled={!dia2}
+                              onChange={(date) => this.setDia2Hasta(date)}
+                              showTimeSelect
+                              showTimeSelectOnly
+                              timeIntervals={15}
+                              timeCaption="Hora"
+                              dateFormat="h:mm aa"
+                            />
+                          </div>
+                          <div className="horarios-box--dia">
+                            <span>
+                              Se van a permitir 3 personas cada 15 minutos en
+                              cada uno de los dias.
+                            </span>
+                            <button
+                              type="submit"
+                              class="btn btn-primary"
+                              onClick={() => {
+                                this.setTurnos();
+                              }}
+                            >
+                              Aceptar
+                            </button>
+                          </div>
                         </div>
-                        <div className="horarios-box--dia">
-                          <span>Día 1: </span>
-                          <DatePicker
-                            selected={dia1}
-                            dateFormat="dd/MM/yyyy"
-                            onChange={(date) => this.setDia1(date)}
-                          />
-                          <span>Hora desde: </span>
-                          <DatePicker
-                            selected={dia1Desde}
-                            disabled={!dia1}
-                            onChange={(date) => this.setDia1Desde(date)}
-                            showTimeSelect
-                            showTimeSelectOnly
-                            timeIntervals={15}
-                            timeCaption="Hora"
-                            dateFormat="h:mm aa"
-                          />
-                          <span>Hora hasta: </span>
-                          <DatePicker
-                            selected={dia1Hasta}
-                            disabled={!dia1}
-                            onChange={(date) => this.setDia1Hasta(date)}
-                            showTimeSelect
-                            showTimeSelectOnly
-                            timeIntervals={15}
-                            timeCaption="Hora"
-                            dateFormat="h:mm aa"
-                          />
+                      )}
+
+                      {errorMessage && (
+                        <div
+                          class="alert alert-danger text-center mt-4"
+                          role="alert"
+                        >
+                          <h4 class="alert-heading">{errorMessage}</h4>
                         </div>
-                        <div className="horarios-box--dia">
-                          <span>Día 2: </span>
-                          <DatePicker
-                            selected={dia2}
-                            dateFormat="dd/MM/yyyy"
-                            onChange={(date) => this.setDia2(date)}
-                          />
-                          <span>Hora desde: </span>
-                          <DatePicker
-                            selected={dia2Desde}
-                            disabled={!dia2}
-                            onChange={(date) => this.setDia2Desde(date)}
-                            showTimeSelect
-                            showTimeSelectOnly
-                            timeIntervals={15}
-                            timeCaption="Hora"
-                            dateFormat="h:mm aa"
-                          />
-                          <span>Hora hasta: </span>
-                          <DatePicker
-                            selected={dia2Hasta}
-                            disabled={!dia2}
-                            onChange={(date) => this.setDia2Hasta(date)}
-                            showTimeSelect
-                            showTimeSelectOnly
-                            timeIntervals={15}
-                            timeCaption="Hora"
-                            dateFormat="h:mm aa"
-                          />
-                        </div>
-                      </div>
+                      )}
                       {count > 0 && (
                         <p class="card-text mt-4">
                           Debe iniciar el proceso de envio de EMails, este
@@ -566,7 +669,8 @@ class Inicio extends Component {
                         <button
                           disabled={
                             entrega.estado != "INI" ||
-                            this.state.intervalId != null
+                            this.state.intervalId != null ||
+                            entrega.dia1Horarios == null
                           }
                           onClick={() => {
                             this.sendEmails();
@@ -589,6 +693,7 @@ class Inicio extends Component {
                               ")"}
                         </button>
                       )}
+
                       {this.state.intervalId && (
                         <button
                           disabled={
@@ -609,16 +714,6 @@ class Inicio extends Component {
                         >
                           Cancelar envio
                         </button>
-                      )}
-                      {errorMessage && (
-                        <div
-                          class="alert alert-danger text-center mt-4"
-                          role="alert"
-                        >
-                          <h4 class="alert-heading">
-                            Hubo un error al Enviar los Emails.
-                          </h4>
-                        </div>
                       )}
                     </React.Fragment>
                   )}
