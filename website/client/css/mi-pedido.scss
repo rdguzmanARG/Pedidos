@@ -122,23 +122,41 @@
   }
   table td .pedido-detail-item-title {
     text-align: center;
-    background-color: teal;
+    background-color: lightgray;
     padding: 10px 0;
-    color: white;
+    color: #000000ab;
   }
-  table .secondary-header {
-    background-color: #d4edda;
+
+  .secondary-header {
+    background-color: #e9ecef;
     color: black;
     font-weight: bold;
   }
+  .secondary-header th {
+    padding: 0 12px;
+  }
+
   table {
+    margin-bottom: 0 !important;
     tr {
-      font-weight: bold;
       th {
         vertical-align: middle;
+        &.col-unitario {
+          width: 102px;
+        }
+        &.col-total {
+          width: 137px;
+        }
       }
       td {
         vertical-align: middle;
+        &.pedido-detail-mobile {
+          padding: 0;
+          .space {
+            background-color: white;
+            height: 15px;
+          }
+        }
       }
       &.bg-entregado {
         background-color: #00800070 !important;
@@ -157,6 +175,59 @@
         color: white;
         a {
           color: white;
+        }
+      }
+    }
+  }
+  .bg-primary {
+    color: white;
+  }
+  .subtotales {
+    background-color: gray;
+    color: white;
+    font-weight: bold;
+  }
+  .cell-right {
+    text-align: right;
+  }
+  .cell-center {
+    text-align: center;
+  }
+  .alert-estado {
+    padding: 20px;
+    margin: 20px;
+    font-size: 20px;
+  }
+  .esquema-colores {
+    margin: 20px 0;
+    padding: 10px;
+    background-color: #e9ecef;
+    .esquema-colores--title {
+      font-size: 20px;
+      font-weight: bold;
+    }
+    .esquema-colores--box {
+      display: flex;
+      justify-content: space-between;
+
+      @media (max-width: 768px) {
+        flex-direction: column;
+      }
+
+      div {
+        display: flex;
+        align-items: center;
+      }
+      span {
+        height: 20px;
+        width: 20px;
+        display: inline-block;
+        margin: 10px;
+        &.esquema-colores--anulado {
+          background-color: red;
+        }
+        &.esquema-colores--cambio-precio {
+          background-color: #007bff;
         }
       }
     }

@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { pedido_get, pedido_getByCode } from "../services/pedidoService";
+import { entrega_getCurrent } from "../services/entregaService";
 import Scroll from "react-scroll";
 import ReactGA from "react-ga";
 import moment from "moment";
@@ -12,35 +13,41 @@ class MiPedido extends Component {
     pedido: null,
     errorMessage: null,
     enviado: false,
+    estado: "",
   };
 
   componentDidMount() {
     ReactGA.pageview(window.location.pathname + window.location.search);
 
-    let code = this.props.match.params.code;
-    if (code != undefined && code.length > 5) {
-      pedido_get(code)
-        .then(({ data }) => {
-          code = code.substr(code.length - 5).toUpperCase();
-          this.setState({
-            ...this.state,
-            pedido: data,
-            search: { code, email: data.email },
-          });
-          scroller.scrollTo("myScrollToElement", {
-            duration: 1000,
-            delay: 100,
-            smooth: true,
-            offset: -65, // Scrolls to element + 50 pixels down the page
-          });
-        })
-        .catch((ex) => {
-          this.setState({
-            errorMessage: ex.response.data.message,
-            pedido: null,
-          });
-        });
-    }
+    entrega_getCurrent().then((res) => {
+      this.setState({ estado: res.data.estado });
+      if (res.data.estado === "INI") {
+        let code = this.props.match.params.code;
+        if (code != undefined && code.length > 5) {
+          pedido_get(code)
+            .then(({ data }) => {
+              code = code.substr(code.length - 5).toUpperCase();
+              this.setState({
+                ...this.state,
+                pedido: data,
+                search: { code, email: data.email },
+              });
+              scroller.scrollTo("myScrollToElement", {
+                duration: 1000,
+                delay: 100,
+                smooth: true,
+                offset: -65, // Scrolls to element + 50 pixels down the page
+              });
+            })
+            .catch((ex) => {
+              this.setState({
+                errorMessage: ex.response.data.message,
+                pedido: null,
+              });
+            });
+        }
+      }
+    });
   }
 
   onFieldChange = (e) => {
@@ -84,19 +91,31 @@ class MiPedido extends Component {
   arrSum = (arr) => arr.reduce((a, b) => a + b, 0);
 
   render() {
-    const { errorMessage, pedido, search } = this.state;
+    const { errorMessage, pedido, search, estado } = this.state;
     if (search == null) return null;
 
     const totalPedido = !pedido
       ? 0
-      : pedido.entregado
+      : pedido.estado > 0
       ? pedido.totalPedido
       : this.arrSum(
-          pedido.items.filter((f) => !f.producto.anulado).map((m) => m.pago)
+          pedido.items.filter((f) => !f.producto.almacen).map((m) => m.pago)
+        );
+    const totalAlmacen = !pedido
+      ? 0
+      : pedido.estado > 0
+      ? pedido.totalAlmacen
+      : this.arrSum(
+          pedido.items.filter((f) => f.producto.almacen).map((m) => m.pago)
         );
 
-    const total =
-      totalPedido + (pedido && pedido.totalAlmacen ? pedido.totalAlmacen : 0);
+    const total = pedido ? totalPedido + totalAlmacen + pedido.varios : 0;
+    const itemsPedido = pedido
+      ? pedido.items.filter((p) => !p.producto.almacen)
+      : null;
+    const itemsAlmacen = pedido
+      ? pedido.items.filter((p) => p.producto.almacen)
+      : null;
 
     return (
       <div className="mi-pedido">
@@ -111,49 +130,66 @@ class MiPedido extends Component {
             </div>
           </div>
         </div>
-        <div class="container pl-0 pr-0">
-          <div className="box-find">
-            <form onSubmit={this.submitForm}>
-              <div className="box-find--input">
-                <h2>Correo</h2>
-                <input
-                  className="email"
-                  type="email"
-                  name="email"
-                  defaultValue={search.email}
-                  required
-                  placeholder="Ingresa el correo.."
-                  onChange={this.onFieldChange}
-                ></input>
-              </div>
-              <div className="box-find--input">
-                <h2>Código</h2>
-                <input
-                  className="codigo"
-                  type="text"
-                  name="code"
-                  defaultValue={search.code}
-                  placeholder="Código"
-                  required
-                  onChange={this.onFieldChange}
-                ></input>
-              </div>
-              <div className="box-find--input">
-                <button class="btn btn-primary" type="submit">
-                  Consultar
-                </button>
-              </div>
-            </form>
-            {errorMessage && (
-              <div class="alert alert-danger text-center m-4" role="alert">
-                {errorMessage}
-              </div>
-            )}
+        {estado === "INI" && (
+          <div class="container pl-0 pr-0">
+            <div className="box-find">
+              <form onSubmit={this.submitForm}>
+                <div className="box-find--input">
+                  <h2>Correo</h2>
+                  <input
+                    className="email"
+                    type="email"
+                    name="email"
+                    defaultValue={search.email}
+                    required
+                    placeholder="Ingresa el correo.."
+                    onChange={this.onFieldChange}
+                  ></input>
+                </div>
+                <div className="box-find--input">
+                  <h2>Código</h2>
+                  <input
+                    className="codigo"
+                    type="text"
+                    name="code"
+                    defaultValue={search.code}
+                    placeholder="Código"
+                    required
+                    onChange={this.onFieldChange}
+                  ></input>
+                </div>
+                <div className="box-find--input">
+                  <button class="btn btn-primary" type="submit">
+                    Consultar
+                  </button>
+                </div>
+              </form>
+              {errorMessage && (
+                <div class="alert alert-danger text-center m-4" role="alert">
+                  {errorMessage}
+                </div>
+              )}
+            </div>
           </div>
-        </div>
+        )}
         <Element name="myScrollToElement"></Element>
+        {estado != "INI" && (
+          <div className="container">
+            <div>
+              <h2 className="title">Vecinxs</h2>
+              <div className="text">
+                <p>
+                  Podrás consultar el estado de tu pedido desde aquí, una vez
+                  realizado tu pedido te enviaremos por correo electrónico los
+                  datos para que puedas consultarlo.
+                </p>
+                <p>Dede ya, muchas gracias.</p>
+              </div>
+            </div>
+          </div>
+        )}
         {pedido != null && (
-          <div className="container pl-0 pr-0">
+          <div className="container">
             <div className="card mt-2 mb-2">
               <div className="card-header">
                 <div class="d-flex">
@@ -203,20 +239,49 @@ class MiPedido extends Component {
                 </div>
               </div>
             </div>
+            {(pedido.estado === 0 || pedido.estado === 1) && (
+              <div class="alert alert-warning alert-estado" role="alert">
+                <b>ATENCIÓN:</b> el pedido no fué procesado, algunos productos
+                pueden no estar disponibles.
+              </div>
+            )}
+            {pedido.estado === 2 && (
+              <div class="alert alert-success alert-estado" role="alert">
+                <b>ATENCIÓN:</b> el pedido fué procesado y está listo para
+                retirar, puede acercarce a retirarlo en el horario seleccionado.
+              </div>
+            )}
+            {pedido.estado === 3 && (
+              <div class="alert alert-success alert-estado" role="alert">
+                El pedido ya fué entregado, muchas gracias.
+              </div>
+            )}
             {pedido.items && (
               <table className="table ">
                 <thead>
                   <tr className="main-header">
                     <th>Detalle del pedido</th>
                     <th className="d-none d-md-table-cell">Cantidad</th>
-                    <th className="d-none d-md-table-cell text-right">
+                    <th className="d-none d-md-table-cell text-right col-unitario">
                       P. Unitario
                     </th>
-                    <th className="d-none d-md-table-cell text-right">Total</th>
+                    <th className="d-none d-md-table-cell text-right col-total">
+                      Total
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
-                  {pedido.items.map(
+                  {itemsPedido && (
+                    <tr className="subtotales">
+                      <td colSpan="4" className="d-none d-md-table-cell">
+                        Pedido Mercado Territorial y Productores Locales
+                      </td>
+                      <td colSpan="4" className="d-md-none">
+                        Pedido M.T. y Productores Locales
+                      </td>
+                    </tr>
+                  )}
+                  {itemsPedido.map(
                     (
                       {
                         producto,
@@ -235,33 +300,43 @@ class MiPedido extends Component {
                         currentPrecio == undefined
                           ? precio * cantidad
                           : currentPago;
+                      let cssName = "";
+                      if (pedido.estado > 0) {
+                        // Pago procesado
+                        if (pago != null) {
+                          // Pago con datos
+                          if (pago === 0) {
+                            cssName = "bg-danger";
+                          } else {
+                            if (pago != precio * cantidad) {
+                              cssName = "bg-primary";
+                            }
+                          }
+                        } else {
+                          if (producto.anulado) {
+                            cssName = "bg-danger";
+                          }
+                        }
+                      } else {
+                        // Pago NO procesado
+                        if (producto.anulado) {
+                          cssName = "bg-danger";
+                        } else {
+                          if (pago === 0) {
+                            cssName = "bg-danger";
+                          } else {
+                            if (pago != precio * cantidad) {
+                              cssName = "bg-primary";
+                            }
+                          }
+                        }
+                      }
 
                       return (
-                        <tr
-                          key={index}
-                          className={
-                            pedido.entregado
-                              ? producto.anulado
-                                ? pago > 0
-                                  ? "bg-danger"
-                                  : ""
-                                : pago != null
-                                ? pago != precio * cantidad
-                                  ? "bg-primary"
-                                  : ""
-                                : "bg-warning"
-                              : producto.anulado
-                              ? "bg-danger"
-                              : pago == null
-                              ? "bg-warning"
-                              : pago != precio * cantidad
-                              ? "bg-primary"
-                              : ""
-                          }
-                        >
+                        <tr key={index} className={cssName}>
                           <td className="pedido-detail-mobile d-table-cell d-md-none">
                             <div class="row2">
-                              <div class="pedido-detail-item-title col pb-3">
+                              <div class="pedido-detail-item-title col">
                                 <b>{producto.nombre}</b>
                               </div>
                             </div>
@@ -274,11 +349,7 @@ class MiPedido extends Component {
                                 </tr>
                               </thead>
                               <tbody>
-                                <tr
-                                  className={
-                                    producto.anulado ? "bg-danger" : ""
-                                  }
-                                >
+                                <tr className={cssName}>
                                   <td>{cantidad}</td>
                                   <td className="text-right">
                                     ${producto.precio.toFixed(2)}
@@ -315,50 +386,218 @@ class MiPedido extends Component {
                       );
                     }
                   )}
-                  <tr className="sub-totales">
+                  {itemsPedido && (
+                    <React.Fragment>
+                      <tr>
+                        <td
+                          colSpan="4"
+                          className="cell-right d-none d-md-table-cell  "
+                        >
+                          <div className="form-group">
+                            <span className="mr-2">Subtotal M.T. y P.L.:</span>
+                            <b>${totalPedido.toFixed(2)}</b>
+                          </div>
+                        </td>
+                        <td
+                          colSpan="3"
+                          className="cell-right d-table-cell d-md-none "
+                        >
+                          <div className="form-group">
+                            <span className="mr-2">Subtotal M.T. y P.L.:</span>
+                            <b>${totalPedido.toFixed(2)}</b>
+                          </div>
+                        </td>
+                      </tr>
+                    </React.Fragment>
+                  )}
+                  {itemsAlmacen && (
+                    <tr className="subtotales">
+                      <td colSpan="4">Pedido de Almacén</td>
+                    </tr>
+                  )}
+                  {itemsAlmacen.map(
+                    (
+                      {
+                        producto,
+                        cantidad,
+                        precio: currentPrecio,
+                        pago: currentPago,
+                        _id,
+                      },
+                      index
+                    ) => {
+                      const precio =
+                        currentPrecio == undefined
+                          ? producto.precio
+                          : currentPrecio;
+                      const pago =
+                        currentPrecio == undefined
+                          ? precio * cantidad
+                          : currentPago;
+                      let cssName = "";
+                      if (pedido.estado > 0) {
+                        // Pago procesado
+                        if (pago != null) {
+                          // Pago con datos
+                          if (pago === 0) {
+                            cssName = "bg-danger";
+                          } else {
+                            if (pago != precio * cantidad) {
+                              cssName = "bg-primary";
+                            }
+                          }
+                        } else {
+                          if (producto.anulado) {
+                            cssName = "bg-danger";
+                          }
+                        }
+                      } else {
+                        // Pago NO procesado
+                        if (producto.anulado) {
+                          cssName = "bg-danger";
+                        } else {
+                          if (pago === 0) {
+                            cssName = "bg-danger";
+                          } else {
+                            if (pago != precio * cantidad) {
+                              cssName = "bg-primary";
+                            }
+                          }
+                        }
+                      }
+
+                      return (
+                        <tr key={index} className={cssName}>
+                          <td className="pedido-detail-mobile d-table-cell d-md-none">
+                            <div class="row2">
+                              <div class="pedido-detail-item-title col">
+                                <b>{producto.nombre}</b>
+                              </div>
+                            </div>
+                            <table className="table m-0">
+                              <thead>
+                                <tr className="secondary-header">
+                                  <th>Cant.</th>
+                                  <th className="text-right">P. Unit.</th>
+                                  <th className="text-right">Total</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr className={cssName}>
+                                  <td>{cantidad}</td>
+                                  <td className="text-right">
+                                    ${producto.precio.toFixed(2)}
+                                  </td>
+                                  <td className="text-right">
+                                    $
+                                    {!producto.anulado && pago
+                                      ? pago.toFixed(2)
+                                      : "0.00"}
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                            <div className="space"></div>
+                          </td>
+
+                          <td className="d-none d-md-table-cell">
+                            {producto.nombre}
+                          </td>
+                          <td className="d-none d-md-table-cell">{cantidad}</td>
+                          <td className="d-none d-md-table-cell text-right">
+                            $
+                            {precio == undefined
+                              ? producto.precio.toFixed(2)
+                              : precio.toFixed(2)}
+                          </td>
+                          <td className="d-none d-md-table-cell text-right">
+                            $
+                            {!producto.anulado && pago
+                              ? pago.toFixed(2)
+                              : "0.00"}
+                          </td>
+                        </tr>
+                      );
+                    }
+                  )}
+                  {itemsAlmacen && (
+                    <React.Fragment>
+                      <tr>
+                        <td
+                          colSpan="4"
+                          className="cell-right d-none d-md-table-cell  "
+                        >
+                          <div className="form-group">
+                            <span className="mr-2">Total almacén:</span>
+                            <b>${totalAlmacen.toFixed(2)}</b>
+                          </div>
+                        </td>
+                        <td
+                          colSpan="3"
+                          className="cell-right d-table-cell d-md-none "
+                        >
+                          <div className="form-group">
+                            <span className="mr-2">Total almacén:</span>
+                            <b>${totalAlmacen.toFixed(2)}</b>
+                          </div>
+                        </td>
+                      </tr>
+                    </React.Fragment>
+                  )}
+                  <tr className="subtotales">
+                    <td colSpan="4">Varios</td>
+                  </tr>
+                  <tr>
                     <td
                       colSpan="4"
-                      className="text-right d-none d-md-table-cell  "
+                      className="cell-right d-none d-md-table-cell"
                     >
-                      Total almacén:
-                      <span className="ml-2">
-                        $
-                        {pedido.totalAlmacen
-                          ? pedido.totalAlmacen.toFixed(2)
-                          : "0.00"}
-                      </span>
+                      <div className="form-group">
+                        <span className="mr-2">Total varios:</span>
+                        <b>{pedido.varios.toFixed(2)}</b>
+                      </div>
                     </td>
                     <td
                       colSpan="3"
-                      className="text-right d-table-cell d-md-none "
+                      className="cell-right d-table-cell d-md-none"
                     >
-                      Total almacén:
-                      <span className="ml-2">
-                        $
-                        {pedido.totalAlmacen
-                          ? pedido.totalAlmacen.toFixed(2)
-                          : "0.00"}
-                      </span>
+                      <div className="form-group">
+                        <span className="mr-2">Total varios:</span>
+                        <b>{pedido.varios.toFixed(2)}</b>
+                      </div>
                     </td>
                   </tr>
                   <tr className="totales">
                     <td
                       colSpan="4"
-                      className="text-right d-none d-md-table-cell  "
+                      className="cell-right d-none d-md-table-cell  "
                     >
-                      Total: <span className="ml-2">${total.toFixed(2)}</span>
+                      Total ${total.toFixed(2)}
                     </td>
                     <td
                       colSpan="3"
-                      className="text-right d-table-cell d-md-none "
+                      className="cell-right d-table-cell d-md-none "
                     >
-                      Total:
-                      <span className="ml-2">${total.toFixed(2)}</span>
+                      Total ${total.toFixed(2)}
                     </td>
                   </tr>
                 </tbody>
               </table>
             )}
+
+            <div className="esquema-colores">
+              <div className="esquema-colores--title">Esquema de colores:</div>
+              <div className="esquema-colores--box">
+                <div>
+                  <span className="esquema-colores--anulado"></span>El producto
+                  no esta disponible.
+                </div>
+                <div>
+                  <span className="esquema-colores--cambio-precio"></span>
+                  El total del producto tiene un ajuste en el precio.
+                </div>
+              </div>
+            </div>
           </div>
         )}
       </div>

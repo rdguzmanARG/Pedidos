@@ -23,9 +23,11 @@ class Form extends Component {
     return (
       <div className="form">
         {estado != "IMP" && (
-          <div>
+          <div class="container pl-0 pr-0">
             <div className="hero">
-              <h2 className="title">Carga tu pedido</h2>
+              <div className="herp-box">
+                <h2 className="hero-title">Cargá tu pedido</h2>
+              </div>
             </div>
             <div className="container">
               <h2 className="title">Vecinxs</h2>
@@ -41,15 +43,17 @@ class Form extends Component {
           </div>
         )}
         {estado == "IMP" && (
-          <iframe
-            src="https://docs.google.com/forms/d/1fpnmoqs2Nwig5ErxfbuCtacf0G9XIMtj9Ts05ylFQHY/viewform?embedded=true"
-            frameBorder="0"
-            marginHeight="0"
-            marginWidth="0"
-            scrolling="yes"
-          >
-            Cargndo...
-          </iframe>
+          <div className="container pl-0 pr-0">
+            <iframe
+              src="https://docs.google.com/forms/d/1fpnmoqs2Nwig5ErxfbuCtacf0G9XIMtj9Ts05ylFQHY/viewform?embedded=true"
+              frameBorder="0"
+              marginHeight="0"
+              marginWidth="0"
+              scrolling="yes"
+            >
+              Cargndo...
+            </iframe>
+          </div>
         )}
       </div>
     );
