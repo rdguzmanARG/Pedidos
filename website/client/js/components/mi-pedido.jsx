@@ -1,7 +1,11 @@
 import React, { Component } from "react";
 import { pedido_get, pedido_getByCode } from "../services/pedidoService";
 import { entrega_getCurrent } from "../services/entregaService";
-import { turno_confirmar, turno_disponibles } from "../services/turnoService";
+import {
+  turno_confirmar,
+  turno_anular,
+  turno_disponibles,
+} from "../services/turnoService";
 import Scroll from "react-scroll";
 import ReactGA from "react-ga";
 import moment from "moment";
@@ -22,7 +26,7 @@ class MiPedido extends Component {
     errorTurno: null,
   };
 
-  validarHorarios(pedido) {
+  validarHorarios() {
     turno_disponibles()
       .then(({ data }) => {
         this.setState({ ...this.state, turnos: data.turnos, dias: data.dias });
@@ -47,7 +51,7 @@ class MiPedido extends Component {
             .then(({ data }) => {
               // Si es Sin Entrega tengo que traer los horarios
               if (!data.conEntrega) {
-                this.validarHorarios(data);
+                this.validarHorarios();
               }
               console.log(data);
               code = code.substr(code.length - 5).toUpperCase();
@@ -91,7 +95,7 @@ class MiPedido extends Component {
       .then((res) => {
         // Si es Sin Entrega tengo que traer los horarios
         if (!res.data.conEntrega) {
-          this.validarHorarios(res.data);
+          this.validarHorarios();
         }
         this.setState({ ...this.state, pedido: res.data, errorMessage: null });
         scroller.scrollTo("myScrollToElement", {
@@ -133,11 +137,12 @@ class MiPedido extends Component {
   };
   removeTurno = () => {
     const { pedido } = this.state;
-    turno_confirmar(pedido.turno._id, { idPedido: null })
+    turno_anular(pedido.turno._id, { idPedido: pedido._id })
       .then(({ data }) => {
         const pedido = this.state.pedido;
         pedido.turno = null;
-        this.setState({ ...this.state, pedido });
+        this.setState({ ...this.state, pedido, idTurno: null, dia: null });
+        this.validarHorarios();
       })
       .catch((ex) => {
         if (ex.response.status === 404) {
@@ -418,10 +423,9 @@ class MiPedido extends Component {
                             </button>
                           </React.Fragment>
                         )}
-                        {!turnos ||
-                          (turnos.length === 0 && (
-                            <div>No hay turnos disponible en este momento.</div>
-                          ))}
+                        {!pedido.turno && (!turnos || turnos.length === 0) && (
+                          <div>No hay turnos disponible en este momento.</div>
+                        )}
                       </div>
                     )}
                   </div>

@@ -7,3 +7,7 @@ export function turno_disponibles() {
 export function turno_confirmar(idTurno, turno) {
   return http.put(apiUrl + "/turnos/" + idTurno, turno);
 }
+
+export function turno_anular(idTurno, turno) {
+  return http.put(apiUrl + "/turnos/" + idTurno + "/anular", turno);
+}

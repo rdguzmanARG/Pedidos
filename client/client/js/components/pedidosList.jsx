@@ -239,17 +239,38 @@ class PedidosList extends Component {
           <tbody>
             {pedidosFilteres
               .sort((a, b) => {
-                var nameA = a.nombre.toLowerCase() + a.apellido.toLowerCase(); // ignore upper and lowercase
-                var nameB = b.nombre.toLowerCase() + b.apellido.toLowerCase(); // ignore upper and lowercase
-                if (nameA < nameB) {
-                  return -1;
-                }
-                if (nameA > nameB) {
-                  return 1;
-                }
+                if (sinEntrega) {
+                  const turnoA = a.turno
+                    ? a.turno.dia + a.turno.hora
+                    : "zzz" + a.nombre.toLowerCase() + a.apellido.toLowerCase();
 
-                // names must be equal
-                return 0;
+                  const turnoB = b.turno
+                    ? b.turno.dia + b.turno.hora
+                    : "zzz" + b.nombre.toLowerCase() + b.apellido.toLowerCase();
+
+                  if (turnoA < turnoB) {
+                    return -1;
+                  }
+                  if (turnoA > turnoB) {
+                    return 1;
+                  }
+
+                  // names must be equal
+                  return 0;
+                } else {
+                  var nameA = a.nombre.toLowerCase() + a.apellido.toLowerCase(); // ignore upper and lowercase
+                  var nameB = b.nombre.toLowerCase() + b.apellido.toLowerCase(); // ignore upper and lowercase
+
+                  if (nameA < nameB) {
+                    return -1;
+                  }
+                  if (nameA > nameB) {
+                    return 1;
+                  }
+
+                  // names must be equal
+                  return 0;
+                }
               })
               .map((p) => {
                 let celularFormat = p.celular.replace(/[^\d]/g, "");
@@ -321,15 +342,28 @@ class PedidosList extends Component {
                     )}
                   </td>
                   <td className="cell-icon">
-                    {!p.conEntrega && <FontAwesomeIcon icon={faWalking} />}
-                    {p.conEntrega && p.direccion && (
-                      <FontAwesomeIcon
-                        icon={faTruck}
-                        className="text-primary"
-                      />
+                    {sinEntrega && (
+                      <React.Fragment>
+                        {p.turno && <b>{p.turno.hora}</b>}
+                        {!p.turno && <FontAwesomeIcon icon={faWalking} />}
+                      </React.Fragment>
                     )}
-                    {p.conEntrega && !p.direccion && (
-                      <FontAwesomeIcon icon={faTruck} className="text-danger" />
+                    {!sinEntrega && (
+                      <React.Fragment>
+                        {!p.conEntrega && <FontAwesomeIcon icon={faWalking} />}
+                        {p.conEntrega && p.direccion && (
+                          <FontAwesomeIcon
+                            icon={faTruck}
+                            className="text-primary"
+                          />
+                        )}
+                        {p.conEntrega && !p.direccion && (
+                          <FontAwesomeIcon
+                            icon={faTruck}
+                            className="text-danger"
+                          />
+                        )}
+                      </React.Fragment>
                     )}
                   </td>
                   <td className="cell-icon">

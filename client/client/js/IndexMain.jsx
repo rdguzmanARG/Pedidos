@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import App from "./App";
 import "bootstrap";
 import "bootstrap/dist/css/bootstrap.css";
-import "../../client/css/main.scss";
+import "../../client/css/main.scss?v=1";
 import { BrowserRouter as Router } from "react-router-dom";
 
 const title = "La Chapanay - Sisteam de Pedidos";

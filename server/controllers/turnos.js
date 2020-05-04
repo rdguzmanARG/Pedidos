@@ -1,5 +1,6 @@
 const Turno = require("../models/turno.model");
 const Entrega = require("../models/entrega.model");
+const Pedido = require("../models/pedido.model");
 const mongoose = require("mongoose");
 const moment = require("moment");
 
@@ -8,6 +9,8 @@ exports.turnos_disponibles = (req, res) => {
     .then((allTurnos) => {
       let turnos = [];
       let dias = [];
+      const now = new Date();
+
       allTurnos.forEach((element) => {
         if (
           turnos.filter(
@@ -21,7 +24,16 @@ exports.turnos_disponibles = (req, res) => {
               (f) => f.dia.toLocaleString() === element.dia.toLocaleString()
             ).length === 0
           ) {
-            dias.push({ dia: element.dia });
+            if (
+              moment(now).format("DD/MM/YYYY") ===
+              moment(element.dia).format("DD/MM/YYYY")
+            ) {
+              if (now.getHours() + 1 < moment(element.dia).format("HH")) {
+                dias.push({ dia: element.dia });
+              }
+            } else {
+              dias.push({ dia: element.dia });
+            }
           }
           turnos.push(element);
         }
@@ -33,10 +45,35 @@ exports.turnos_disponibles = (req, res) => {
 };
 
 exports.turnos_confirmar = (req, res) => {
-  Turno.findByIdAndUpdate(req.params.idTurno, req.body, { new: true })
+  Turno.find({ idPedido: req.body.idPedido })
+    .then((turnos) => {
+      if (turnos.length === 0) {
+        Turno.findByIdAndUpdate(req.params.idTurno, req.body, { new: true })
+          .exec()
+          .then((turno) => {
+            Pedido.findByIdAndUpdate(req.body.idPedido, { turno })
+              .then(() => {
+                res.json(turno);
+              })
+              .catch((err) => res.status(500).json("Error: " + err));
+          })
+          .catch((err) => res.status(500).json("Error: " + err));
+      } else {
+        res.json(turnos[0]);
+      }
+    })
+    .catch((err) => res.status(500).json("Error: " + err));
+};
+
+exports.turnos_anular = (req, res) => {
+  Turno.findByIdAndUpdate(req.params.idTurno, { idPedido: null }, { new: true })
     .exec()
     .then((turno) => {
-      res.json(turno);
+      Pedido.findByIdAndUpdate(req.body.idPedido, { turno: null })
+        .then(() => {
+          res.json(turno);
+        })
+        .catch((err) => res.status(500).json("Error: " + err));
     })
     .catch((err) => res.status(500).json("Error: " + err));
 };

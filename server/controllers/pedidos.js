@@ -9,9 +9,7 @@ const EmailSender = require("../helpers/email-sender");
 
 exports.pedidos_get_all = (req, res) => {
   Pedido.find()
-    .select(
-      "_id nombre apellido celular estado comentarios conEntrega direccion usuarioMod"
-    )
+    .populate("turno")
     .then((pedidos) => {
       Entrega.findOne()
         .sort({ fechaImportacion: -1 })
