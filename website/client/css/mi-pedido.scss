@@ -232,4 +232,38 @@
       }
     }
   }
+
+  .horarios-box {
+    margin: 10px 0;
+    background-color: #0e7b27;
+    padding: 10px;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+  }
+  .horarios-box--title {
+    text-align: center;
+    font-size: 22px;
+    text-transform: uppercase;
+  }
+  .horario-error {
+    margin: 10px 0;
+    padding: 10px;
+    background-color: red;
+  }
+  .horarios-box--seleccion {
+    padding: 10px 0;
+    display: flex;
+    align-items: center;
+    span {
+      flex: 1;
+      margin: 0 10px;
+      text-align: right;
+    }
+    select {
+      flex: 1;
+      margin: 0 10px;
+      padding: 5px;
+    }
+  }
 }

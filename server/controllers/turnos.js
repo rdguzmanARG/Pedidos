@@ -5,7 +5,30 @@ const moment = require("moment");
 
 exports.turnos_disponibles = (req, res) => {
   Turno.find({ idPedido: null })
-    .then((turnos) => res.status(200).json(turnos))
+    .then((allTurnos) => {
+      let turnos = [];
+      let dias = [];
+      allTurnos.forEach((element) => {
+        if (
+          turnos.filter(
+            (f) =>
+              f.dia.toLocaleString() === element.dia.toLocaleString() &&
+              f.hora === element.hora
+          ).length === 0
+        ) {
+          if (
+            dias.filter(
+              (f) => f.dia.toLocaleString() === element.dia.toLocaleString()
+            ).length === 0
+          ) {
+            dias.push({ dia: element.dia });
+          }
+          turnos.push(element);
+        }
+      });
+      const retorno = { dias, turnos };
+      res.status(200).json(retorno);
+    })
     .catch((err) => res.status(500).json({ Error: err }));
 };
 

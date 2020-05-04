@@ -56,6 +56,7 @@ const schema = mongoose.Schema(
     usuarioMod: {
       type: String,
     },
+    turno: { type: mongoose.Schema.Types.ObjectId, ref: "Turno" },
   },
   {
     timestamps: true,

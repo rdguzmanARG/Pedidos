@@ -78,7 +78,18 @@ exports.pedidos_get_pedido = (req, res) => {
             : item.producto.precio * item.cantidad;
         });
       }
-      res.status(200).json(pedido);
+
+      //Obtengo el turno si no es entrega a domicilio
+      if (!pedido.conEntrega) {
+        Turno.findOne({ idPedido: pedido._id })
+          .then((turno) => {
+            pedido.turno = turno;
+            res.status(200).json(pedido);
+          })
+          .catch((err) => res.status(500).json({ error: err }));
+      } else {
+        res.status(200).json(pedido);
+      }
     })
     .catch((err) => res.status(500).json({ error: err }));
 };
@@ -116,7 +127,18 @@ exports.pedidos_get_pedidoByCode = (req, res) => {
                   : item.producto.precio * item.cantidad;
               });
             }
-            res.status(200).json(pedido);
+
+            //Obtengo el turno si no es entrega a domicilio
+            if (!pedido.conEntrega) {
+              Turno.findOne({ idPedido: pedido._id })
+                .then((turno) => {
+                  pedido.turno = turno;
+                  res.status(200).json(pedido);
+                })
+                .catch((err) => res.status(500).json({ error: err }));
+            } else {
+              res.status(200).json(pedido);
+            }
           }
         })
         .catch((err) => res.status(500).json({ error: err }));

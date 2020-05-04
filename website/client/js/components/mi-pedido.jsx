@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { pedido_get, pedido_getByCode } from "../services/pedidoService";
 import { entrega_getCurrent } from "../services/entregaService";
+import { turno_confirmar, turno_disponibles } from "../services/turnoService";
 import Scroll from "react-scroll";
 import ReactGA from "react-ga";
 import moment from "moment";
@@ -14,7 +15,25 @@ class MiPedido extends Component {
     errorMessage: null,
     enviado: false,
     estado: "",
+    turnos: null,
+    dias: null,
+    dia: null,
+    idTurno: null,
+    errorTurno: null,
   };
+
+  validarHorarios(pedido) {
+    turno_disponibles()
+      .then(({ data }) => {
+        this.setState({ ...this.state, turnos: data.turnos, dias: data.dias });
+      })
+      .catch((ex) => {
+        this.setState({
+          errorMessage: ex.response.data.message,
+          pedido: null,
+        });
+      });
+  }
 
   componentDidMount() {
     ReactGA.pageview(window.location.pathname + window.location.search);
@@ -26,6 +45,11 @@ class MiPedido extends Component {
         if (code != undefined && code.length > 5) {
           pedido_get(code)
             .then(({ data }) => {
+              // Si es Sin Entrega tengo que traer los horarios
+              if (!data.conEntrega) {
+                this.validarHorarios(data);
+              }
+              console.log(data);
               code = code.substr(code.length - 5).toUpperCase();
               this.setState({
                 ...this.state,
@@ -65,6 +89,10 @@ class MiPedido extends Component {
     e.preventDefault();
     pedido_getByCode(search.email, search.code.toUpperCase())
       .then((res) => {
+        // Si es Sin Entrega tengo que traer los horarios
+        if (!res.data.conEntrega) {
+          this.validarHorarios(res.data);
+        }
         this.setState({ ...this.state, pedido: res.data, errorMessage: null });
         scroller.scrollTo("myScrollToElement", {
           duration: 1000,
@@ -88,10 +116,86 @@ class MiPedido extends Component {
       });
   };
 
+  selectedDate = (date) => {
+    this.setState({
+      ...this.state,
+      dia: date === "" ? null : date,
+      errorTurno: null,
+    });
+  };
+
+  selectedTime = (idTurno) => {
+    this.setState({
+      ...this.state,
+      idTurno: idTurno === "" ? null : idTurno,
+      errorTurno: null,
+    });
+  };
+  removeTurno = () => {
+    const { pedido } = this.state;
+    turno_confirmar(pedido.turno._id, { idPedido: null })
+      .then(({ data }) => {
+        const pedido = this.state.pedido;
+        pedido.turno = null;
+        this.setState({ ...this.state, pedido });
+      })
+      .catch((ex) => {
+        if (ex.response.status === 404) {
+          this.setState({
+            errorMessage: ex.response.data.message,
+            pedido: null,
+          });
+        } else {
+          this.setState({
+            errorMessage: "No se pudieron recuperar los datos.",
+            pedido: null,
+          });
+        }
+      });
+  };
+  setTurno = () => {
+    const { dia, idTurno, pedido } = this.state;
+    if (dia == null || idTurno == null) {
+      this.setState({
+        ...this.state,
+        errorTurno: "Debe completar día y hora para retirar su pedido.",
+      });
+      return;
+    }
+
+    turno_confirmar(idTurno, { idPedido: pedido._id })
+      .then(({ data }) => {
+        const pedido = this.state.pedido;
+        pedido.turno = data;
+        this.setState({ ...this.state, pedido });
+      })
+      .catch((ex) => {
+        if (ex.response.status === 404) {
+          this.setState({
+            errorMessage: ex.response.data.message,
+            pedido: null,
+          });
+        } else {
+          this.setState({
+            errorMessage: "No se pudieron recuperar los datos.",
+            pedido: null,
+          });
+        }
+      });
+  };
+
   arrSum = (arr) => arr.reduce((a, b) => a + b, 0);
 
   render() {
-    const { errorMessage, pedido, search, estado } = this.state;
+    const {
+      errorMessage,
+      errorTurno,
+      pedido,
+      search,
+      estado,
+      turnos,
+      dias,
+    } = this.state;
     if (search == null) return null;
 
     const totalPedido = !pedido
@@ -233,6 +337,91 @@ class MiPedido extends Component {
                     {pedido.comentarios && (
                       <div>
                         Comentarios: <b>{pedido.comentarios}</b>{" "}
+                      </div>
+                    )}
+                    {turnos != null && !pedido.conEntrega && (
+                      <div className="horarios-box">
+                        <div className="horarios-box--title">
+                          Horario de retiro
+                        </div>
+                        {pedido.turno && (
+                          <React.Fragment>
+                            <div className="horarios-box--seleccion">
+                              <span>Día</span>
+                              <span className="text-left">
+                                {moment(pedido.turno.dia).format("DD/MM/YYYY")}
+                              </span>
+                            </div>
+                            <div className="horarios-box--seleccion">
+                              <span>Hora</span>
+                              <span className="text-left">
+                                {pedido.turno.hora}
+                              </span>
+                            </div>
+                            <button
+                              className="btn btn-danger"
+                              onClick={() => this.removeTurno()}
+                            >
+                              Anular Horario
+                            </button>
+                          </React.Fragment>
+                        )}
+                        {!pedido.turno && turnos && turnos.length > 0 && (
+                          <React.Fragment>
+                            <div className="horarios-box--seleccion">
+                              <span>Día</span>
+                              <select
+                                onChange={(e) =>
+                                  this.selectedDate(e.target.value)
+                                }
+                              >
+                                <option value={null}></option>
+                                {dias.map((d) => (
+                                  <option
+                                    key={moment(d.dia).format("DD/MM/YYYY")}
+                                    value={moment(d.dia).format("DD/MM/YYYY")}
+                                  >
+                                    {moment(d.dia).format("DD/MM/YYYY")}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+                            <div className="horarios-box--seleccion">
+                              <span>Hora</span>
+                              <select
+                                onChange={(e) =>
+                                  this.selectedTime(e.target.value)
+                                }
+                              >
+                                <option value={null}></option>
+                                {turnos
+                                  .filter(
+                                    (f) =>
+                                      moment(f.dia).format("DD/MM/YYYY") ===
+                                      this.state.dia
+                                  )
+                                  .map((d) => (
+                                    <option key={d._id} value={d._id}>
+                                      {d.hora}
+                                    </option>
+                                  ))}
+                              </select>
+                            </div>
+                            {errorTurno && (
+                              <div className="horario-error">{errorTurno}</div>
+                            )}
+                            <button
+                              className="btn btn-success"
+                              onClick={() => this.setTurno()}
+                            >
+                              Confirmar Horario
+                            </button>
+                          </React.Fragment>
+                        )}
+                        {!turnos ||
+                          (turnos.length === 0 && (
+                            <div>No hay turnos disponible en este momento.</div>
+                          ))}
                       </div>
                     )}
                   </div>
