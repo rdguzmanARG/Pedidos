@@ -351,17 +351,13 @@ class MiPedido extends Component {
                         </div>
                         {pedido.turno && (
                           <React.Fragment>
-                            <div className="horarios-box--seleccion">
-                              <span>Día</span>
-                              <span className="text-left">
+                            <div className="horarios-box--seleccionado">
+                              <span>Día:</span>
+                              <span>
                                 {moment(pedido.turno.dia).format("DD/MM/YYYY")}
                               </span>
-                            </div>
-                            <div className="horarios-box--seleccion">
-                              <span>Hora</span>
-                              <span className="text-left">
-                                {pedido.turno.hora}
-                              </span>
+                              <span>Hora:</span>
+                              <span>{pedido.turno.hora}</span>
                             </div>
                             <button
                               className="btn btn-danger"

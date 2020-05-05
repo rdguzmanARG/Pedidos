@@ -1,7 +1,7 @@
 const nodemailer = require("nodemailer");
 const Pedido = require("../models/pedido.model");
 
-exports.sendEmails = (pedidos) => {
+exports.sendEmails = (entrega, pedidos) => {
   return new Promise((resolve, reject) => {
     var transporter = nodemailer.createTransport({
       service: "gmail",
@@ -34,7 +34,7 @@ exports.sendEmails = (pedidos) => {
       });
     }
 
-    SendAllEmails(transporter, emails)
+    SendAllEmails(transporter, emails, entrega)
       .then((data) => {
         return resolve(data);
       })
@@ -44,9 +44,10 @@ exports.sendEmails = (pedidos) => {
   });
 };
 
-SendAllEmails = function (transporter, pedidos) {
+SendAllEmails = function (transporter, pedidos, entrega) {
   var promises = pedidos.map(function (pe) {
-    const code = pe.idPedido.toString();
+    let dias = `<li>${entrega.dia1Horarios}</li>`;
+    dias += entrega.dia2Horarios && `<li>${entrega.dia2Horarios}</li>`;
 
     var mailOptions = {
       from: process.env.EMAIL_SENDER,
@@ -80,6 +81,7 @@ SendAllEmails = function (transporter, pedidos) {
               width: 100% !important;
               height: 100%;
               background: #f8f8f8;
+              color:#5f6368;
             }
       
             a {
@@ -89,6 +91,10 @@ SendAllEmails = function (transporter, pedidos) {
       
             a:hover {
               text-decoration: underline;
+            }
+      
+            ul {
+              margin-left: 20px;
             }
       
             .text-center {
@@ -121,7 +127,7 @@ SendAllEmails = function (transporter, pedidos) {
             h2,
             h3,
             h4,
-            h5, 
+            h5,
             h6 {
               margin-bottom: 20px;
               line-height: 1.25;
@@ -146,7 +152,7 @@ SendAllEmails = function (transporter, pedidos) {
             h5 {
               font-size: 16px;
             }
-                  
+      
             p,
             ul,
             ol {
@@ -199,7 +205,12 @@ SendAllEmails = function (transporter, pedidos) {
               text-align: center;
               font-size: 14px;
             }
-      
+
+            span.im  {
+              color: #5f6368 !important;
+            }
+              
+
             .container .content.footer a {
               color: #888;
               text-decoration: none;
@@ -225,32 +236,37 @@ SendAllEmails = function (transporter, pedidos) {
                   <tr>
                     <td class="content">
                       <h2>Hola, ${pe.nombre} ${pe.apellido}</h2>
-      
-                      <p>
-                        Ingresá al sitio 
-                        con este <b>CODIGO: ${code
-                          .substr(code.length - 5)
-                          .toUpperCase()}</b> y 
-                        tu <b>E-mail</b> para verificar el estado de tu pedido las veces que lo desees, o haciendo click en el siguiente botón...            
-                      </p>
-                                     
+                      <p>En los próximos días vamos a estar procesando tu pedido, podes consultar su estado desde nuestro Sitio.</p><p><b>Si vas a retirar tu pedido por nuestra casa, reservá un <b>día y horario</b> para retirarlo.</b></p>
+                      <h3>Día/s y horario/s disponible/s</h3>
+                      <ul>
+                        ${dias}
+                      </ul>
                       <table>
                         <tr>
                           <td align="center">
                             <p>
-                              <a href="http://nodo-temperley.azurewebsites.net/mi-pedido/${pe.idPedido.toString()}" class="button text-white">VER PEDIDO</a>
+                              <a
+                                href="http://nodo-temperley.azurewebsites.net/mi-pedido/${pe.idPedido.toString()}"
+                                class="button text-white"
+                                >VER PEDIDO</a
+                              >
                             </p>
                           </td>
                         </tr>
-                      </table>
-      
+                      </table>                      
                       <p>
-                        Si queres ver mas información 
-                        de LA CHAPANAY - Nodo Temperley hace click
-                        <a class="text-green" href="https://nodo-temperley.azurewebsites.net"> AQUI...</a>.
+                        Si queres ver mas información de LA CHAPANAY - Nodo Temperley
+                        hace click
+                        <a
+                          class="text-green"
+                          href="https://nodo-temperley.azurewebsites.net"
+                        >
+                          AQUI...</a
+                        >.
                       </p>
-      
-                      <p><em>– Gracias!!</em></p>
+                      <p>
+                        Muchas Gracias!!
+                      </p>
                     </td>
                   </tr>
                 </table>
@@ -262,11 +278,9 @@ SendAllEmails = function (transporter, pedidos) {
                 <table>
                   <tr>
                     <td class="content footer" align="center">
+                      <p>© 2020 <a href="#">Diseñado por MrcGo</a>, 11-3208-9799</p>
                       <p>
-                          © 2020 <a href="#">MrcGo</a>, 11-3208-9799 
-                      </p>
-                      <p>
-                        <a href="mailto:">ricardo.deguzman@gmail.com</a> 
+                        <a href="mailto:">ricardo.deguzman@gmail.com</a>
                       </p>
                     </td>
                   </tr>
@@ -275,7 +289,8 @@ SendAllEmails = function (transporter, pedidos) {
             </tr>
           </table>
         </body>
-      </html>`,
+      </html>
+      `,
     };
 
     const prom = transporter

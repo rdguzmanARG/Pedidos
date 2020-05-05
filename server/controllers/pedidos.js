@@ -28,23 +28,31 @@ exports.pedido_getPendingEmails = (req, res) => {
 };
 
 exports.pedido_sendPendingEmails = (req, res) => {
-  Pedido.find({ emailEnviado: 0 })
-    .limit(5)
-    .select(
-      "_id nombre apellido celular estado comentarios conEntrega direccion usuarioMod"
-    )
-    .then((pedidos) => {
-      EmailSender.sendEmails(pedidos)
-        .then((data) => {
-          Pedido.count({ emailEnviado: 0 }).then((count) => {
-            return res.json({ restantes: count, procesado: data });
-          });
+  Entrega.findOne()
+    .sort({ fechaImportacion: -1 })
+    .then((entrega) => {
+      Pedido.find({ emailEnviado: 0 })
+        .limit(5)
+        .select(
+          "_id nombre apellido celular estado comentarios conEntrega direccion usuarioMod"
+        )
+        .then((pedidos) => {
+          EmailSender.sendEmails(entrega, pedidos)
+            .then((data) => {
+              Pedido.count({ emailEnviado: 0 }).then((count) => {
+                return res.json({ restantes: count, procesado: data });
+              });
+            })
+            .catch((err) => {
+              return res.status(500).json("Error: " + err);
+            });
         })
-        .catch((err) => {
-          return res.status(500).json("Error: " + err);
-        });
+        .catch((err) => res.status(500).json({ error: err }));
     })
-    .catch((err) => res.status(500).json({ error: err }));
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({ error: err });
+    });
 };
 
 exports.pedidos_get_last = (req, res) => {
