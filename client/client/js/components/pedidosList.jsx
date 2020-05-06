@@ -8,7 +8,12 @@ import {
 } from "../services/pedidoService";
 import auth from "../services/authService";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit, faTruck, faWalking } from "@fortawesome/free-solid-svg-icons";
+import {
+  faEdit,
+  faTruck,
+  faWalking,
+  faEnvelope,
+} from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
 import Moment from "react-moment";
 
@@ -335,9 +340,15 @@ class PedidosList extends Component {
                   }
                 >
                   <td>
-                    <b>
-                      {p.nombre}, {p.apellido} {p.comentarios ? "(*)" : ""}
+                    <b className="mr-1">
+                      {p.nombre}, {p.apellido}
                     </b>
+                    {p.emailEnviado > 1 && (
+                      <FontAwesomeIcon
+                        icon={faEnvelope}
+                        className="text-danger"
+                      />
+                    )}
                   </td>
                   <td className="d-none d-sm-table-cell">
                     <a href={"tel:+" + p.celular}>{p.celular}</a>{" "}
