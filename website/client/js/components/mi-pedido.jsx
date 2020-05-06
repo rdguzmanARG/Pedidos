@@ -127,8 +127,8 @@ class MiPedido extends Component {
           .then((horarios) => {
             this.setState({
               ...this.state,
-              dias: horarios != null ? horarios.dias : data,
-              turnos: horarios != null ? horarios.turnos : data,
+              dias: horarios != null ? horarios.dias : horarios,
+              turnos: horarios != null ? horarios.turnos : horarios,
               pedido: pedido,
               isLoading: false,
               errorMessage: null,
@@ -412,11 +412,13 @@ class MiPedido extends Component {
                         </div>
                         {pedido.turno && (
                           <React.Fragment>
-                            <div className="horarios-box--seleccionado">
+                            <div className="horarios-box--seleccionado big">
                               <span>Día:</span>
                               <span>
                                 {moment(pedido.turno.dia).format("DD/MM/YYYY")}
                               </span>
+                            </div>
+                            <div className="horarios-box--seleccionado big">
                               <span>Hora:</span>
                               <span>{pedido.turno.hora}</span>
                             </div>
@@ -500,14 +502,14 @@ class MiPedido extends Component {
             )}
             {pedido.estado === 2 && pedido.conEntrega && (
               <div class="alert alert-success alert-estado" role="alert">
-                El pedido fue procesado, en las próximas horas se lo llevaremos
-                al domicilio indicado.
+                El pedido fue procesado, en las próximas horas se lo acercaremos
+                al domicilio indicado: {pedido.direccion}
               </div>
             )}
             {pedido.estado === 2 && !pedido.conEntrega && (
               <div class="alert alert-success alert-estado" role="alert">
                 El pedido fue procesado, puede acercarce a retirarlo en el
-                horario acordado.
+                horario elegido.
               </div>
             )}
             {pedido.estado === 3 && (
