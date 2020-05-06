@@ -91,9 +91,6 @@ class PedidoDetail extends Component {
   onVariosChange = (e) => {
     let valor = e.target.value;
     let varios = Number(valor.replace("$", ""));
-    if (varios == 0) {
-      varios = null;
-    }
 
     this.setState({
       ...this.state,
