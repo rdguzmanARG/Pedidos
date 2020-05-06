@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { pedido_get, pedido_getByCode } from "../services/pedidoService";
 import { entrega_getCurrent } from "../services/entregaService";
+import Loader from "react-loader-spinner";
 import {
   turno_confirmar,
   turno_anular,
@@ -24,58 +25,85 @@ class MiPedido extends Component {
     dia: null,
     idTurno: null,
     errorTurno: null,
+    isLoading: true,
   };
 
-  validarHorarios() {
-    turno_disponibles()
-      .then(({ data }) => {
-        this.setState({ ...this.state, turnos: data.turnos, dias: data.dias });
-      })
-      .catch((ex) => {
-        this.setState({
-          errorMessage: ex.response.data.message,
-          pedido: null,
+  validarHorarios(pedido) {
+    return new Promise((resolve, reject) => {
+      if (pedido.conEntrega) {
+        resolve(null);
+      }
+      turno_disponibles()
+        .then(({ data }) => {
+          resolve({ turnos: data.turnos, dias: data.dias });
+        })
+        .catch((ex) => {
+          reject(ex);
         });
-      });
+    });
   }
 
   componentDidMount() {
     ReactGA.pageview(window.location.pathname + window.location.search);
 
-    entrega_getCurrent().then((res) => {
-      this.setState({ estado: res.data.estado });
-      if (res.data.estado === "INI") {
-        let code = this.props.match.params.code;
-        if (code != undefined && code.length > 5) {
-          pedido_get(code)
-            .then(({ data }) => {
-              // Si es Sin Entrega tengo que traer los horarios
-              if (!data.conEntrega) {
-                this.validarHorarios();
-              }
-              console.log(data);
-              code = code.substr(code.length - 5).toUpperCase();
-              this.setState({
-                ...this.state,
-                pedido: data,
-                search: { code, email: data.email },
+    entrega_getCurrent()
+      .then(({ data: entrega }) => {
+        if (entrega.estado === "INI") {
+          let code = this.props.match.params.code;
+          if (code != undefined && code.length > 5) {
+            pedido_get(code)
+              .then(({ data: pedido }) => {
+                // Si es Sin Entrega tengo que traer los horarios
+                this.validarHorarios(pedido)
+                  .then((horarios) => {
+                    code = code.substr(code.length - 5).toUpperCase();
+                    this.setState({
+                      ...this.state,
+                      dias: horarios != null ? horarios.dias : data,
+                      turnos: horarios != null ? horarios.turnos : data,
+                      pedido: pedido,
+                      estado: entrega.estado,
+                      isLoading: false,
+                      search: { code, email: pedido.email },
+                    });
+                    scroller.scrollTo("myScrollToElement", {
+                      duration: 1000,
+                      delay: 100,
+                      smooth: true,
+                      offset: -15, // Scrolls to element + 50 pixels down the page
+                    });
+                  })
+                  .catch((ex) => {
+                    this.setState({
+                      errorMessage: "Los datos ingresados son invalidos.",
+                      pedido: null,
+                      estado: entrega.estado,
+                      isLoading: false,
+                    });
+                  });
+              })
+              .catch((ex) => {
+                this.setState({
+                  errorMessage: ex.response.data.message,
+                  pedido: null,
+                  estado: entrega.estado,
+                  isLoading: false,
+                });
               });
-              scroller.scrollTo("myScrollToElement", {
-                duration: 1000,
-                delay: 100,
-                smooth: true,
-                offset: -65, // Scrolls to element + 50 pixels down the page
-              });
-            })
-            .catch((ex) => {
-              this.setState({
-                errorMessage: ex.response.data.message,
-                pedido: null,
-              });
-            });
+          } else {
+            this.setState({ estado: entrega.estado, isLoading: false });
+          }
+        } else {
+          this.setState({ estado: entrega.estado, isLoading: false });
         }
-      }
-    });
+      })
+      .catch((ex) => {
+        this.setState({
+          errorMessage: "No se pudieron recuperar los datos.",
+          pedido: null,
+          isLoading: false,
+        });
+      });
   }
 
   onFieldChange = (e) => {
@@ -85,6 +113,7 @@ class MiPedido extends Component {
   };
 
   submitForm = (e) => {
+    this.setState({ ...this.state, isLoading: true });
     const { search } = this.state;
     ReactGA.event({
       category: "Pedido",
@@ -92,29 +121,53 @@ class MiPedido extends Component {
     });
     e.preventDefault();
     pedido_getByCode(search.email, search.code.toUpperCase())
-      .then((res) => {
+      .then(({ data: pedido }) => {
         // Si es Sin Entrega tengo que traer los horarios
-        if (!res.data.conEntrega) {
-          this.validarHorarios();
-        }
-        this.setState({ ...this.state, pedido: res.data, errorMessage: null });
-        scroller.scrollTo("myScrollToElement", {
-          duration: 1000,
-          delay: 100,
-          smooth: true,
-          offset: -65, // Scrolls to element + 50 pixels down the page
-        });
+        this.validarHorarios(pedido)
+          .then((horarios) => {
+            this.setState({
+              ...this.state,
+              dias: horarios != null ? horarios.dias : data,
+              turnos: horarios != null ? horarios.turnos : data,
+              pedido: pedido,
+              isLoading: false,
+              errorMessage: null,
+            });
+            scroller.scrollTo("myScrollToElement", {
+              duration: 1000,
+              delay: 100,
+              smooth: true,
+              offset: -15, // Scrolls to element + 50 pixels down the page
+            });
+          })
+          .catch((ex) => {
+            if (ex.response.status === 404) {
+              this.setState({
+                errorMessage: ex.response.data.message,
+                pedido: null,
+                isLoading: false,
+              });
+            } else {
+              this.setState({
+                errorMessage: "No se pudieron recuperar los datos.",
+                pedido: null,
+                isLoading: false,
+              });
+            }
+          });
       })
       .catch((ex) => {
         if (ex.response.status === 404) {
           this.setState({
             errorMessage: ex.response.data.message,
             pedido: null,
+            isLoading: false,
           });
         } else {
           this.setState({
             errorMessage: "No se pudieron recuperar los datos.",
             pedido: null,
+            isLoading: false,
           });
         }
       });
@@ -200,6 +253,7 @@ class MiPedido extends Component {
       estado,
       turnos,
       dias,
+      isLoading,
     } = this.state;
     if (search == null) return null;
 
@@ -226,6 +280,13 @@ class MiPedido extends Component {
       ? pedido.items.filter((p) => p.producto.almacen)
       : null;
 
+    if (isLoading) {
+      return (
+        <div id="overlay">
+          <Loader type="Oval" color="green" height={100} width={100} />
+        </div>
+      );
+    }
     return (
       <div className="mi-pedido">
         <div class="container pl-0 pr-0">
