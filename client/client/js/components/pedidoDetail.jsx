@@ -64,7 +64,6 @@ class PedidoDetail extends Component {
                 isLoading: false,
                 entregaEstado: resEntrega.data ? resEntrega.data.estado : "",
               });
-              console.log(pedido);
             })
             .catch((ex) => {
               if (ex.response && ex.response.status === 401) {
@@ -439,24 +438,6 @@ class PedidoDetail extends Component {
                     }
                   }
 
-                  // pedido.estado > 0
-                  //   ? producto.anulado
-                  //     ? pago == null
-                  //       ? "bg-danger"
-                  //       : ""
-                  //     : pago != null
-                  //     ? pago != precio * cantidad
-                  //       ? "bg-primary"
-                  //       : ""
-                  //     : "bg-warning"
-                  //   : producto.anulado
-                  //   ? "bg-danger"
-                  //   : pago == 0
-                  //   ? "bg-warning"
-                  //   : pago != precio * cantidad
-                  //   ? "bg-primary"
-                  //   : "";
-
                   return (
                     <tr key={index} className={cssName}>
                       <td className="pedido-detail-mobile d-table-cell d-md-none">
@@ -597,7 +578,9 @@ class PedidoDetail extends Component {
                       className="cell-right d-none d-md-table-cell  "
                     >
                       <div className="form-group">
-                        <label>Subtotal M.T. y P.L.:</label>
+                        <label>
+                          <b>Subtotal M.T. y P.L.:</b>
+                        </label>
                         <NumberFormat
                           disabled={true}
                           thousandSeparator={false}
@@ -612,7 +595,9 @@ class PedidoDetail extends Component {
                       className="cell-right d-table-cell d-md-none "
                     >
                       <div className="form-group">
-                        <label>Subtotal M.T. y P.L.:</label>
+                        <label>
+                          <b>Subtotal M.T. y P.L.:</b>
+                        </label>
                         <NumberFormat
                           disabled={true}
                           thousandSeparator={false}
@@ -821,7 +806,9 @@ class PedidoDetail extends Component {
                       className="cell-right d-none d-md-table-cell  "
                     >
                       <div className="form-group">
-                        <label>Subtotal almacén:</label>
+                        <label>
+                          <b>Subtotal almacén:</b>
+                        </label>
                         <NumberFormat
                           disabled={true}
                           thousandSeparator={false}
@@ -836,7 +823,9 @@ class PedidoDetail extends Component {
                       className="cell-right d-table-cell d-md-none "
                     >
                       <div className="form-group">
-                        <label>Subtotal almacén:</label>
+                        <label>
+                          <b>Subtotal almacén:</b>
+                        </label>
                         <NumberFormat
                           disabled={true}
                           thousandSeparator={false}
@@ -855,7 +844,9 @@ class PedidoDetail extends Component {
               <tr>
                 <td colSpan="4" className="cell-right d-none d-md-table-cell">
                   <div className="form-group">
-                    <label for="almacenD">Total varios:</label>
+                    <label for="almacenD">
+                      <b>Total varios:</b>
+                    </label>
                     <NumberFormat
                       id="almacenD"
                       disabled={entregaEstado !== "INI" || pedido.estado > 1}
@@ -871,7 +862,9 @@ class PedidoDetail extends Component {
                 </td>
                 <td colSpan="3" className="cell-right d-table-cell d-md-none">
                   <div className="form-group">
-                    <label for="almacenM">Total varios:</label>
+                    <label for="almacenM">
+                      <b>Total varios:</b>
+                    </label>
                     <NumberFormat
                       id="almacenM"
                       disabled={entregaEstado !== "INI" || pedido.estado > 1}

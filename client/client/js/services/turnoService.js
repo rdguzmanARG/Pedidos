@@ -9,6 +9,5 @@ export function turno_confirmar(idTurno, turno) {
   return http.put(apiUrl + "/turnos/" + idTurno, turno);
 }
 export function turno_procesar(config) {
-  console.log(config);
   return http.post(apiUrl + "/turnos/procesar", config);
 }

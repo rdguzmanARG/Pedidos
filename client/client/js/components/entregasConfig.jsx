@@ -282,7 +282,7 @@ class Inicio extends Component {
       dia2Desde,
       dia2Hasta,
     } = this.state;
-    console.log(dia1);
+
     const { user } = this.props;
     if (isLoading) {
       return (

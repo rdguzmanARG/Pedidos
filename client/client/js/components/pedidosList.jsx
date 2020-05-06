@@ -1,7 +1,11 @@
 import React, { Component } from "react";
 import Loader from "react-loader-spinner";
 import { Link } from "react-router-dom";
-import { pedido_getAll, pedido_getLast } from "../services/pedidoService";
+import {
+  pedido_getAll,
+  pedido_getLast,
+  pedido_notificado,
+} from "../services/pedidoService";
 import auth from "../services/authService";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTruck, faWalking } from "@fortawesome/free-solid-svg-icons";
@@ -118,6 +122,29 @@ class PedidosList extends Component {
           clearInterval(this.state.intervalId);
         });
     }
+  };
+
+  notify = (pedido) => {
+    pedido_notificado(pedido._id).then(({ data }) => {
+      const pedidos = this.state.pedidos.filter(function (p) {
+        return p._id != data.idPedido;
+      });
+      const pedido = this.state.pedidos.filter(function (p) {
+        return p._id == data.idPedido;
+      });
+      if (pedido.length === 1) {
+        pedido[0].notificado = true;
+        this.setState({ ...this.state, pedidos: [...pedidos, pedido[0]] });
+      }
+    });
+    window.open(
+      "https://api.whatsapp.com/send?phone=+549" +
+        pedido.celFormat +
+        "&text=Su pedido ha sido procesado, puede ingresar al Sitio Web del *NODO Temperley* para consultar su estado actual.%0a%0D%0Ahttps://nodo-temperley.azurewebsites.net/mi-pedido/" +
+        pedido._id.toString() +
+        "%0D%0AMuchas Gracias.",
+      "_blank"
+    );
   };
 
   render() {
@@ -320,17 +347,11 @@ class PedidosList extends Component {
                   </td>
                   <td className="cell-icon">
                     {p.celFormat != "" && (
-                      <a
-                        href={
-                          "https://api.whatsapp.com/send?phone=+549" +
-                          p.celFormat +
-                          "&text=Puede ingresar al Sitio Web del *NODO Temperley* para consultar su pedido.%0a‎Código de pedido= " +
-                          p._id.substr(p._id.length - 5).toUpperCase() +
-                          "%0D%0Ahttps://nodo-temperley.azurewebsites.net/mi-pedido %0D%0AMuchas Gracias."
-                        }
-                      >
+                      <a onClick={() => this.notify(p)}>
                         <img
-                          className="whatsapp"
+                          className={
+                            p.notificado ? "whatsapp selected" : "whatsapp"
+                          }
                           src="/images/whatsapp.png"
                         ></img>
                       </a>

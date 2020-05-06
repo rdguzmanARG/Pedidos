@@ -53,6 +53,9 @@ const schema = mongoose.Schema(
     emailEnviado: {
       type: Number,
     },
+    notificado: {
+      type: Boolean,
+    },
     usuarioMod: {
       type: String,
     },

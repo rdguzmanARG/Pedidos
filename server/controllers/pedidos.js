@@ -55,11 +55,17 @@ exports.pedido_sendPendingEmails = (req, res) => {
     });
 };
 
+exports.pedido_notificado = (req, res) => {
+  const idPedido = req.body.idPedido;
+  Pedido.findByIdAndUpdate(idPedido, { notificado: true })
+    .then((notificado) => {
+      return res.json({ idPedido: idPedido, notificado: true });
+    })
+    .catch((err) => res.status(500).json({ error: err }));
+};
+
 exports.pedidos_get_last = (req, res) => {
   Pedido.find({ updatedAt: { $gt: req.params.date } })
-    .select(
-      "_id nombre apellido celular estado comentarios conEntrega direccion usuarioMod"
-    )
     .then((pedidos) => {
       Entrega.findOne()
         .sort({ fechaImportacion: -1 })

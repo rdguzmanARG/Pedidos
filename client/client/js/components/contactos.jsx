@@ -20,7 +20,6 @@ class Contactos extends Component {
         }
       })
       .catch((ex) => {
-        console.log(ex);
         if (ex.response && ex.response.status === 401) {
           auth.logout();
           window.location = "/login";

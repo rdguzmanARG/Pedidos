@@ -15,8 +15,9 @@ router.get(
   controller.pedido_getPendingEmails
 );
 
-router.get("/:email/:code", controller.pedidos_get_pedidoByCode);
+router.post("/notificado", controller.pedido_notificado);
 router.get("/last/:date", checkAuth, controller.pedidos_get_last);
+router.get("/:email/:code", controller.pedidos_get_pedidoByCode);
 router.get("/import", [checkAuth, admin], controller.pedidos_import);
 router.get("/:idPedido", controller.pedidos_get_pedido);
 router.put("/:idPedido", [checkAuth], controller.pedidos_update_pedido);

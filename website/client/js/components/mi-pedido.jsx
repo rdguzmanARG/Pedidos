@@ -359,6 +359,9 @@ class MiPedido extends Component {
                               <span>Hora:</span>
                               <span>{pedido.turno.hora}</span>
                             </div>
+                            <div className="horarios-box--seleccionado">
+                              Por favor respete el horario elegido.
+                            </div>
                             <button
                               className="btn btn-danger"
                               onClick={() => this.removeTurno()}
@@ -430,19 +433,19 @@ class MiPedido extends Component {
             </div>
             {(pedido.estado === 0 || pedido.estado === 1) && (
               <div class="alert alert-warning alert-estado" role="alert">
-                <b>ATENCIÓN:</b> el pedido no fué procesado, algunos productos
+                <b>ATENCIÓN:</b> el pedido no fue procesado, algunos productos
                 pueden no estar disponibles.
               </div>
             )}
             {pedido.estado === 2 && (
               <div class="alert alert-success alert-estado" role="alert">
-                <b>ATENCIÓN:</b> el pedido fué procesado y está listo para
-                retirar, puede acercarce a retirarlo en el horario seleccionado.
+                <b>ATENCIÓN:</b> el pedido fue procesado, puede acercarce a
+                retirarlo en el horario seleccionado previamente.
               </div>
             )}
             {pedido.estado === 3 && (
               <div class="alert alert-success alert-estado" role="alert">
-                El pedido ya fué entregado, muchas gracias.
+                El pedido ya fue entregado, muchas gracias.
               </div>
             )}
             {pedido.items && (

@@ -14,6 +14,10 @@ export function pedido_sendPendingEmails() {
   return http.post(apiUrl + "/pedidos/pending-emails");
 }
 
+export function pedido_notificado(idPedido) {
+  return http.post(apiUrl + "/pedidos/notificado", { idPedido });
+}
+
 export function pedido_getLast(lastCheck) {
   return http.get(apiUrl + "/pedidos/last/" + lastCheck);
 }
