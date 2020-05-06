@@ -287,12 +287,7 @@ class Inicio extends Component {
     if (isLoading) {
       return (
         <div id="overlay">
-          <Loader
-            type="Circles"
-            color="#025f17"
-            height={100}
-            width={100}
-          ></Loader>
+          <Loader type="Oval" color="#025f17" height={100} width={100}></Loader>
         </div>
       );
     }

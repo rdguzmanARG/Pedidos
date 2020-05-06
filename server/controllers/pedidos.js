@@ -33,9 +33,6 @@ exports.pedido_sendPendingEmails = (req, res) => {
     .then((entrega) => {
       Pedido.find({ emailEnviado: 0 })
         .limit(5)
-        .select(
-          "_id nombre apellido celular estado comentarios conEntrega direccion usuarioMod"
-        )
         .then((pedidos) => {
           EmailSender.sendEmails(entrega, pedidos)
             .then((data) => {
