@@ -347,7 +347,7 @@ class PedidosList extends Component {
                   </td>
                   <td className="cell-icon">
                     {p.celFormat != "" && (
-                      <a onClick={() => this.notify(p)}>
+                      <a href="#" onClick={() => this.notify(p)}>
                         <img
                           className={
                             p.notificado ? "whatsapp selected" : "whatsapp"

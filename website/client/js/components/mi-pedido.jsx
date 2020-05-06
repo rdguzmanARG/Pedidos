@@ -437,10 +437,16 @@ class MiPedido extends Component {
                 pueden no estar disponibles.
               </div>
             )}
-            {pedido.estado === 2 && (
+            {pedido.estado === 2 && pedido.conEntrega && (
+              <div class="alert alert-success alert-estado" role="alert">
+                <b>ATENCIÓN:</b> el pedido fue procesado, en las próximas horas
+                se lo llevaremos al domicilio indicado.
+              </div>
+            )}
+            {pedido.estado === 2 && !pedido.conEntrega && (
               <div class="alert alert-success alert-estado" role="alert">
                 <b>ATENCIÓN:</b> el pedido fue procesado, puede acercarce a
-                retirarlo en el horario seleccionado previamente.
+                retirarlo en el horario acordado previamente.
               </div>
             )}
             {pedido.estado === 3 && (
