@@ -59,8 +59,8 @@ class MiPedido extends Component {
                     code = code.substr(code.length - 5).toUpperCase();
                     this.setState({
                       ...this.state,
-                      dias: horarios != null ? horarios.dias : data,
-                      turnos: horarios != null ? horarios.turnos : data,
+                      dias: horarios != null ? horarios.dias : horarios,
+                      turnos: horarios != null ? horarios.turnos : horarios,
                       pedido: pedido,
                       estado: entrega.estado,
                       isLoading: false,
@@ -653,7 +653,9 @@ class MiPedido extends Component {
                           className="cell-right d-none d-md-table-cell  "
                         >
                           <div className="form-group">
-                            <span className="mr-2">Subtotal M.T. y P.L.:</span>
+                            <span className="mr-2">
+                              <b>Subtotal M.T. y P.L.:</b>
+                            </span>
                             <b>${totalPedido.toFixed(2)}</b>
                           </div>
                         </td>
@@ -662,7 +664,9 @@ class MiPedido extends Component {
                           className="cell-right d-table-cell d-md-none "
                         >
                           <div className="form-group">
-                            <span className="mr-2">Subtotal M.T. y P.L.:</span>
+                            <span className="mr-2">
+                              <b>Subtotal M.T. y P.L.:</b>
+                            </span>
                             <b>${totalPedido.toFixed(2)}</b>
                           </div>
                         </td>
@@ -787,7 +791,9 @@ class MiPedido extends Component {
                           className="cell-right d-none d-md-table-cell  "
                         >
                           <div className="form-group">
-                            <span className="mr-2">Total almacén:</span>
+                            <span className="mr-2">
+                              <b>Subtotal almacén:</b>
+                            </span>
                             <b>${totalAlmacen.toFixed(2)}</b>
                           </div>
                         </td>
@@ -796,7 +802,9 @@ class MiPedido extends Component {
                           className="cell-right d-table-cell d-md-none "
                         >
                           <div className="form-group">
-                            <span className="mr-2">Total almacén:</span>
+                            <span className="mr-2">
+                              <b>Subtotal almacén:</b>
+                            </span>
                             <b>${totalAlmacen.toFixed(2)}</b>
                           </div>
                         </td>
@@ -812,8 +820,10 @@ class MiPedido extends Component {
                       className="cell-right d-none d-md-table-cell"
                     >
                       <div className="form-group">
-                        <span className="mr-2">Total varios:</span>
-                        <b>{pedido.varios.toFixed(2)}</b>
+                        <span className="mr-2">
+                          <b>Total varios:</b>
+                        </span>
+                        <b>${pedido.varios.toFixed(2)}</b>
                       </div>
                     </td>
                     <td
@@ -821,7 +831,9 @@ class MiPedido extends Component {
                       className="cell-right d-table-cell d-md-none"
                     >
                       <div className="form-group">
-                        <span className="mr-2">Total varios:</span>
+                        <span className="mr-2">
+                          <b>Total varios:</b>
+                        </span>
                         <b>{pedido.varios.toFixed(2)}</b>
                       </div>
                     </td>
