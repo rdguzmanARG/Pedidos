@@ -10,7 +10,7 @@ exports.turnos_disponibles = (req, res) => {
       let turnos = [];
       let dias = [];
       const now = new Date();
-
+      let hayTurno = false;
       allTurnos.forEach((element) => {
         if (
           turnos.filter(
@@ -19,13 +19,7 @@ exports.turnos_disponibles = (req, res) => {
               f.hora === element.hora
           ).length === 0
         ) {
-          if (
-            dias.filter(
-              (f) => f.dia.toLocaleString() === element.dia.toLocaleString()
-            ).length === 0
-          ) {
-            dias.push({ dia: element.dia });
-          }
+          hayTurno = false;
 
           if (
             moment(now).format("DD/MM/YYYY") >=
@@ -34,14 +28,26 @@ exports.turnos_disponibles = (req, res) => {
             if (now.getHours() + 1 == parseInt(element.hora.substr(0, 2))) {
               if (now.getMinutes() < parseInt(element.hora.substr(3, 2))) {
                 turnos.push(element);
+                hayTurno = true;
               }
             } else {
               if (now.getHours() + 1 < parseInt(element.hora.substr(0, 2))) {
                 turnos.push(element);
+                hayTurno = true;
               }
             }
           } else {
             turnos.push(element);
+            hayTurno = true;
+          }
+
+          if (
+            hayTurno &&
+            dias.filter(
+              (f) => f.dia.toLocaleString() === element.dia.toLocaleString()
+            ).length === 0
+          ) {
+            dias.push({ dia: element.dia });
           }
         }
       });
