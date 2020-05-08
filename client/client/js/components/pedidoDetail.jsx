@@ -381,6 +381,13 @@ class PedidoDetail extends Component {
                     </div>
                   </div>
                 )}
+                {!pedido.conEntrega && !pedido.turno && (
+                  <div className="">
+                    <div className="pedido-detail--title">
+                      Falta reservar horario de retiro
+                    </div>
+                  </div>
+                )}
                 {pedido.conEntrega && (
                   <div className="pedido-detail--title text-left">
                     Datos para el envio
