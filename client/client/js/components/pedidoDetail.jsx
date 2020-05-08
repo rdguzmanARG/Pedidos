@@ -454,7 +454,7 @@ class PedidoDetail extends Component {
                 <th>Detalle del pedido</th>
                 <th className="d-none d-md-table-cell">Cantidad</th>
                 <th className="d-none d-md-table-cell cell-right col-unitario">
-                  P. Unitario
+                  P. Unit.
                 </th>
                 <th className="d-none d-md-table-cell cell-right col-total">
                   Total
