@@ -24,18 +24,19 @@ exports.turnos_disponibles = (req, res) => {
               (f) => f.dia.toLocaleString() === element.dia.toLocaleString()
             ).length === 0
           ) {
-            if (
-              moment(now).format("DD/MM/YYYY") ===
-              moment(element.dia).format("DD/MM/YYYY")
-            ) {
-              if (now.getHours() + 1 < moment(element.dia).format("HH")) {
-                dias.push({ dia: element.dia });
-              }
-            } else {
-              dias.push({ dia: element.dia });
-            }
+            dias.push({ dia: element.dia });
           }
-          turnos.push(element);
+
+          if (
+            moment(now).format("DD/MM/YYYY") >=
+            moment(element.dia).format("DD/MM/YYYY")
+          ) {
+            if (now.getHours() + 1 < parseInt(element.hora.substr(0, 2))) {
+              turnos.push(element);
+            }
+          } else {
+            turnos.push(element);
+          }
         }
       });
       const retorno = { dias, turnos };
