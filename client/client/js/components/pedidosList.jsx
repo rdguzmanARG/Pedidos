@@ -166,6 +166,9 @@ class PedidosList extends Component {
       .filter((f) => !pendientes || f.estado !== 3)
       .filter((f) => !conEntrega || f.conEntrega)
       .filter((f) => !sinEntrega || !f.conEntrega);
+    const sinTurno = pedidosFilteres.filter(
+      (f) => !f.conEntrega && f.turno == null && f.estado < 3
+    ).length;
 
     if (isLoading) {
       return (
@@ -264,7 +267,9 @@ class PedidosList extends Component {
               <th className="d-none d-sm-table-cell">Teléfono</th>
               <th className="d-none d-md-table-cell">Procesado por</th>
               <th className="cell-icon"></th>
-              <th className="cell-icon"></th>
+              <th className="cell-icon text-center">
+                {sinEntrega ? <span>ST:{sinTurno}</span> : <span></span>}
+              </th>
               <th className="cell-icon"></th>
             </tr>
           </thead>
