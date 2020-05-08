@@ -223,9 +223,15 @@ class MiPedido extends Component {
 
     turno_confirmar(idTurno, { idPedido: pedido._id })
       .then(({ data }) => {
-        const pedido = this.state.pedido;
-        pedido.turno = data;
-        this.setState({ ...this.state, pedido });
+        if (data.error) {
+          this.setState({
+            errorTurno: data.error,
+          });
+        } else {
+          const pedido = this.state.pedido;
+          pedido.turno = data;
+          this.setState({ ...this.state, pedido, errorTurno: null });
+        }
       })
       .catch((ex) => {
         if (ex.response.status === 404) {

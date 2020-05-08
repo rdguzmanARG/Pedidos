@@ -49,12 +49,22 @@ exports.turnos_confirmar = (req, res) => {
   Turno.find({ idPedido: req.body.idPedido })
     .then((turnos) => {
       if (turnos.length === 0) {
-        Turno.findByIdAndUpdate(req.params.idTurno, req.body, { new: true })
-          .exec()
-          .then((turno) => {
-            Pedido.findByIdAndUpdate(req.body.idPedido, { turno })
-              .then(() => {
-                res.json(turno);
+        Turno.find({ _id: req.params.idTurno, idPedido: { $ne: null } })
+          .then((libre) => {
+            if (libre.length > 0) {
+              res.json({ error: "El turno ya fue seleccionado." });
+              return;
+            }
+            Turno.findByIdAndUpdate({ _id: req.params.idTurno }, req.body, {
+              new: true,
+            })
+              .exec()
+              .then((turno) => {
+                Pedido.findByIdAndUpdate(req.body.idPedido, { turno })
+                  .then(() => {
+                    res.json(turno);
+                  })
+                  .catch((err) => res.status(500).json("Error: " + err));
               })
               .catch((err) => res.status(500).json("Error: " + err));
           })
