@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Loader from "react-loader-spinner";
 import moment from "moment";
+import Scroll from "react-scroll";
 import SweetAlert from "react-bootstrap-sweetalert";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -10,11 +11,15 @@ import {
   faCheckSquare,
   faDolly,
   faTimes,
+  faEdit,
 } from "@fortawesome/free-solid-svg-icons";
 import { pedido_get, pedido_update } from "../services/pedidoService";
 import { entrega_getCurrent } from "../services/entregaService";
 import NumberFormat from "react-number-format";
 import auth from "../services/authService";
+
+const Element = Scroll.Element;
+const scroller = Scroll.scroller;
 
 class PedidoDetail extends Component {
   state = {
@@ -25,6 +30,7 @@ class PedidoDetail extends Component {
     entregaEstado: "",
     totalPedidos: 0,
     totalAlmacen: 0,
+    direccion: "",
     varios: null,
     pressEntregado: false,
     pressPreparado: false,
@@ -59,6 +65,7 @@ class PedidoDetail extends Component {
               this.setState({
                 pedido,
                 totalPedidos,
+                direccion: pedido.direccion,
                 varios: pedido.varios,
                 totalAlmacen,
                 isLoading: false,
@@ -161,6 +168,38 @@ class PedidoDetail extends Component {
       totalAlmacen,
       pedido: { ...ped },
     });
+  };
+
+  updateDireccion = () => {
+    this.setState({ ...this.state, isLoading: true });
+    const { pedido } = this.state;
+
+    pedido_update(pedido._id, { direccion: this.state.direccion })
+      .then(({ data: updatePedido }) => {
+        this.setState({
+          ...this.state,
+          pedido: updatePedido,
+          direccion: updatePedido.direccion,
+          isLoading: false,
+        });
+        scroller.scrollTo("mapaId", {
+          duration: 1000,
+          delay: 100,
+          smooth: true,
+          offset: -120, // Scrolls to element + 50 pixels down the page
+        });
+      })
+      .catch((ex) => {
+        if (ex.response && ex.response.status === 401) {
+          auth.logout();
+          window.location = "/login";
+        } else {
+          this.setState({
+            ...this.state,
+            isLoading: false,
+          });
+        }
+      });
   };
 
   render() {
@@ -294,9 +333,15 @@ class PedidoDetail extends Component {
           </div>
           <div className="card-body m-1">
             <div className="row">
-              <div className="col-md-6 mb-2">
+              <div className="col-md-6 mb-1">
                 Código:{" "}
                 <b>{pedido._id.substr(pedido._id.length - 5).toUpperCase()}</b>
+                {pedido.date && (
+                  <div>
+                    Fecha del pedido:{" "}
+                    <b>{moment(pedido.date).format("DD/MM HH:mm")}</b>
+                  </div>
+                )}
                 {pedido.celular && (
                   <div>
                     Teléfono: <b>{pedido.celular}</b>
@@ -305,30 +350,6 @@ class PedidoDetail extends Component {
                 {pedido.email && (
                   <div>
                     Email: <b>{pedido.email}</b>
-                  </div>
-                )}
-                {pedido.date && (
-                  <div>
-                    Fecha - Hora:{" "}
-                    <b>{moment(pedido.date).format("DD/MM/YYYY HH:mm")}</b>
-                  </div>
-                )}
-                <div>
-                  Entrega a domicilio: <b>{pedido.conEntrega ? "Si" : "No"}</b>{" "}
-                </div>
-                {pedido.direccion && (
-                  <div>
-                    Domicilio: <b>{pedido.direccion}</b>{" "}
-                  </div>
-                )}
-                {pedido.direccionDetalle && (
-                  <div>
-                    Detalle domicilio: <b>{pedido.direccionDetalle}</b>{" "}
-                  </div>
-                )}
-                {pedido.comentarios && (
-                  <div>
-                    Comentarios: <b>{pedido.comentarios}</b>{" "}
                   </div>
                 )}
                 <div>
@@ -341,8 +362,63 @@ class PedidoDetail extends Component {
                       : "No se pudo enviar el Email."}
                   </b>{" "}
                 </div>
+                <div>
+                  Entrega a domicilio: <b>{pedido.conEntrega ? "Si" : "No"}</b>{" "}
+                </div>
               </div>
               <div className="col-md-6 map-position">
+                {pedido.turno && (
+                  <div className="text-left">
+                    <div className="pedido-detail--title">
+                      Horario de retiro
+                    </div>
+                    <div>
+                      Fecha:{" "}
+                      <b>{moment(pedido.turno.dia).format("DD/MM/YYYY")}</b>
+                    </div>
+                    <div>
+                      Hora: <b>{pedido.turno.hora}</b>
+                    </div>
+                  </div>
+                )}
+                {pedido.conEntrega && (
+                  <div className="pedido-detail--title text-left">
+                    Datos para el envio
+                  </div>
+                )}
+                {pedido.conEntrega && pedido.direccion && (
+                  <div className="text-left">
+                    Domicilio: <b>{pedido.direccion}</b>{" "}
+                  </div>
+                )}
+                {pedido.conEntrega && pedido.direccionDetalle && (
+                  <div className="text-left">
+                    <b>{pedido.direccionDetalle}</b>{" "}
+                  </div>
+                )}
+                <Element name="mapaId"></Element>
+                {pedido.conEntrega && pedido.direccion && (
+                  <div className="pedido-detail--direccion">
+                    <input
+                      className="form-control"
+                      defaultValue={pedido.direccion}
+                      onChange={(e) =>
+                        this.setState({
+                          ...this.state,
+                          direccion: e.target.value,
+                        })
+                      }
+                    ></input>
+                    <button
+                      title="Corregir dirección"
+                      onClick={() => this.updateDireccion()}
+                      class="btn btn-info"
+                    >
+                      <FontAwesomeIcon icon={faEdit} />
+                    </button>
+                  </div>
+                )}
+
                 {pedido.conEntrega && pedido.direccion && (
                   <iframe
                     width="300"
@@ -354,6 +430,11 @@ class PedidoDetail extends Component {
                     }
                     allowFullScreen
                   ></iframe>
+                )}
+                {pedido.comentarios && (
+                  <div>
+                    Comentarios: <b>{pedido.comentarios}</b>{" "}
+                  </div>
                 )}
               </div>
             </div>

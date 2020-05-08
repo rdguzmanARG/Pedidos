@@ -232,6 +232,16 @@ footer {
 }
 // Detalle del pedido
 .pedido-detail {
+  .pedido-detail--title {
+    font-weight: bold;
+    text-transform: uppercase;
+    padding: 0 0 5px;
+  }
+  .pedido-detail--direccion {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
   .pedido-detalle-botones {
     display: flex;
     justify-content: space-between;

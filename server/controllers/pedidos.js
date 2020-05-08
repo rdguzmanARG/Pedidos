@@ -63,6 +63,7 @@ exports.pedido_notificado = (req, res) => {
 
 exports.pedidos_get_last = (req, res) => {
   Pedido.find({ updatedAt: { $gt: req.params.date } })
+    .populate("turno")
     .then((pedidos) => {
       Entrega.findOne()
         .sort({ fechaImportacion: -1 })
@@ -77,6 +78,7 @@ exports.pedidos_get_last = (req, res) => {
 exports.pedidos_get_pedido = (req, res) => {
   Pedido.findById(req.params.idPedido)
     .populate("items.producto")
+    .populate("turno")
     .then((pedido) => {
       // Si el pedido no fue entregado, debe completar los valores de precio y pago.
       if (pedido.estado === 0) {
