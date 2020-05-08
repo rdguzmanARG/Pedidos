@@ -31,8 +31,14 @@ exports.turnos_disponibles = (req, res) => {
             moment(now).format("DD/MM/YYYY") >=
             moment(element.dia).format("DD/MM/YYYY")
           ) {
-            if (now.getHours() + 1 < parseInt(element.hora.substr(0, 2))) {
-              turnos.push(element);
+            if (now.getHours() + 1 == parseInt(element.hora.substr(0, 2))) {
+              if (now.getMinutes() < parseInt(element.hora.substr(3, 2))) {
+                turnos.push(element);
+              }
+            } else {
+              if (now.getHours() + 1 < parseInt(element.hora.substr(0, 2))) {
+                turnos.push(element);
+              }
             }
           } else {
             turnos.push(element);
