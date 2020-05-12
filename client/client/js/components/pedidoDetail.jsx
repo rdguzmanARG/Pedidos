@@ -31,6 +31,8 @@ class PedidoDetail extends Component {
     totalPedidos: 0,
     totalAlmacen: 0,
     direccion: "",
+    direccionDetalle: "",
+    repartidor: "",
     varios: null,
     pressEntregado: false,
     pressPreparado: false,
@@ -66,6 +68,8 @@ class PedidoDetail extends Component {
                 pedido,
                 totalPedidos,
                 direccion: pedido.direccion,
+                direccionDetalle: pedido.direccionDetalle,
+                repartidor: pedido.repartidor,
                 varios: pedido.varios,
                 totalAlmacen,
                 isLoading: false,
@@ -174,12 +178,18 @@ class PedidoDetail extends Component {
     this.setState({ ...this.state, isLoading: true });
     const { pedido } = this.state;
 
-    pedido_update(pedido._id, { direccion: this.state.direccion })
+    pedido_update(pedido._id, {
+      direccion: this.state.direccion,
+      direccionDetalle: this.state.direccionDetalle,
+      repartidor: this.state.repartidor,
+    })
       .then(({ data: updatePedido }) => {
         this.setState({
           ...this.state,
           pedido: updatePedido,
           direccion: updatePedido.direccion,
+          direccionDetalle: updatePedido.direccionDetalle,
+          repartidor: updatePedido.repartidor,
           isLoading: false,
         });
         scroller.scrollTo("mapaId", {
@@ -214,6 +224,7 @@ class PedidoDetail extends Component {
       pressPreparado,
       pressGuardado,
       pressAnulado,
+      repartidor,
     } = this.state;
     const itemsPedido = pedido.items.filter((p) => !p.producto.almacen);
     const itemsAlmacen = pedido.items.filter((p) => p.producto.almacen);
@@ -393,37 +404,64 @@ class PedidoDetail extends Component {
                     Datos para el envio
                   </div>
                 )}
-                {pedido.conEntrega && pedido.direccion && (
-                  <div className="text-left">
-                    Domicilio: <b>{pedido.direccion}</b>{" "}
-                  </div>
-                )}
-                {pedido.conEntrega && pedido.direccionDetalle && (
-                  <div className="text-left">
-                    <b>{pedido.direccionDetalle}</b>{" "}
-                  </div>
-                )}
                 <Element name="mapaId"></Element>
                 {pedido.conEntrega && pedido.direccion && (
-                  <div className="pedido-detail--direccion">
-                    <input
-                      className="form-control"
-                      defaultValue={pedido.direccion}
-                      onChange={(e) =>
-                        this.setState({
-                          ...this.state,
-                          direccion: e.target.value,
-                        })
-                      }
-                    ></input>
-                    <button
-                      title="Corregir dirección"
-                      onClick={() => this.updateDireccion()}
-                      class="btn btn-info"
-                    >
-                      <FontAwesomeIcon icon={faEdit} />
-                    </button>
-                  </div>
+                  <React.Fragment>
+                    <div className="pedido-detail--edicion">
+                      <label>Domicilio:</label>
+                      <input
+                        disabled={entregaEstado !== "INI"}
+                        className="form-control"
+                        defaultValue={pedido.direccion}
+                        onChange={(e) =>
+                          this.setState({
+                            ...this.state,
+                            direccion: e.target.value,
+                          })
+                        }
+                      ></input>
+                    </div>
+                    <div className="pedido-detail--edicion">
+                      <label>Detalle:</label>
+                      <input
+                        disabled={entregaEstado !== "INI"}
+                        className="form-control"
+                        defaultValue={pedido.direccionDetalle}
+                        onChange={(e) =>
+                          this.setState({
+                            ...this.state,
+                            direccionDetalle: e.target.value,
+                          })
+                        }
+                      ></input>
+                    </div>
+                    <div className="pedido-detail--edicion">
+                      <label>Repartidor:</label>
+                      <input
+                        disabled={entregaEstado !== "INI"}
+                        maxLength="5"
+                        className="form-control"
+                        value={repartidor}
+                        onChange={(e) =>
+                          this.setState({
+                            ...this.state,
+                            repartidor: e.target.value.toUpperCase(),
+                          })
+                        }
+                      ></input>
+                    </div>
+                    <div className="pedido-detail--edicion">
+                      <button
+                        disabled={entregaEstado !== "INI"}
+                        title="Actualizar datos"
+                        onClick={() => this.updateDireccion()}
+                        class="btn btn-info"
+                      >
+                        Actualizar
+                        <FontAwesomeIcon icon={faEdit} />
+                      </button>
+                    </div>
+                  </React.Fragment>
                 )}
 
                 {pedido.conEntrega && pedido.direccion && (

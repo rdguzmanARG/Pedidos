@@ -26,6 +26,9 @@ const schema = mongoose.Schema(
     direccionDetalle: {
       type: String,
     },
+    repartidor: {
+      type: String,
+    },
     conEntrega: {
       type: Boolean,
     },

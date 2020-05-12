@@ -78,20 +78,14 @@ class Form extends Component {
             </AutoplaySlider>
           </div>
 
-          <h2 className="title">Seguí nuestros consejos</h2>
-          <div className="pb-4 pt-4">
-            <AutoplaySlider
-              play={true}
-              cancelOnInteraction={false} // should stop playing on user interaction
-              interval={10000}
-            >
-              <div data-src="/images/higiene-1.jpg" />
-              <div data-src="/images/higiene-2.jpg" />
-              <div data-src="/images/higiene-3.jpg" />
-              <div data-src="/images/higiene-4.jpg" />
-              <div data-src="/images/higiene-5.jpg" />
-              <div data-src="/images/higiene-6.jpg" />
-            </AutoplaySlider>
+          <div class="embed-responsive embed-responsive-16by9">
+            <iframe
+              class="embed-responsive-item"
+              src="https://www.youtube-nocookie.com/embed/Fch9Dq4M1Bg"
+              frameborder="0"
+              allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen
+            ></iframe>
           </div>
 
           <div class="card-group pt-3">

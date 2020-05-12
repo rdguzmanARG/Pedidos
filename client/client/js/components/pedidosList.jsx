@@ -166,8 +166,13 @@ class PedidosList extends Component {
       .filter((f) => !pendientes || f.estado !== 3)
       .filter((f) => !conEntrega || f.conEntrega)
       .filter((f) => !sinEntrega || !f.conEntrega);
+
     const sinTurno = pedidosFilteres.filter(
       (f) => !f.conEntrega && f.turno == null && f.estado < 3
+    ).length;
+
+    const sinAsignar = pedidosFilteres.filter(
+      (f) => f.conEntrega && f.repartidor == null && f.estado < 3
     ).length;
 
     if (isLoading) {
@@ -268,7 +273,8 @@ class PedidosList extends Component {
               <th className="d-none d-md-table-cell">Procesado por</th>
               <th className="cell-icon"></th>
               <th className="cell-icon text-center">
-                {sinEntrega ? <span>ST:{sinTurno}</span> : <span></span>}
+                {sinEntrega ? <span>S.T.:{sinTurno}</span> : <span></span>}
+                {conEntrega ? <span>S.R.:{sinAsignar}</span> : <span></span>}
               </th>
               <th className="cell-icon"></th>
             </tr>
@@ -295,18 +301,44 @@ class PedidosList extends Component {
                   // names must be equal
                   return 0;
                 } else {
-                  var nameA = a.nombre.toLowerCase() + a.apellido.toLowerCase(); // ignore upper and lowercase
-                  var nameB = b.nombre.toLowerCase() + b.apellido.toLowerCase(); // ignore upper and lowercase
+                  if (conEntrega) {
+                    const repaA = a.repartidor
+                      ? a.repartidor
+                      : "zzz" +
+                        a.nombre.toLowerCase() +
+                        a.apellido.toLowerCase();
 
-                  if (nameA < nameB) {
-                    return -1;
-                  }
-                  if (nameA > nameB) {
-                    return 1;
-                  }
+                    const repaB = b.repartidor
+                      ? b.repartidor
+                      : "zzz" +
+                        b.nombre.toLowerCase() +
+                        b.apellido.toLowerCase();
 
-                  // names must be equal
-                  return 0;
+                    if (repaA < repaB) {
+                      return -1;
+                    }
+                    if (repaA > repaB) {
+                      return 1;
+                    }
+
+                    // names must be equal
+                    return 0;
+                  } else {
+                    var nameA =
+                      a.nombre.toLowerCase() + a.apellido.toLowerCase(); // ignore upper and lowercase
+                    var nameB =
+                      b.nombre.toLowerCase() + b.apellido.toLowerCase(); // ignore upper and lowercase
+
+                    if (nameA < nameB) {
+                      return -1;
+                    }
+                    if (nameA > nameB) {
+                      return 1;
+                    }
+
+                    // names must be equal
+                    return 0;
+                  }
                 }
               })
               .map((p) => {
@@ -379,13 +411,19 @@ class PedidosList extends Component {
                     )}
                   </td>
                   <td className="cell-icon">
+                    {conEntrega && (
+                      <React.Fragment>
+                        {p.repartidor && <b>{p.repartidor}</b>}
+                        {!p.repartidor && <FontAwesomeIcon icon={faTruck} />}
+                      </React.Fragment>
+                    )}
                     {sinEntrega && (
                       <React.Fragment>
                         {p.turno && <b>{p.turno.hora}</b>}
                         {!p.turno && <FontAwesomeIcon icon={faWalking} />}
                       </React.Fragment>
                     )}
-                    {!sinEntrega && (
+                    {!sinEntrega && !conEntrega && (
                       <React.Fragment>
                         {!p.conEntrega && <FontAwesomeIcon icon={faWalking} />}
                         {p.conEntrega && p.direccion && (

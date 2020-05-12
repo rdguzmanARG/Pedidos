@@ -189,7 +189,13 @@ class ProductoDetail extends Component {
                     .map((pedido, index) => (
                       <tr
                         key={index}
-                        className={pedido.entregado ? "bg-entregado" : ""}
+                        className={
+                          pedido.estado === 3
+                            ? "bg-entregado"
+                            : pedido.estado === 2
+                            ? "bg-listo"
+                            : ""
+                        }
                       >
                         <td>
                           <b>
