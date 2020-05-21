@@ -26,10 +26,7 @@ exports.sendEmails = (entrega, pedidos) => {
           idPedido: ped._id,
           nombre: ped.nombre,
           apellido: ped.apellido,
-          email:
-            ped.nombre.toLowerCase().indexOf("e") >= 0
-              ? "laura.grisolia@gmail.com"
-              : "ricardo.deguzman@gmail.com",
+          email: "ricardo.deguzman@gmail.com",
         };
       });
     }
@@ -52,7 +49,8 @@ SendAllEmails = function (transporter, pedidos, entrega) {
     var mailOptions = {
       from: process.env.EMAIL_SENDER,
       to: pe.email,
-      subject: "Nodo Temperley - Pedido",
+      subject:
+        "Nodo Temperley - Pedido - " + entrega.dia1Horarios.substr(0, 10),
       html: `
       <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
       <html xmlns="http://www.w3.org/1999/xhtml">
@@ -282,6 +280,7 @@ SendAllEmails = function (transporter, pedidos, entrega) {
                       <p>
                         <a href="mailto:">ricardo.deguzman@gmail.com</a>
                       </p>
+                      <p>No conteste este correo electrónico.</p>
                     </td>
                   </tr>
                 </table>
