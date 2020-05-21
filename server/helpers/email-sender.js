@@ -276,7 +276,7 @@ SendAllEmails = function (transporter, pedidos, entrega) {
                 <table>
                   <tr>
                     <td class="content footer" align="center">
-                      <p>© 2020 <a href="#">Diseñado por MrcGo</a>, 11-3208-9799</p>
+                      <p>© 2020 <a href="#">Diseñado por Aticus</a>, 11-3208-9799</p>
                       <p>
                         <a href="mailto:">ricardo.deguzman@gmail.com</a>
                       </p>

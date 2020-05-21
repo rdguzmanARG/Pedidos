@@ -5,7 +5,7 @@ export default function Footer(props) {
     <footer>
       <div class="container text-center mt-4">
         <span>
-          &copy; 2020 MRCGo <br></br>
+          &copy; 2020 Aticus <br></br>
           ricardo.deguzman@gmail.com
         </span>
       </div>

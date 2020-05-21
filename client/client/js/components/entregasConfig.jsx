@@ -134,6 +134,11 @@ class Inicio extends Component {
   };
 
   sendEmails = () => {
+    // Si se llamo de forma automatica lo anula
+    if (this.state.intervalId != null) {
+      clearInterval(this.state.intervalId);
+    }
+    // Envia los emails
     pedido_sendPendingEmails()
       .then((restan) => {
         //console.log(restan.data.procesado);
@@ -148,10 +153,12 @@ class Inicio extends Component {
             count: 0,
           });
         } else {
+          const intervalId = setInterval(this.sendEmails, 1000 * 7);
           this.setState({
             ...this.state,
             count: restan.data.restantes,
             errorMessage: null,
+            intervalId: intervalId,
           });
         }
       })
@@ -670,15 +677,6 @@ class Inicio extends Component {
                           }
                           onClick={() => {
                             this.sendEmails();
-                            const intervalId = setInterval(
-                              this.sendEmails,
-                              1000 * 6
-                            );
-                            this.setState({
-                              ...this.state,
-                              errorMessage: null,
-                              intervalId: intervalId,
-                            });
                           }}
                           class="btn btn-danger btn-pasos"
                         >
