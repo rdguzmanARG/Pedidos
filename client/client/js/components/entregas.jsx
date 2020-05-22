@@ -151,6 +151,9 @@ class Entregas extends Component {
                     <th className="d-none d-sm-table-cell cell-right">
                       Total Almacen
                     </th>
+                    <th className="d-none d-sm-table-cell cell-right">
+                      Varios
+                    </th>
                     <th className="cell-right">Total</th>
                   </tr>
                 </thead>
@@ -176,8 +179,16 @@ class Entregas extends Component {
                         <td className="d-none d-sm-table-cell cell-right">
                           ${p.totalAlmacen.toFixed(2)}
                         </td>
+                        <td className="d-none d-sm-table-cell cell-right">
+                          ${p.varios ? p.varios.toFixed(2) : "0.00"}
+                        </td>
                         <td className="cell-right">
-                          ${(p.totalEntrega + p.totalAlmacen).toFixed(2)}
+                          $
+                          {(
+                            p.totalEntrega +
+                            p.totalAlmacen +
+                            (p.varios ? p.varios : 0)
+                          ).toFixed(2)}
                         </td>
                       </tr>
                     ))}
