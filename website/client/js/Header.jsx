@@ -21,50 +21,50 @@ class Header extends React.Component {
   };
   render() {
     const banners = [
-      {
-        key: 1,
-        html: (
-          <div className="banner anabela-rey">
-            <img
-              src="/images/adds/anabela-rey.png"
-              className="carousel-item-image"
-            ></img>
-            <div className="carousel-caption">
-              <h5>Lic. Anabela M. Rey</h5>
-              <h6>
-                Psicóloga Clínica - Docente{" "}
-                <span className="d-none d-sm-inline">
-                  - M.N. 40466 M.P. 72216
-                </span>
-              </h6>
-              <span className="d-block d-sm-none">M.N. 40466 M.P. 72216</span>
-              <span className="d-none d-sm-block d-lg-none">
-                Adolescentes/Adultos/Adultos mayores
-              </span>
-              <div className="carousel-caption-row">
-                <span className="d-none d-lg-block">
-                  Adolescentes/Adultos/Adultos mayores -
-                </span>
-                <span className="d-none d-sm-block">
-                  Arancel diferencial PAMI
-                </span>
+      // {
+      //   key: 1,
+      //   html: (
+      //     <div className="banner anabela-rey">
+      //       <img
+      //         src="/images/adds/anabela-rey.png"
+      //         className="carousel-item-image"
+      //       ></img>
+      //       <div className="carousel-caption">
+      //         <h5>Lic. Anabela M. Rey</h5>
+      //         <h6>
+      //           Psicóloga Clínica - Docente{" "}
+      //           <span className="d-none d-sm-inline">
+      //             - M.N. 40466 M.P. 72216
+      //           </span>
+      //         </h6>
+      //         <span className="d-block d-sm-none">M.N. 40466 M.P. 72216</span>
+      //         <span className="d-none d-sm-block d-lg-none">
+      //           Adolescentes/Adultos/Adultos mayores
+      //         </span>
+      //         <div className="carousel-caption-row">
+      //           <span className="d-none d-lg-block">
+      //             Adolescentes/Adultos/Adultos mayores -
+      //           </span>
+      //           <span className="d-none d-sm-block">
+      //             Arancel diferencial PAMI
+      //           </span>
 
-                <a
-                  target="_blank"
-                  onClick={() => this.clickBanner("anabela-rey")}
-                  href="https://api.whatsapp.com/send?phone=+5491165703197"
-                >
-                  11 6570-3197
-                </a>
-                <img
-                  className="whatsapp-icon"
-                  src="/images/Icons/whatsapp.png"
-                ></img>
-              </div>
-            </div>
-          </div>
-        ),
-      },
+      //           <a
+      //             target="_blank"
+      //             onClick={() => this.clickBanner("anabela-rey")}
+      //             href="https://api.whatsapp.com/send?phone=+5491165703197"
+      //           >
+      //             11 6570-3197
+      //           </a>
+      //           <img
+      //             className="whatsapp-icon"
+      //             src="/images/Icons/whatsapp.png"
+      //           ></img>
+      //         </div>
+      //       </div>
+      //     </div>
+      //   ),
+      // },
       {
         key: 2,
         html: (
