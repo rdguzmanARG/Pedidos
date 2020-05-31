@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { producto_getAll } from "../services/productoService";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit } from "@fortawesome/free-solid-svg-icons";
+import removeAccents from "../Utils/helpers";
 
 class ProductosList extends Component {
   state = {
@@ -33,7 +34,9 @@ class ProductosList extends Component {
 
     const resultado = productos.filter(
       (f) =>
-        f.nombre.toLowerCase().includes(this.props.filter.text.toLowerCase()) &&
+        removeAccents(f.nombre).includes(
+          removeAccents(this.props.filter.text)
+        ) &&
         (!this.props.filter.soloPedidos || f.cantidad > 0)
     );
 
@@ -84,8 +87,8 @@ class ProductosList extends Component {
           <tbody>
             {resultado
               .sort((a, b) => {
-                var nameA = a.nombre.toLowerCase(); // ignore upper and lowercase
-                var nameB = b.nombre.toLowerCase(); // ignore upper and lowercase
+                var nameA = removeAccents(a.nombre); // ignore upper and lowercase
+                var nameB = removeAccents(b.nombre); // ignore upper and lowercase
                 if (nameA < nameB) {
                   return -1;
                 }

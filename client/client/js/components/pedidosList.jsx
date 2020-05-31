@@ -16,6 +16,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
 import Moment from "react-moment";
+import removeAccents from "../Utils/helpers";
 
 class PedidosList extends Component {
   state = {
@@ -159,8 +160,9 @@ class PedidosList extends Component {
     const pedidosFilteres = pedidos
       .filter(
         (f) =>
-          f.nombre.toLowerCase().includes(text.toLowerCase()) ||
-          f.apellido.toLowerCase().includes(text.toLowerCase()) ||
+          removeAccents(f.nombre + " " + f.apellido).includes(
+            removeAccents(text)
+          ) ||
           (text === "*" && f.comentarios)
       )
       .filter((f) => !pendientes || f.estado !== 3)
@@ -303,13 +305,17 @@ class PedidosList extends Component {
                 } else {
                   if (conEntrega) {
                     const repaA = a.repartidor
-                      ? a.repartidor
+                      ? a.repartidor +
+                        a.nombre.toLowerCase() +
+                        a.apellido.toLowerCase()
                       : "zzz" +
                         a.nombre.toLowerCase() +
                         a.apellido.toLowerCase();
 
                     const repaB = b.repartidor
-                      ? b.repartidor
+                      ? b.repartidor +
+                        b.nombre.toLowerCase() +
+                        b.apellido.toLowerCase()
                       : "zzz" +
                         b.nombre.toLowerCase() +
                         b.apellido.toLowerCase();
