@@ -163,7 +163,7 @@ class PedidosList extends Component {
           removeAccents(f.nombre + " " + f.apellido).includes(
             removeAccents(text)
           ) ||
-          (text === "*" && f.comentarios)
+          (text === "*" && (f.comentarios || f.comentarioInterno))
       )
       .filter((f) => !pendientes || f.estado !== 3)
       .filter((f) => !conEntrega || f.conEntrega)
@@ -386,6 +386,7 @@ class PedidosList extends Component {
                     <b className="mr-1">
                       {p.nombre}, {p.apellido}
                     </b>
+                    {(p.comentarios || p.comentarioInterno) && <span>(*)</span>}
                     {p.emailEnviado > 1 && (
                       <FontAwesomeIcon
                         icon={faEnvelope}

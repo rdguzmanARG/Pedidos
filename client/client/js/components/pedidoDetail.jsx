@@ -32,6 +32,8 @@ class PedidoDetail extends Component {
     totalAlmacen: 0,
     direccion: "",
     direccionDetalle: "",
+    celular: "",
+    comentarioInterno: "",
     repartidor: "",
     varios: null,
     pressEntregado: false,
@@ -69,7 +71,9 @@ class PedidoDetail extends Component {
                 totalPedidos,
                 direccion: pedido.direccion,
                 direccionDetalle: pedido.direccionDetalle,
+                celular: pedido.celular,
                 repartidor: pedido.repartidor,
+                comentarioInterno: pedido.comentarioInterno,
                 varios: pedido.varios,
                 totalAlmacen,
                 isLoading: false,
@@ -181,7 +185,9 @@ class PedidoDetail extends Component {
     pedido_update(pedido._id, {
       direccion: this.state.direccion,
       direccionDetalle: this.state.direccionDetalle,
+      celular: this.state.celular,
       repartidor: this.state.repartidor,
+      comentarioInterno: this.state.comentarioInterno,
     })
       .then(({ data: updatePedido }) => {
         this.setState({
@@ -189,7 +195,9 @@ class PedidoDetail extends Component {
           pedido: updatePedido,
           direccion: updatePedido.direccion,
           direccionDetalle: updatePedido.direccionDetalle,
+          celular: updatePedido.celular,
           repartidor: updatePedido.repartidor,
+          comentarioInterno: updatePedido.comentarioInterno,
           isLoading: false,
         });
         scroller.scrollTo("mapaId", {
@@ -353,11 +361,6 @@ class PedidoDetail extends Component {
                     <b>{moment(pedido.date).format("DD/MM HH:mm")}</b>
                   </div>
                 )}
-                {pedido.celular && (
-                  <div>
-                    Teléfono: <b>{pedido.celular}</b>
-                  </div>
-                )}
                 {pedido.email && (
                   <div>
                     Email: <b>{pedido.email}</b>
@@ -376,6 +379,16 @@ class PedidoDetail extends Component {
                 <div>
                   Entrega a domicilio: <b>{pedido.conEntrega ? "Si" : "No"}</b>{" "}
                 </div>
+                {pedido.comentarios && (
+                  <div>
+                    Comentarios: <b>{pedido.comentarios}</b>{" "}
+                  </div>
+                )}
+                {!pedido.conEntrega && !pedido.turno && (
+                  <div>
+                    Horario: <b>Sin reservar</b>{" "}
+                  </div>
+                )}
               </div>
               <div className="col-md-6 map-position">
                 {pedido.turno && (
@@ -392,16 +405,14 @@ class PedidoDetail extends Component {
                     </div>
                   </div>
                 )}
-                {!pedido.conEntrega && !pedido.turno && (
-                  <div className="">
-                    <div className="pedido-detail--title">
-                      Falta reservar horario de retiro
-                    </div>
-                  </div>
-                )}
                 {pedido.conEntrega && (
                   <div className="pedido-detail--title text-left">
                     Datos para el envio
+                  </div>
+                )}
+                {!pedido.conEntrega && (
+                  <div className="pedido-detail--title text-left">
+                    Datos de contacto
                   </div>
                 )}
                 <Element name="mapaId"></Element>
@@ -445,24 +456,54 @@ class PedidoDetail extends Component {
                         onChange={(e) =>
                           this.setState({
                             ...this.state,
-                            repartidor: e.target.value.toUpperCase(),
+                            repartidor: e.target.value
+                              .substr(0, 5)
+                              .toUpperCase(),
                           })
                         }
                       ></input>
                     </div>
-                    <div className="pedido-detail--edicion">
-                      <button
-                        disabled={entregaEstado !== "INI"}
-                        title="Actualizar datos"
-                        onClick={() => this.updateDireccion()}
-                        class="btn btn-info"
-                      >
-                        Actualizar
-                        <FontAwesomeIcon icon={faEdit} />
-                      </button>
-                    </div>
                   </React.Fragment>
                 )}
+                <div className="pedido-detail--edicion">
+                  <label>Teléfono:</label>
+                  <input
+                    disabled={entregaEstado !== "INI"}
+                    className="form-control"
+                    defaultValue={pedido.celular}
+                    onChange={(e) =>
+                      this.setState({
+                        ...this.state,
+                        celular: e.target.value,
+                      })
+                    }
+                  ></input>
+                </div>
+                <div className="pedido-detail--edicion">
+                  <label>Comentarios internos:</label>
+                  <textarea
+                    disabled={entregaEstado !== "INI"}
+                    className="form-control"
+                    defaultValue={pedido.comentarioInterno}
+                    onChange={(e) =>
+                      this.setState({
+                        ...this.state,
+                        comentarioInterno: e.target.value,
+                      })
+                    }
+                  ></textarea>
+                </div>
+                <div className="pedido-detail--edicion">
+                  <button
+                    disabled={entregaEstado !== "INI"}
+                    title="Actualizar datos"
+                    onClick={() => this.updateDireccion()}
+                    class="btn btn-info"
+                  >
+                    Actualizar
+                    <FontAwesomeIcon icon={faEdit} />
+                  </button>
+                </div>
 
                 {pedido.conEntrega && pedido.direccion && (
                   <iframe
@@ -475,11 +516,6 @@ class PedidoDetail extends Component {
                     }
                     allowFullScreen
                   ></iframe>
-                )}
-                {pedido.comentarios && (
-                  <div>
-                    Comentarios: <b>{pedido.comentarios}</b>{" "}
-                  </div>
                 )}
               </div>
             </div>

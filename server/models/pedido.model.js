@@ -29,6 +29,9 @@ const schema = mongoose.Schema(
     repartidor: {
       type: String,
     },
+    comentarioInterno: {
+      type: String,
+    },
     conEntrega: {
       type: Boolean,
     },

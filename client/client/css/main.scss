@@ -243,8 +243,13 @@ footer {
     justify-content: left;
     label {
       margin: 0;
-      width: 110px;
+      width: 170px;
       text-align: left;
+      @media (max-width: 620px) {
+        width: 100%;
+        flex-direction: column;
+        align-items: flex-start;
+      }
     }
     input {
       margin: 5px 0;
