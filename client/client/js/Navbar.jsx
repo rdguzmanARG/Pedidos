@@ -63,6 +63,17 @@ class Navbar extends React.Component {
                     </li>
                   )}
                   {(user.isAdmin || user.isAdminPed) && (
+                    <li className="nav-item">
+                      <NavLink
+                        className="nav-link"
+                        onClick={this.changeSelection}
+                        to="/recetas"
+                      >
+                        Recetas
+                      </NavLink>
+                    </li>
+                  )}
+                  {(user.isAdmin || user.isAdminPed) && (
                     <li class="nav-item dropdown">
                       <a
                         class="nav-link dropdown-toggle"

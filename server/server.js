@@ -5,6 +5,7 @@ const morgan = require("morgan");
 
 const pedidosRoutes = require("./routes/pedidos");
 const productosRoutes = require("./routes/productos");
+const recetasRoutes = require("./routes/recetas");
 const usersRoutes = require("./routes/users");
 const entregasRoutes = require("./routes/entregas");
 const contactosRoutes = require("./routes/contactos");
@@ -30,6 +31,7 @@ mongoose
     console.log("MongoDB database connection established successfully.");
     app.use("/api/pedidos", pedidosRoutes);
     app.use("/api/productos", productosRoutes);
+    app.use("/api/recetas", recetasRoutes);
     app.use("/api/users", usersRoutes);
     app.use("/api/entregas", entregasRoutes);
     app.use("/api/contactos", contactosRoutes);

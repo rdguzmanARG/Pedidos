@@ -13,6 +13,8 @@ import PedidosList from "./components/pedidosList";
 import PedidoDetail from "./components/pedidoDetail";
 import ProductosList from "./components/productosList";
 import ProductoDetail from "./components/productoDetail";
+import Recetas from "./components/recetasList";
+import RecetaDetail from "./components/recetaDetail";
 import EntregasConfig from "./components/entregasConfig";
 import Entregas from "./components/entregas";
 import Contactos from "./components/contactos";
@@ -30,6 +32,7 @@ class App extends Component {
     filterPedidosConEntrega: false,
     filterPedidosSinEntrega: false,
     filterProductos: "",
+    filterRecetas: "",
     filterProductosPedidos: false,
     hasError: "",
     isLoading: true,
@@ -73,6 +76,10 @@ class App extends Component {
     } else {
       this.setState({ ...this.state, filterProductos });
     }
+  };
+
+  ChangeFilterRecetas = (filterRecetas) => {
+    this.setState({ ...this.state, filterRecetas });
   };
 
   SetGlobalError = (status) => {
@@ -208,6 +215,55 @@ class App extends Component {
                       onChangeFilter={this.ChangeFilterProductos}
                       {...props}
                     ></ProductosList>
+                  );
+                }}
+              />
+              <Route
+                path="/recetas/:verb/:id"
+                render={(props) => {
+                  if (!user) return <Redirect to="/login"></Redirect>;
+                  if (!user.isAdmin && !user.isAdminPed)
+                    return <Redirect to="/404"></Redirect>;
+                  return (
+                    <RecetaDetail
+                      onGlobalError={this.SetGlobalError}
+                      user={user}
+                      {...props}
+                    ></RecetaDetail>
+                  );
+                }}
+              />              
+              <Route
+                path="/recetas/:verb"
+                render={(props) => {
+                  if (!user) return <Redirect to="/login"></Redirect>;
+                  if (!user.isAdmin && !user.isAdminPed)
+                    return <Redirect to="/404"></Redirect>;
+                  return (
+                    <RecetaDetail
+                      onGlobalError={this.SetGlobalError}
+                      user={user}
+                      {...props}
+                    ></RecetaDetail>
+                  );
+                }}
+              />              
+
+              <Route
+                path="/recetas"
+                render={(props) => {
+                  if (!user) return <Redirect to="/login"></Redirect>;
+                  if (!user.isAdmin && !user.isAdminPed)
+                    return <Redirect to="/404"></Redirect>;
+                  return (
+                    <Recetas
+                      onGlobalError={this.SetGlobalError}
+                      {...props}
+                      filter={{
+                        text: this.state.filterRecetas,
+                      }}
+                      onChangeFilter={this.ChangeFilterRecetas}
+                    ></Recetas>
                   );
                 }}
               />

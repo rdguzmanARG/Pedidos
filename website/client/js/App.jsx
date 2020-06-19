@@ -4,6 +4,7 @@ import Header from "./Header";
 import Inicio from "./components/inicio";
 import Form from "./components/form";
 import Contact from "./components/contact";
+import Recetas from "./components/recetas";
 import QuienesSomos from "./components/quienes-somos";
 import MiPedido from "./components/mi-pedido";
 import Footer from "./Footer";
@@ -35,6 +36,12 @@ class App extends Component {
               return <MiPedido {...props}></MiPedido>;
             }}
           />
+          <Route
+            path="/recetas"
+            render={(props) => {
+              return <Recetas></Recetas>;
+            }}
+          />          
           <Route
             path="/contactos"
             render={(props) => {
