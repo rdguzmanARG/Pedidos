@@ -36,6 +36,12 @@ class RecetaDetail extends Component {
                     "html"
                   )
                 : RichTextEditor.createEmptyValue(),
+              preparacion: resReceta.data.preparacion
+                ? RichTextEditor.createValueFromString(
+                    resReceta.data.preparacion,
+                    "html"
+                  )
+                : RichTextEditor.createEmptyValue(),
               isLoading: false,
               verb,
             });
@@ -52,6 +58,7 @@ class RecetaDetail extends Component {
     } else {
       this.setState({
         ingredientes: RichTextEditor.createEmptyValue(),
+        preparacion: RichTextEditor.createEmptyValue(),
         isLoading: false,
         verb,
       });
@@ -120,7 +127,7 @@ class RecetaDetail extends Component {
         { label: "OL", style: "ordered-list-item" },
       ],
     };
-    const { verb, receta, isLoading, ingredientes } = this.state;
+    const { verb, receta, isLoading, ingredientes, preparacion } = this.state;
     const { user } = this.props;
     if (isLoading) {
       return (
@@ -154,10 +161,21 @@ class RecetaDetail extends Component {
                 <RichTextEditor
                   readOnly={verb === "eliminar"}
                   value={ingredientes}
+                  name="ingredientes"
                   onChange={(value) => this.onChangeRtf("ingredientes", value)}
                   toolbarConfig={toolbarConfig}
                 />
               </div>
+              <div className="form-group">
+                <label for="exampleInputEmail1">Preparación</label>
+                <RichTextEditor
+                  readOnly={verb === "eliminar"}
+                  value={preparacion}
+                  name="preparacion"
+                  onChange={(value) => this.onChangeRtf("preparacion", value)}
+                  toolbarConfig={toolbarConfig}
+                />
+              </div>              
               <button
                 type="submit"
                 className="btn btn-success"

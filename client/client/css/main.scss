@@ -211,7 +211,12 @@ footer {
 
 // Recetas de cocina
 .recetas-list{
-  
+  table{
+    margin-top: 10px;
+    tr td {
+      vertical-align: middle;
+  }
+  }
 }
 
 // Listado de Productos

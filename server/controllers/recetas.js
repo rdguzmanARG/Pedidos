@@ -17,7 +17,8 @@ exports.recetas_create_receta = (req, res) => {
   const receta = new Receta({
     _id: new mongoose.Types.ObjectId(),
     nombre: req.body.nombre,
-    ingredientes: req.body.ingredientes
+    ingredientes: req.body.ingredientes,
+    preparacion: req.body.preparacion
   });
   receta.save()
     .then((result) =>

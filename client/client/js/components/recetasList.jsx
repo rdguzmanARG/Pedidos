@@ -60,11 +60,11 @@ class RecetasList extends Component {
             Nueva
           </button>
         </Link>
-        <table className="table table-striped table-sm table-productos">
+        <table className="table table-striped table-sm">
           <thead className="thead-dark">
             <tr>
               <th>Nombre</th>
-              <th className="cell-icon"></th>
+              <th className="cell-icon text-right"></th>
             </tr>
           </thead>
           <tbody>
@@ -84,7 +84,7 @@ class RecetasList extends Component {
               .map((p) => (
                 <tr key={p._id} className={p.anulado ? "bg-danger" : ""}>
                   <td>{p.nombre}</td>
-                  <td className="cell-icon">
+                  <td className="cell-icon text-right">
                     <Link to={`/recetas/modificar/${p._id}`} title="Modificar">
                       <button type="button" class="btn btn-primary">
                         <FontAwesomeIcon icon={faEdit} />

@@ -9,7 +9,10 @@ const schema = mongoose.Schema(
     },
     ingredientes: {
       type: String,
-    }    
+    },
+    preparacion: {
+      type: String,
+    }  
   },
   {
     timestamps: true,
