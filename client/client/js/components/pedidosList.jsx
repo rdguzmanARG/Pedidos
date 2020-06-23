@@ -16,7 +16,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
 import Moment from "react-moment";
-import removeAccents from "../Utils/helpers";
+import { removeAccents } from "../Utils/helpers";
 
 class PedidosList extends Component {
   state = {

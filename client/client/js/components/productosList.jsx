@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { producto_getAll } from "../services/productoService";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit } from "@fortawesome/free-solid-svg-icons";
-import removeAccents from "../Utils/helpers";
+import { removeAccents } from "../Utils/helpers";
 
 class ProductosList extends Component {
   state = {

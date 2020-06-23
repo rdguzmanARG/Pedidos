@@ -217,17 +217,38 @@ footer {
       vertical-align: middle;
     }
     td {
-      &.col-image{
+      &.col-image {
         width: 200px;
       }
       img.image {
         width: 100%;
         max-width: 200px;
       }
-    }    
+    }
   }
 }
-
+.receta-detail {
+  img.image {
+    margin: 0 10px 0 0;
+    @media (max-width: 620px) {
+      width: 100%;
+      margin: 10px 0;
+    }
+  }
+  .media-upload {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    @media (max-width: 620px) {
+      flex-direction: column;
+    }
+  }
+  .media-upload-buttons {
+    button{
+      margin-right: 10px;
+    }
+  }
+}
 // Listado de Productos
 .productos-list {
   .form-check-input {
@@ -247,7 +268,6 @@ footer {
         width: 44px;
       }
     }
-
   }
 }
 // Detalle del pedido

@@ -5,6 +5,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUndo } from "@fortawesome/free-solid-svg-icons";
 import { faEdit } from "@fortawesome/free-solid-svg-icons";
 import RichTextEditor from "react-rte";
+import { getErrorMessage } from "../Utils/helpers";
+import { faImage, faWindowClose } from "@fortawesome/free-solid-svg-icons";
 import {
   receta_get,
   receta_create,
@@ -21,6 +23,7 @@ class RecetaDetail extends Component {
     selectedFile: null,
     deleteImage: false,
     imagePreviewUrl: null,
+    errorMessage: null,
   };
 
   componentDidMount() {
@@ -101,6 +104,7 @@ class RecetaDetail extends Component {
 
     reader.readAsDataURL(file);
   };
+
   fileDeletedHandler = (event) => {
     event.preventDefault();
     this.setState({
@@ -112,6 +116,7 @@ class RecetaDetail extends Component {
   };
 
   submitForm = (e) => {
+    this.setState({ ...this.state, isLoading: true });
     e.preventDefault();
 
     const {
@@ -121,34 +126,76 @@ class RecetaDetail extends Component {
       deleteImage,
       imagePreviewUrl,
     } = this.state;
+
     const fd = new FormData();
     if (selectedFile) {
       fd.append("newimage", selectedFile, selectedFile.name);
     }
     fd.set("nombre", receta.nombre);
+    fd.set("descripcion", receta.descripcion ? receta.descripcion : "");
     fd.set("ingredientes", receta.ingredientes ? receta.ingredientes : "");
     fd.set("preparacion", receta.preparacion ? receta.preparacion : "");
     fd.set("image", receta.image ? receta.image : "");
     fd.set("deleteImage", deleteImage);
 
     if (verb == "agregar") {
-      receta_create(fd).then((res) => {
-        if (res.status === 201) {
-          this.props.history.push("/recetas");
-        }
-      });
+      // Agrega una nueva receta
+      receta_create(fd)
+        .then((res) => {
+          if (res.status === 201) {
+            this.props.history.push("/recetas");
+          }
+        })
+        .catch((ex) => {
+          if (ex.response && ex.response.status === 401) {
+            auth.logout();
+            window.location = "/login";
+          } else {
+            this.setState({
+              ...this.state,
+              errorMessage: getErrorMessage(ex),
+              isLoading: false,
+            });
+          }
+        });
     } else if (verb == "eliminar") {
-      receta_delete(receta._id).then((res) => {
-        if (res.status === 200) {
-          this.props.history.push("/recetas");
-        }
-      });
+      receta_delete(receta._id)
+        .then((res) => {
+          if (res.status === 200) {
+            this.props.history.push("/recetas");
+          }
+        })
+        .catch((ex) => {
+          if (ex.response && ex.response.status === 401) {
+            auth.logout();
+            window.location = "/login";
+          } else {
+            this.setState({
+              ...this.state,
+              errorMessage: getErrorMessage(ex),
+              isLoading: false,
+            });
+          }
+        });
     } else {
-      receta_update(receta._id, fd).then((res) => {
-        if (res.status === 200) {
-          this.props.history.push("/recetas");
-        }
-      });
+      receta_update(receta._id, fd)
+        .then((res) => {
+          if (res.status === 200) {
+            this.props.history.push("/recetas");
+          }
+        })
+        .catch((ex) => {
+          if (ex.response && ex.response.status === 401) {
+            auth.logout();
+            window.location = "/login";
+          } else {
+            this.setState({
+              ...this.state,
+              errorMessage: getErrorMessage(ex),
+              isLoading: false,
+            });
+          }
+        });
     }
   };
 
@@ -179,6 +226,7 @@ class RecetaDetail extends Component {
       preparacion,
       deleteImage,
       imagePreviewUrl,
+      errorMessage,
     } = this.state;
     const { user } = this.props;
     if (isLoading) {
@@ -209,6 +257,17 @@ class RecetaDetail extends Component {
                 />
               </div>
               <div className="form-group">
+                <label for="exampleInputEmail1">Descripción</label>
+                <textarea
+                  type="text"
+                  className="form-control"
+                  name="descripcion"
+                  readOnly={verb === "eliminar"}
+                  value={receta.descripcion}
+                  onChange={this.onFieldChange}
+                />
+              </div>
+              <div className="form-group">
                 <label for="exampleInputEmail1">Ingredientes</label>
                 <RichTextEditor
                   readOnly={verb === "eliminar"}
@@ -228,47 +287,65 @@ class RecetaDetail extends Component {
                   toolbarConfig={toolbarConfig}
                 />
               </div>
-              <div className="form-group">
+              <input
+                style={{ display: "none" }}
+                type="file"
+                name="newimage"
+                onChange={this.fileSelectedHandler}
+                ref={(fileInput) => (this.fileInput = fileInput)}
+              ></input>
+              <label for="exampleInputEmail1">Imagen:</label>
+              <div className="form-group media-upload">
+                {verb !== "eliminar" && (
+                  <div className="media-upload-buttons">
+                    <button
+                      type="button"
+                      className="btn btn-primary"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        this.fileInput.click();
+                      }}
+                    >
+                      Subir <FontAwesomeIcon icon={faImage} />
+                    </button>
+                    {!deleteImage && (receta.image || imagePreviewUrl) && (
+                      <button
+                        type="button"
+                        className="btn btn-danger"
+                        onClick={this.fileDeletedHandler}
+                      >
+                        Borrar <FontAwesomeIcon icon={faWindowClose} />
+                      </button>
+                    )}
+                  </div>
+                )}
+
                 {!imagePreviewUrl && receta.image && !deleteImage && (
                   <img
                     width="200"
-                    className="image mr-2"
+                    className="image"
                     src={process.env.BACKEND_URL + "/" + receta.image}
                   ></img>
                 )}
                 {imagePreviewUrl && (
                   <img
                     width="200"
-                    className="image mr-2"
+                    className="image"
                     src={imagePreviewUrl}
                   ></img>
                 )}
-
-                <input
-                  style={{ display: "none" }}
-                  type="file"
-                  name="newimage"
-                  onChange={this.fileSelectedHandler}
-                  ref={(fileInput) => (this.fileInput = fileInput)}
-                ></input>
-                {verb !== "eliminar" && (
-                  <React.Fragment>
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        this.fileInput.click();
-                      }}
-                    >
-                      Subir imagen
-                    </button>
-                    {!deleteImage && (receta.image || imagePreviewUrl) && (
-                      <button onClick={this.fileDeletedHandler}>
-                        Borrar Imagen
-                      </button>
-                    )}
-                  </React.Fragment>
+                {((!imagePreviewUrl && !receta.image) || deleteImage) && (
+                  <img
+                    width="200"
+                    className="image"
+                    src="/images/icons/no-image.png"
+                  ></img>
                 )}
               </div>
+
+              {errorMessage && (
+                <div className="alert alert-danger">{errorMessage}</div>
+              )}
               <button
                 type="submit"
                 className="btn btn-success"

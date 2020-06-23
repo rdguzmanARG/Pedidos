@@ -1,4 +1,4 @@
-export default function removeAccents(str) {
+export function removeAccents(str) {
   var accents =
     "ÀÁÂÃÄÅàáâãäåÒÓÔÕÕÖØòóôõöøÈÉÊËèéêëðÇçÐÌÍÎÏìíîïÙÚÛÜùúûüÑñŠšŸÿýŽž";
   var accentsOut =
@@ -12,4 +12,18 @@ export default function removeAccents(str) {
     }
   }
   return str.join("").toLowerCase();
+}
+
+export function getErrorMessage(ex) {
+  if (ex && ex.response && ex.response.data && ex.response.data.error) {
+    return ex.response.data.error.message;
+  } else {
+    if (ex && ex.message) {
+      return ex.message
+    } else {
+      return "Error inesperado, vuelva a intentar más tarde."
+    }
+  }
+
+
 }

@@ -3,8 +3,12 @@ import Loader from "react-loader-spinner";
 import { Link } from "react-router-dom";
 import { recetas_getAll } from "../services/recetaService";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit } from "@fortawesome/free-solid-svg-icons";
-import removeAccents from "../Utils/helpers";
+import {
+  faEdit,
+  faWindowClose,
+  faPlus,
+} from "@fortawesome/free-solid-svg-icons";
+import { removeAccents } from "../Utils/helpers";
 
 class RecetasList extends Component {
   state = {
@@ -32,8 +36,14 @@ class RecetasList extends Component {
   render() {
     const { recetas, isLoading } = this.state;
 
-    const resultados = recetas.filter((f) =>
-      removeAccents(f.nombre).includes(removeAccents(this.props.filter.text))
+    const resultados = recetas.filter(
+      (f) =>
+        removeAccents(f.nombre).includes(
+          removeAccents(this.props.filter.text)
+        ) ||
+        removeAccents(f.descripcion).includes(
+          removeAccents(this.props.filter.text)
+        )
     );
 
     if (isLoading) {
@@ -57,7 +67,7 @@ class RecetasList extends Component {
 
         <Link to={`/recetas/agregar/`}>
           <button title="Agregar receta" className="btn btn-success">
-            Nueva
+            <FontAwesomeIcon icon={faPlus} /> Agregar receta
           </button>
         </Link>
         <table className="table table-striped table-sm">
@@ -86,7 +96,16 @@ class RecetasList extends Component {
                 <tr key={p._id} className={p.anulado ? "bg-danger" : ""}>
                   <td className="col-image">
                     {p.image && (
-                      <img className="image" src={process.env.BACKEND_URL + "/" + p.image}></img>
+                      <img
+                        className="image"
+                        src={process.env.BACKEND_URL + "/" + p.image}
+                      ></img>
+                    )}
+                    {!p.image && (
+                      <img
+                        className="image"
+                        src="/images/icons/no-image.png"
+                      ></img>
                     )}
                   </td>
                   <td>{p.nombre}</td>
@@ -96,9 +115,9 @@ class RecetasList extends Component {
                         <FontAwesomeIcon icon={faEdit} />
                       </button>
                     </Link>
-                    <Link to={`/recetas/eliminar/${p._id}`} title="Modificar">
+                    <Link to={`/recetas/eliminar/${p._id}`} title="Eliminar">
                       <button type="button" class="btn btn-danger ml-1">
-                        <FontAwesomeIcon icon={faEdit} />
+                        <FontAwesomeIcon icon={faWindowClose} />
                       </button>
                     </Link>
                   </td>
