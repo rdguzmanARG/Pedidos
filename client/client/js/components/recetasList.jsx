@@ -96,10 +96,9 @@ class RecetasList extends Component {
                 <tr key={p._id} className={p.anulado ? "bg-danger" : ""}>
                   <td className="col-image">
                     {p.image && (
-                      <img
+                      <div style={{backgroundImage:"URL(" + process.env.BACKEND_URL + "/" + p.image +")", opacity:1}}
                         className="image"
-                        src={process.env.BACKEND_URL + "/" + p.image}
-                      ></img>
+                      ></div>
                     )}
                     {!p.image && (
                       <img
@@ -111,7 +110,7 @@ class RecetasList extends Component {
                   <td>{p.nombre}</td>
                   <td className="cell-icon text-right">
                     <Link to={`/recetas/modificar/${p._id}`} title="Modificar">
-                      <button type="button" class="btn btn-primary">
+                      <button type="button" class="btn btn-primary ml-1">
                         <FontAwesomeIcon icon={faEdit} />
                       </button>
                     </Link>

@@ -316,25 +316,36 @@ class RecetaDetail extends Component {
                 )}
 
                 {!imagePreviewUrl && receta.image && !deleteImage && (
-                  <img
-                    width="200"
+                  <div
+                    style={{
+                      backgroundImage:
+                        "URL(" +
+                        process.env.BACKEND_URL +
+                        "/" +
+                        receta.image +
+                        ")",
+                      opacity: 1,
+                    }}
                     className="image"
-                    src={process.env.BACKEND_URL + "/" + receta.image}
-                  ></img>
+                  ></div>
                 )}
                 {imagePreviewUrl && (
-                  <img
-                    width="200"
+                  <div
+                    style={{
+                      backgroundImage: "URL(" + imagePreviewUrl + ")",
+                      opacity: 1,
+                    }}
                     className="image"
-                    src={imagePreviewUrl}
-                  ></img>
+                  ></div>
                 )}
                 {((!imagePreviewUrl && !receta.image) || deleteImage) && (
-                  <img
-                    width="200"
+                  <div
+                    style={{
+                      backgroundImage: "URL(/images/icons/no-image.png)",
+                      opacity: 1,
+                    }}
                     className="image"
-                    src="/images/icons/no-image.png"
-                  ></img>
+                  ></div>
                 )}
               </div>
 

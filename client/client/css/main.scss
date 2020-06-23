@@ -215,25 +215,38 @@ footer {
     margin-top: 10px;
     tr td {
       vertical-align: middle;
+      button {
+        width: 45px;
+      }
     }
     td {
       &.col-image {
         width: 200px;
       }
-      img.image {
-        width: 100%;
-        max-width: 200px;
+      .image {
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        display: block;
+        height: 150px;
       }
     }
   }
 }
 .receta-detail {
-  img.image {
-    margin: 0 10px 0 0;
+  .image {
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-color: #e4e4e4;
+    display: block;
+    height: 200px;
+    width: 200px;
+    margin-right: 10px;
     @media (max-width: 620px) {
+      margin:10px 0;
       width: 100%;
-      margin: 10px 0;
-    }
+    }    
   }
   .media-upload {
     display: flex;
@@ -245,7 +258,7 @@ footer {
   }
   .media-upload-buttons {
     button {
-      margin-right: 10px;
+      margin-right: 5px;
     }
   }
 }
