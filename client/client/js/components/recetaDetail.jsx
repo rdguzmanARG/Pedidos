@@ -18,6 +18,9 @@ class RecetaDetail extends Component {
     isLoading: true,
     receta: {},
     verb: "",
+    selectedFile: null,
+    deleteImage: false,
+    imagePreviewUrl: null,
   };
 
   componentDidMount() {
@@ -84,11 +87,52 @@ class RecetaDetail extends Component {
     });
   };
 
+  fileSelectedHandler = (event) => {
+    const file = event.target.files[0];
+    let reader = new FileReader();
+    reader.onloadend = () => {
+      this.setState({
+        ...this.state,
+        selectedFile: file,
+        deleteImage: false,
+        imagePreviewUrl: reader.result,
+      });
+    };
+
+    reader.readAsDataURL(file);
+  };
+  fileDeletedHandler = (event) => {
+    event.preventDefault();
+    this.setState({
+      ...this.state,
+      selectedFile: null,
+      imagePreviewUrl: null,
+      deleteImage: true,
+    });
+  };
+
   submitForm = (e) => {
-    const { verb, receta } = this.state;
     e.preventDefault();
+
+    const {
+      verb,
+      receta,
+      selectedFile,
+      deleteImage,
+      imagePreviewUrl,
+    } = this.state;
+    const fd = new FormData();
+    if (selectedFile) {
+      fd.append("newimage", selectedFile, selectedFile.name);
+    }
+    fd.set("nombre", receta.nombre);
+    fd.set("ingredientes", receta.ingredientes ? receta.ingredientes : "");
+    fd.set("preparacion", receta.preparacion ? receta.preparacion : "");
+    fd.set("image", receta.image ? receta.image : "");
+    fd.set("deleteImage", deleteImage);
+
     if (verb == "agregar") {
-      receta_create(receta).then((res) => {
+      receta_create(fd).then((res) => {
         if (res.status === 201) {
           this.props.history.push("/recetas");
         }
@@ -100,7 +144,7 @@ class RecetaDetail extends Component {
         }
       });
     } else {
-      receta_update(receta._id, receta).then((res) => {
+      receta_update(receta._id, fd).then((res) => {
         if (res.status === 200) {
           this.props.history.push("/recetas");
         }
@@ -127,7 +171,15 @@ class RecetaDetail extends Component {
         { label: "OL", style: "ordered-list-item" },
       ],
     };
-    const { verb, receta, isLoading, ingredientes, preparacion } = this.state;
+    const {
+      verb,
+      receta,
+      isLoading,
+      ingredientes,
+      preparacion,
+      deleteImage,
+      imagePreviewUrl,
+    } = this.state;
     const { user } = this.props;
     if (isLoading) {
       return (
@@ -175,7 +227,48 @@ class RecetaDetail extends Component {
                   onChange={(value) => this.onChangeRtf("preparacion", value)}
                   toolbarConfig={toolbarConfig}
                 />
-              </div>              
+              </div>
+              <div className="form-group">
+                {!imagePreviewUrl && receta.image && !deleteImage && (
+                  <img
+                    width="200"
+                    className="image mr-2"
+                    src={process.env.BACKEND_URL + "/" + receta.image}
+                  ></img>
+                )}
+                {imagePreviewUrl && (
+                  <img
+                    width="200"
+                    className="image mr-2"
+                    src={imagePreviewUrl}
+                  ></img>
+                )}
+
+                <input
+                  style={{ display: "none" }}
+                  type="file"
+                  name="newimage"
+                  onChange={this.fileSelectedHandler}
+                  ref={(fileInput) => (this.fileInput = fileInput)}
+                ></input>
+                {verb !== "eliminar" && (
+                  <React.Fragment>
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        this.fileInput.click();
+                      }}
+                    >
+                      Subir imagen
+                    </button>
+                    {!deleteImage && (receta.image || imagePreviewUrl) && (
+                      <button onClick={this.fileDeletedHandler}>
+                        Borrar Imagen
+                      </button>
+                    )}
+                  </React.Fragment>
+                )}
+              </div>
               <button
                 type="submit"
                 className="btn btn-success"

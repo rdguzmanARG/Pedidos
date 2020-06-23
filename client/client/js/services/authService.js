@@ -1,7 +1,7 @@
 import http from "./httpService";
 import jwdtDecode from "jwt-decode";
 //import { apiUrl } from "../../../config.json";
-const apiUrl = process.env.API_URL;
+const apiUrl = process.env.BACKEND_URL + "/api";
 const apiEndpoint = apiUrl + "/users/login";
 const tokenKey = "token";
 

@@ -1,5 +1,5 @@
 import http from "./httpService";
-const apiUrl = process.env.API_URL;
+const apiUrl = process.env.BACKEND_URL + "/api";
 
 export function entrega_getAll() {
   return http.get(apiUrl + "/entregas");

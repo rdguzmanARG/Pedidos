@@ -210,12 +210,21 @@ footer {
 }
 
 // Recetas de cocina
-.recetas-list{
-  table{
+.recetas-list {
+  table {
     margin-top: 10px;
     tr td {
       vertical-align: middle;
-  }
+    }
+    td {
+      &.col-image{
+        width: 200px;
+      }
+      img.image {
+        width: 100%;
+        max-width: 200px;
+      }
+    }    
   }
 }
 
@@ -238,6 +247,7 @@ footer {
         width: 44px;
       }
     }
+
   }
 }
 // Detalle del pedido

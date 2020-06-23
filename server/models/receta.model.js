@@ -12,7 +12,10 @@ const schema = mongoose.Schema(
     },
     preparacion: {
       type: String,
-    }  
+    },
+    image: {
+      type: String,
+    }
   },
   {
     timestamps: true,

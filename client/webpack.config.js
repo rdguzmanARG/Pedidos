@@ -10,8 +10,8 @@ module.exports = (env) => {
   const pluginArray = [
     new ExtractTextPlugin({ filename: "css/style.css" }),
     new webpack.DefinePlugin({
-      "process.env.API_URL": JSON.stringify(
-        env.API_URL ? env.API_URL : "http://localhost:5000/api"
+      "process.env.BACKEND_URL": JSON.stringify(
+        env.BACKEND_URL ? env.BACKEND_URL : "http://localhost:5000"
       ),
     }),
     new webpack.ContextReplacementPlugin(

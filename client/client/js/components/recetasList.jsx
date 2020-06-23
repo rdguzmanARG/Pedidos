@@ -63,6 +63,7 @@ class RecetasList extends Component {
         <table className="table table-striped table-sm">
           <thead className="thead-dark">
             <tr>
+              <th>Imagen</th>
               <th>Nombre</th>
               <th className="cell-icon text-right"></th>
             </tr>
@@ -83,6 +84,11 @@ class RecetasList extends Component {
               })
               .map((p) => (
                 <tr key={p._id} className={p.anulado ? "bg-danger" : ""}>
+                  <td className="col-image">
+                    {p.image && (
+                      <img className="image" src={process.env.BACKEND_URL + "/" + p.image}></img>
+                    )}
+                  </td>
                   <td>{p.nombre}</td>
                   <td className="cell-icon text-right">
                     <Link to={`/recetas/modificar/${p._id}`} title="Modificar">

@@ -18,7 +18,7 @@ const port = process.env.PORT || 5000;
 app.use(morgan("dev"));
 app.use(cors());
 app.use(express.json());
-//app.use(express.static("dist"));
+app.use("/media", express.static("media"));
 
 mongoose
   .connect(process.env.DB_URL, {
