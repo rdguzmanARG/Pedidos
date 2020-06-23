@@ -202,12 +202,7 @@ class RecetaDetail extends Component {
   render() {
     const toolbarConfig = {
       // Optionally specify the groups to display (displayed in the order listed).
-      display: [
-        "INLINE_STYLE_BUTTONS",
-        "BLOCK_TYPE_BUTTONS",
-        "LINK_BUTTONS",
-        "HISTORY_BUTTONS",
-      ],
+      display: ["INLINE_STYLE_BUTTONS", "BLOCK_TYPE_BUTTONS"],
       INLINE_STYLE_BUTTONS: [
         { label: "Bold", style: "BOLD", className: "custom-css-class" },
         { label: "Italic", style: "ITALIC" },
