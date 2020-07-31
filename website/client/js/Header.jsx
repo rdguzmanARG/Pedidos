@@ -65,68 +65,68 @@ class Header extends React.Component {
       //     </div>
       //   ),
       // },
-      {
-        key: 2,
-        html: (
-          <div className="banner romina-monzon">
-            <div
-              className="carousel-item-image d-lg-none"
-              style={{
-                backgroundImage:
-                  "url(" + "/images/adds/romina-monzon.jpg" + ")",
-              }}
-            >
-              <div className="carousel-caption">
-                <h6>Estudio contable</h6>
-                <h5>Romina Monzón</h5>
-                <div className="carousel-caption-row">
-                  <span className="d-none d-sm-inline">
-                    Consultas sin cargo:{" "}
-                  </span>
-                  <a
-                    target="_blank"
-                    onClick={() => this.clickBanner("romina-monzon")}
-                    href="https://api.whatsapp.com/send?phone=+5491163999959&text=Necesito asesoramiento contable"
-                  >
-                    116399-9959
-                  </a>
-                  <img
-                    className="whatsapp-icon"
-                    src="/images/Icons/whatsapp.png"
-                  ></img>
-                </div>
-              </div>
-            </div>
+      // {
+      //   key: 2,
+      //   html: (
+      //     <div className="banner romina-monzon">
+      //       <div
+      //         className="carousel-item-image d-lg-none"
+      //         style={{
+      //           backgroundImage:
+      //             "url(" + "/images/adds/romina-monzon.jpg" + ")",
+      //         }}
+      //       >
+      //         <div className="carousel-caption">
+      //           <h6>Estudio contable</h6>
+      //           <h5>Romina Monzón</h5>
+      //           <div className="carousel-caption-row">
+      //             <span className="d-none d-sm-inline">
+      //               Consultas sin cargo:{" "}
+      //             </span>
+      //             <a
+      //               target="_blank"
+      //               onClick={() => this.clickBanner("romina-monzon")}
+      //               href="https://api.whatsapp.com/send?phone=+5491163999959&text=Necesito asesoramiento contable"
+      //             >
+      //               116399-9959
+      //             </a>
+      //             <img
+      //               className="whatsapp-icon"
+      //               src="/images/Icons/whatsapp.png"
+      //             ></img>
+      //           </div>
+      //         </div>
+      //       </div>
 
-            <div
-              className="carousel-item-image d-none d-lg-block"
-              style={{
-                backgroundImage:
-                  "url(" + "/images/adds/romina-monzon-large.jpg" + ")",
-              }}
-            >
-              <div className="carousel-caption">
-                <h6>Estudio contable</h6>
-                <h5>Romina Monzón</h5>
-                <div className="carousel-caption-row">
-                  <span>Consultas sin cargo:</span>
-                  <a
-                    target="_blank"
-                    onClick={() => this.clickBanner("romina-monzon")}
-                    href="https://api.whatsapp.com/send?phone=+5491163999959&text=Necesito asesoramiento contable"
-                  >
-                    116399-9959
-                  </a>
-                  <img
-                    className="whatsapp-icon"
-                    src="/images/Icons/whatsapp.png"
-                  ></img>
-                </div>
-              </div>
-            </div>
-          </div>
-        ),
-      },
+      //       <div
+      //         className="carousel-item-image d-none d-lg-block"
+      //         style={{
+      //           backgroundImage:
+      //             "url(" + "/images/adds/romina-monzon-large.jpg" + ")",
+      //         }}
+      //       >
+      //         <div className="carousel-caption">
+      //           <h6>Estudio contable</h6>
+      //           <h5>Romina Monzón</h5>
+      //           <div className="carousel-caption-row">
+      //             <span>Consultas sin cargo:</span>
+      //             <a
+      //               target="_blank"
+      //               onClick={() => this.clickBanner("romina-monzon")}
+      //               href="https://api.whatsapp.com/send?phone=+5491163999959&text=Necesito asesoramiento contable"
+      //             >
+      //               116399-9959
+      //             </a>
+      //             <img
+      //               className="whatsapp-icon"
+      //               src="/images/Icons/whatsapp.png"
+      //             ></img>
+      //           </div>
+      //         </div>
+      //       </div>
+      //     </div>
+      //   ),
+      // },
       {
         key: 3,
         html: (
@@ -244,7 +244,7 @@ class Header extends React.Component {
                     Mi pedido
                   </NavLink>
                 </li>
-                <li class="nav-item">
+                {/* <li class="nav-item">
                   <NavLink
                     to="/recetas"
                     onClick={() => this.setState({ collapse: true })}
@@ -252,7 +252,7 @@ class Header extends React.Component {
                   >
                     Recetas
                   </NavLink>
-                </li>                
+                </li>                 */}
                 <li class="nav-item">
                   <NavLink
                     to="/quienes-somos"
